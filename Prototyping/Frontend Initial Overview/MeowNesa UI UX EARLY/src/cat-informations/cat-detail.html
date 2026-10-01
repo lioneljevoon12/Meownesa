@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title id="pageTitle">Profil Detail Kucing — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            'card': '0 12px 32px -8px rgba(43, 18, 32, 0.08)',
+            'glow': '0 0 25px rgba(255, 197, 61, 0.5)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FBF6F1;
+      color: #2B1220;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-display {
+      font-family: 'Baloo 2', sans-serif;
+    }
+    .thumb-active {
+      border-color: #B3184F !important;
+      box-shadow: 0 0 0 3px rgba(179, 24, 79, 0.3) !important;
+      transform: scale(1.04);
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 197, 61, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0); }
+    }
+    .pulse-collar {
+      animation: pulseGlow 2.5s infinite;
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col selection:bg-magenta selection:text-white">
+
+  <!-- ================= TOP BAR ================= -->
+  <div class="bg-magenta text-white text-xs py-2 px-4 border-b border-magenta-dark/30">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="bg-sun text-ink font-extrabold px-2 py-0.5 rounded-full text-[10px] tracking-wide uppercase">Profil Kucing Resmi</span>
+        <span>Terdata dalam sistem Jaga Satwa UNESA • Kampus Ketintang &amp; Lidah Wetan</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="hover:underline font-bold text-sun">
+          Kembali ke Informasi Kucing
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HEADER (STRICT DOCUMENT STRUCTURE) ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-line shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo Lockup -->
+      <a href="../../index.html" class="flex items-center gap-3 group">
+        <div class="relative">
+          <img src="../../images/cat-icons.jpg" alt="Icon MeowNesa" class="w-12 h-12 object-cover rounded-2xl border-2 border-magenta/30 shadow-sm group-hover:scale-105 transition">
+          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-bold">✓</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-display font-extrabold text-2xl text-magenta leading-none">MeowNesa</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sun/30 text-ink leading-none">UNESA</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <img src="../../images/jagasatwa-logo.png" alt="Logo Jaga Satwa UNESA" class="w-3.5 h-3.5 object-contain rounded-full">
+            <span class="text-xs text-ink-muted font-medium">Jaga Satwa UNESA</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Navigation Links (Strictly According to Document) -->
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-ink-light">
+        <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
+        <a href="index.html" class="text-magenta font-bold transition">Informasi Kucing</a>
+        <a href="../adoption/apply.html" class="hover:text-magenta transition">Adopsi</a>
+        <a href="../cms-blog-awarness/blog.html" class="hover:text-magenta transition">Artikel</a>
+        <a href="../../index.html#donasi" class="hover:text-magenta transition">Donasi</a>
+      </nav>
+
+      <!-- Action -->
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="../adoption/tracking.html" class="px-4 py-2.5 rounded-full border border-line hover:border-magenta text-ink hover:text-magenta text-xs font-bold transition bg-cream/40">
+          Lacak Pengajuan
+        </a>
+        <a id="navAdoptBtn" href="../adoption/apply.html" class="px-5 py-2.5 rounded-full bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition">
+          Ajukan Adopsi
+        </a>
+      </div>
+
+      <!-- Mobile Button -->
+      <button id="mobileMenuBtn" class="lg:hidden w-10 h-10 rounded-xl border border-line flex flex-col items-center justify-center gap-1.5 hover:bg-cream transition">
+        <span class="w-5 h-0.5 bg-ink rounded"></span>
+        <span class="w-5 h-0.5 bg-ink rounded"></span>
+        <span class="w-5 h-0.5 bg-ink rounded"></span>
+      </button>
+
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="lg:hidden hidden border-t border-line bg-white px-5 py-4 flex-col gap-3 text-sm font-semibold">
+      <a href="../../index.html" class="py-2 hover:text-magenta">Beranda</a>
+      <a href="index.html" class="py-2 text-magenta font-bold">Informasi Kucing</a>
+      <a href="../adoption/apply.html" class="py-2 hover:text-magenta">Adopsi</a>
+      <a href="../cms-blog-awarness/blog.html" class="py-2 hover:text-magenta">Artikel</a>
+      <a href="../../index.html#donasi" class="py-2 hover:text-magenta">Donasi</a>
+      <div class="pt-3 border-t border-line flex flex-col gap-2">
+        <a href="../adoption/tracking.html" class="w-full py-2.5 rounded-xl border border-line text-xs font-bold text-ink text-center">
+          Lacak Pengajuan
+        </a>
+        <a href="../adoption/apply.html" class="w-full py-2.5 rounded-xl bg-magenta text-white text-xs font-bold text-center">
+          Ajukan Adopsi
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN PROFILE CONTENT ================= -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-ink-muted mb-6 font-medium">
+      <a href="../../index.html" class="hover:text-magenta">Beranda</a>
+      <span>/</span>
+      <a href="index.html" class="hover:text-magenta">Informasi Kucing</a>
+      <span>/</span>
+      <span class="text-magenta font-bold" id="breadCatName">Mochi</span>
+    </nav>
+
+    <!-- 2 COLUMNS LAYOUT: GALLERY (LEFT) & FULL DETAILS (RIGHT) -->
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- ================= LEFT COLUMN: MULTI-PHOTO GALLERY ================= -->
+      <div class="lg:col-span-6 flex flex-col gap-4 sticky top-28">
+        
+        <!-- Main Hero Photo Viewer -->
+        <div class="relative bg-white border border-line rounded-3xl p-3 shadow-card overflow-hidden group">
+          <div class="relative h-[380px] sm:h-[460px] rounded-2xl overflow-hidden bg-cream cursor-zoom-in" onclick="openLightbox()">
+            <img id="mainGalleryImg" src="" alt="Foto Kucing" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+            
+            <!-- Status Pill Floating -->
+            <span id="detailStatusBadge" class="absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-extrabold shadow-lg">
+              Siap Diadopsi
+            </span>
+
+            <!-- Reflective Collar Tag Floating -->
+            <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-line shadow-md flex items-center gap-2 pulse-collar">
+              <span class="text-lg">🏷️</span>
+              <div>
+                <span class="font-display font-bold text-xs text-ink block leading-none" id="detailCollarTag">Kalung Merah Reflektif</span>
+                <span class="text-[10px] text-ink-muted block mt-0.5 font-mono" id="detailCollarId">ID: KTT-01</span>
+              </div>
+            </div>
+
+            <!-- Fullscreen Hint Icon -->
+            <button onclick="openLightbox()" class="absolute bottom-4 right-4 w-9 h-9 rounded-xl bg-ink/70 hover:bg-ink text-white flex items-center justify-center text-sm backdrop-blur-sm shadow transition">
+              🔍
+            </button>
+          </div>
+        </div>
+
+        <!-- Multi-photo Thumbnails Strip -->
+        <div class="bg-white border border-line rounded-2xl p-3 shadow-card flex flex-col gap-2">
+          <div class="flex items-center justify-between text-xs font-bold text-ink">
+            <span>Galeri Foto Kucing</span>
+            <span class="text-[11px] text-ink-muted font-normal" id="galleryCountText">3 Foto Tersedia</span>
+          </div>
+
+          <!-- Thumbnails Row -->
+          <div class="grid grid-cols-4 gap-2.5 pt-1" id="thumbnailsContainer"></div>
+        </div>
+
+        <!-- Campus Habitat Quick Info -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center text-xl flex-shrink-0">
+              📍
+            </div>
+            <div>
+              <span class="text-[11px] text-ink-muted font-bold block uppercase">Wilayah Teritorial di Kampus</span>
+              <span class="font-display font-extrabold text-sm text-ink block" id="detailLocation">Gedung K10 — Fakultas Vokasi</span>
+              <span class="text-xs text-ink-muted block" id="detailCampus">Kampus Ketintang UNESA</span>
+            </div>
+          </div>
+          <a href="index.html" onclick="sessionStorage.setItem('openMapView', 'true')" class="px-3.5 py-2 rounded-xl bg-cream hover:bg-magenta-50 text-magenta text-xs font-bold transition flex items-center gap-1 border border-line flex-shrink-0">
+            Lihat di Peta
+          </a>
+        </div>
+
+      </div>
+
+      <!-- ================= RIGHT COLUMN: COMPREHENSIVE PROFILE & MEDICAL ================= -->
+      <div class="lg:col-span-6 flex flex-col gap-6">
+        
+        <!-- Header Info Card -->
+        <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-4">
+          
+          <div class="flex items-start justify-between gap-3 border-b border-line pb-4">
+            <div>
+              <span class="text-xs font-bold text-magenta tracking-wider uppercase block" id="detailNickName">Kucing Resmi UNESA</span>
+              <h1 class="font-display font-extrabold text-3xl sm:text-4xl text-ink mt-0.5" id="detailCatName">
+                Mochi
+              </h1>
+              <p class="text-xs sm:text-sm text-ink-muted mt-1" id="detailTagline">
+                Kucing calico manis binaan Jaga Satwa UNESA.
+              </p>
+            </div>
+            <span class="px-3 py-1.5 rounded-xl bg-magenta-50 border border-magenta/20 text-magenta font-extrabold text-sm flex items-center gap-1" id="detailGender">
+              Betina
+            </span>
+          </div>
+
+          <!-- Quick Bio Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+            <div class="p-3 rounded-2xl bg-cream/70 border border-line/70">
+              <span class="text-[10px] font-bold text-ink-muted block uppercase">Perkiraan Usia</span>
+              <span class="font-display font-extrabold text-base text-ink block mt-0.5" id="detailAge">± 2 Tahun</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-cream/70 border border-line/70">
+              <span class="text-[10px] font-bold text-ink-muted block uppercase">Status Steril</span>
+              <span class="font-display font-extrabold text-base text-emerald-700 block mt-0.5">Sudah Steril</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-cream/70 border border-line/70">
+              <span class="text-[10px] font-bold text-ink-muted block uppercase">Kesehatan</span>
+              <span class="font-display font-extrabold text-base text-ink block mt-0.5">Sangat Sehat</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-cream/70 border border-line/70">
+              <span class="text-[10px] font-bold text-ink-muted block uppercase">Tahun Terdata</span>
+              <span class="font-display font-extrabold text-base text-magenta block mt-0.5">2021</span>
+            </div>
+          </div>
+
+          <!-- Personality & Characteristics -->
+          <div>
+            <h3 class="font-display font-bold text-base text-ink mb-2">
+              Karakteristik &amp; Kebiasaan
+            </h3>
+            <div class="flex flex-wrap gap-2 mb-3" id="detailTraitsList"></div>
+            <p class="text-xs sm:text-sm text-ink-light leading-relaxed bg-cream/50 p-4 rounded-2xl border border-line/60" id="detailDescription">
+              Mochi adalah kucing calico yang sangat ramah. Gemar menyambut mahasiswa dan dosen yang melintas di selasar Gedung K10. Nafsu makannya sangat baik dan sudah terbiasa dengan jadwal feeding sore dari relawan Jaga Satwa.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Verified Medical & Clinical Records -->
+        <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-4">
+          
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <h3 class="font-display font-bold text-lg text-ink">
+              Catatan Kesehatan &amp; Sterilisasi Medis
+            </h3>
+            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              Verified Jaga Satwa
+            </span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            
+            <div class="flex items-start gap-3 p-3 rounded-2xl bg-cream/60 border border-line/70">
+              <span class="w-8 h-8 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center text-sm font-bold flex-shrink-0">✂️</span>
+              <div>
+                <span class="font-bold text-ink block">Sterilisasi Tuntas (Kebiri Betina/Jantan)</span>
+                <span class="text-ink-muted text-[11px] block mt-0.5">Telah disterilkan secara medis di klinik mitra: <strong>Nusantara Vet Surabaya</strong></span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-3 rounded-2xl bg-cream/60 border border-line/70">
+              <span class="w-8 h-8 rounded-xl bg-sun/30 text-ink flex items-center justify-center text-sm font-bold flex-shrink-0">💉</span>
+              <div>
+                <span class="font-bold text-ink block">Vaksinasi &amp; Vitamin Rutin</span>
+                <span class="text-ink-muted text-[11px] block mt-0.5" id="detailVaccine">Vaksin Tricat Lengkap + Pemberian Obat Cacing Terjadwal</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-3 rounded-2xl bg-cream/60 border border-line/70">
+              <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-bold flex-shrink-0">🍲</span>
+              <div>
+                <span class="font-bold text-ink block">Pola Pakan &amp; Feeding Harian</span>
+                <span class="text-ink-muted text-[11px] block mt-0.5">Pakan kering (Dry food) berkualitas &amp; wet food berkala saat sesi feeding pagi &amp; sore.</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Adoption Box / Action Section -->
+        <div id="adoptionBoxCard" class="bg-gradient-to-br from-magenta-50 via-white to-sun/10 border-2 border-magenta/20 rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-4">
+          
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-magenta text-white flex items-center justify-center text-2xl shadow-md flex-shrink-0">
+              🏠
+            </div>
+            <div>
+              <span class="text-[11px] font-bold text-magenta uppercase tracking-wider block">Program Adopsi Terverifikasi</span>
+              <h3 class="font-display font-extrabold text-2xl text-ink leading-tight">
+                Tertarik Mengadopsi <span id="adoptBoxCatName">Mochi</span>?
+              </h3>
+            </div>
+          </div>
+
+          <p class="text-xs sm:text-sm text-ink-light leading-relaxed">
+            Pengajuan adopsi dilakukan secara bertanggung jawab untuk memastikan calon adopter memiliki komitmen perawatan, tempat tinggal yang aman, dan bersedia memberikan kabar berkala ke kontak resmi Jaga Satwa UNESA.
+          </p>
+
+          <div class="grid sm:grid-cols-2 gap-2 text-[11px] font-semibold text-ink-light">
+            <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
+              <span>✓</span> <span>Tanpa pungutan biaya adopsi</span>
+            </div>
+            <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
+              <span>✓</span> <span>Sudah include steril &amp; vaksin</span>
+            </div>
+            <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
+              <span>✓</span> <span>Lacak status via Kode Tracking</span>
+            </div>
+            <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
+              <span>✓</span> <span>Serah terima resmi &amp; perjanjian</span>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <a id="mainAdoptActionBtn" href="../adoption/apply.html" class="w-full py-4 rounded-2xl bg-magenta hover:bg-magenta-dark text-white font-display font-extrabold text-base text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition flex items-center justify-center gap-2">
+              <span>Isi Formulir Pengajuan Adopsi Sekarang</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= RELATED CATS RECOMMENDATION ================= -->
+    <section class="mt-16 pt-10 border-t border-line">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <span class="text-xs font-bold text-magenta tracking-wider uppercase block">Jelajahi Anabul Lainnya</span>
+          <h2 class="font-display font-extrabold text-2xl text-ink">Kucing Binaan Kampus Terkait</h2>
+        </div>
+        <a href="index.html" class="text-xs font-bold text-magenta hover:underline flex items-center gap-1">
+          Lihat Semua Kucing →
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="relatedCatsGrid"></div>
+    </section>
+
+  </main>
+
+  <!-- ================= LIGHTBOX MODAL FULLSCREEN ================= -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-ink/90 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeLightbox()">
+    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white hover:text-sun font-bold text-2xl transition">✕ Tutup</button>
+      <img id="lightboxImg" src="" alt="Zoom Foto" class="max-h-[80vh] w-auto rounded-3xl object-contain shadow-2xl border border-white/20">
+      <p id="lightboxCaption" class="text-white/80 text-xs mt-3 font-semibold"></p>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-line mt-16 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4 text-xs text-ink-muted">
+      <p>© 2026 MeowNesa &amp; Jaga Satwa UNESA. Seluruh hak cipta dilindungi.</p>
+      <a href="index.html" class="font-bold text-magenta hover:underline">Kembali ke Informasi Kucing</a>
+    </div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    const catsMaster = [
+      {
+        id: 'mochi',
+        name: 'Mochi',
+        nickname: 'Kucing Calico Manja Vokasi',
+        gender: 'Betina',
+        age: '± 2 Tahun',
+        campus: 'Kampus Ketintang',
+        location: 'Gedung K10 — Fakultas Vokasi',
+        collarCode: 'KTT-01',
+        collarColor: 'Kalung Merah Reflektif',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril (Nusantara Vet)',
+        vaccine: 'Vaksin Tricat Lengkap + Rabies',
+        gallery: [
+          { src: '../../images/cat-images/cat1.jpg', caption: 'Mochi sedang bersantai di depan lobi Gedung K10 Vokasi' },
+          { src: '../../images/cat-images/cat1-p2.jpg', caption: 'Posisi kalung merah reflektif Mochi saat siang hari' },
+          { src: '../../images/cat-images/imgi_30_pet-owner-stroking-his-old-cat-and-dog-together.jpg', caption: 'Mochi sangat jinak saat diajak interaksi oleh mahasiswa' }
+        ],
+        traits: ['Ramah Banget', 'Suka Dielus Dagu', 'Manja', 'Nafsu Makan Sangat Bagus'],
+        desc: 'Mochi adalah kucing belang tiga (calico) yang telah menjadi maskot di Fakultas Vokasi sejak 2021. Sangat jinak, senang menyapa orang yang lewat di depan ruang perkuliahan, dan rutin mendapatkan makanan saat sesi feeding sore Jaga Satwa.'
+      },
+      {
+        id: 'milo',
+        name: 'Milo',
+        nickname: 'Kucing Gagah Penjaga Danau',
+        gender: 'Jantan',
+        age: '± 3 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Dermaga Danau UNESA Lidah Wetan',
+        collarCode: 'LWT-01',
+        collarColor: 'Kalung Biru Reflektif',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril (Nusantara Vet)',
+        vaccine: 'Vaksin Tricat Lengkap',
+        gallery: [
+          { src: '../../images/cat-images/cat2-p1.jpg', caption: 'Milo bertengger di tepi Danau UNESA Lidah Wetan' },
+          { src: '../../images/cat-images/cat2-p2.jpg', caption: 'Milo menikmati angin sore di jogging track kampus' },
+          { src: '../../images/cat-images/imgi_33_happy-panting-golden-retriever-dog-and-blue-maine-coon-cat-looking-at-camera-isolated-on-grey.jpg', caption: 'Postur Milo yang tegap dan berbulu abu-abu lebat' }
+        ],
+        traits: ['Tenang & Kalem', 'Pemberani', 'Suka Menemani Belajar', 'Mandiri'],
+        desc: 'Milo memiliki kepribadian yang tenang dan penyabar. Sering duduk di dekat bangku taman danau menemani mahasiswa yang sedang mengerjakan tugas akhir atau berolahraga sore.'
+      },
+      {
+        id: 'oyen',
+        name: 'Oyen Barbar',
+        nickname: 'Kucing Ceria Food Court Ketintang',
+        gender: 'Jantan',
+        age: '± 1.5 Tahun',
+        campus: 'Kampus Ketintang',
+        location: 'Kantin Pusat & Selasar FT Ketintang',
+        collarCode: 'KTT-03',
+        collarColor: 'Kalung Oranye Reflektif',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Rutin Terjadwal',
+        gallery: [
+          { src: '../../images/cat-images/catoyen-p1.jpg', caption: 'Oyen sedang mengawasi area kantin Ketintang' },
+          { src: '../../images/cat-images/catoyen-p2.jpg', caption: 'Oyen bersantai setelah sesi feeding siang' },
+          { src: '../../images/cat-images/imgi_32_cute-ginger-cat.jpg', caption: 'Wajah lucu Oyen yang selalu ceria' }
+        ],
+        traits: ['Aktif & Lincah', 'Suka Bermain', 'Nafsu Makan Juara', 'Pemberani'],
+        desc: 'Si oyen yang penuh energi! Terkenal di kalangan mahasiswa Fakultas Teknik dan Vokasi karena selalu aktif menyapa pengunjung food court.'
+      },
+      {
+        id: 'kismis',
+        name: 'Kismis',
+        nickname: 'Maskot Seni FBS & Teater',
+        gender: 'Betina',
+        age: '± 4 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Gedung Sawunggaling & FBS',
+        collarCode: 'LWT-06',
+        collarColor: 'Kalung Kuning Reflektif',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        gallery: [
+          { src: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg', caption: 'Kismis bersantai di selasar Sendratasik FBS' },
+          { src: '../../images/cat-images/cat2-p2.jpg', caption: 'Kismis di depan pintu masuk Gedung Sawunggaling' },
+          { src: '../../images/cat-images/imgi_494_pexels-photo-34719941.jpg', caption: 'Kismis menikmati suasana tenang sore hari' }
+        ],
+        traits: ['Bulu Totol Eksotis', 'Sangat Kalem', 'Penyayang', 'Mudah Beradaptasi'],
+        desc: 'Kucing artistik yang terbiasa dengan alunan musik dan gamelan di Gedung Sawunggaling FBS UNESA.'
+      },
+      {
+        id: 'luna',
+        name: 'Luna',
+        nickname: 'Kucing Putih Manja FIP',
+        gender: 'Betina',
+        age: '± 1 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Gedung O1 — Fakultas Ilmu Pendidikan',
+        collarCode: 'LWT-09',
+        collarColor: 'Kalung Ungu Reflektif',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Tricat Lengkap',
+        gallery: [
+          { src: '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg', caption: 'Luna menatap ramah di koridor FIP' },
+          { src: '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg', caption: 'Luna bermain di taman belajar PGSD' },
+          { src: '../../images/cat-images/imgi_496_pexels-photo-13473569.jpg', caption: 'Luna saat santai di bawah pohon rindang' }
+        ],
+        traits: ['Bulu Putih Bersih', 'Suka Main Bulu', 'Mendengkur Saat Dielus', 'Manis'],
+        desc: 'Luna adalah kucing muda yang sangat manis dan anggun. Sering mendengkur puas saat kepalanya dielus oleh mahasiswa FIP.'
+      }
+    ];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const catIdParam = urlParams.get('id') || 'mochi';
+
+    let currentCat = catsMaster.find(c => c.id.toLowerCase() === catIdParam.toLowerCase()) || catsMaster[0];
+
+    function loadCatProfile(cat) {
+      document.getElementById('pageTitle').innerText = `${cat.name} — Profil Informasi Kucing | MeowNesa UNESA`;
+      document.getElementById('breadCatName').innerText = cat.name;
+      document.getElementById('detailCatName').innerText = cat.name;
+      document.getElementById('detailNickName').innerText = cat.nickname;
+      document.getElementById('detailGender').innerText = cat.gender;
+      document.getElementById('detailAge').innerText = cat.age;
+      document.getElementById('detailLocation').innerText = cat.location;
+      document.getElementById('detailCampus').innerText = cat.campus;
+      document.getElementById('detailCollarTag').innerText = cat.collarColor;
+      document.getElementById('detailCollarId').innerText = `ID: ${cat.collarCode}`;
+      document.getElementById('detailDescription').innerText = cat.desc;
+      document.getElementById('detailVaccine').innerText = cat.vaccine;
+      document.getElementById('adoptBoxCatName').innerText = cat.name;
+
+      const statusBadge = document.getElementById('detailStatusBadge');
+      if (cat.status === 'AVAILABLE') {
+        statusBadge.className = 'absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-extrabold shadow-lg bg-sun text-ink';
+        statusBadge.innerText = 'Siap Diadopsi';
+        document.getElementById('adoptionBoxCard').classList.remove('hidden');
+      } else {
+        statusBadge.className = 'absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-extrabold shadow-lg bg-magenta text-white';
+        statusBadge.innerText = 'Terdata Kampus';
+        document.getElementById('adoptionBoxCard').classList.add('hidden');
+      }
+
+      const traitsContainer = document.getElementById('detailTraitsList');
+      traitsContainer.innerHTML = '';
+      cat.traits.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'px-3 py-1 rounded-xl bg-magenta-50 border border-magenta/20 text-magenta font-bold text-xs';
+        span.innerText = `${t}`;
+        traitsContainer.appendChild(span);
+      });
+
+      document.getElementById('mainGalleryImg').src = cat.gallery[0].src;
+      document.getElementById('galleryCountText').innerText = `${cat.gallery.length} Foto Tersedia`;
+
+      const thumbsContainer = document.getElementById('thumbnailsContainer');
+      thumbsContainer.innerHTML = '';
+      cat.gallery.forEach((g, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `relative h-20 rounded-xl overflow-hidden border-2 bg-cream transition ${idx === 0 ? 'thumb-active' : 'border-line hover:opacity-90'}`;
+        btn.onclick = () => switchMainPhoto(g.src, g.caption, btn);
+        btn.innerHTML = `
+          <img src="${g.src}" alt="${cat.name}" class="w-full h-full object-cover">
+          <span class="absolute bottom-1 right-1 bg-ink/70 text-white text-[9px] px-1 rounded font-mono">${idx+1}</span>
+        `;
+        thumbsContainer.appendChild(btn);
+      });
+
+      const applyUrl = `../adoption/apply.html?cat=${encodeURIComponent(cat.name)}`;
+      document.getElementById('navAdoptBtn').href = applyUrl;
+      document.getElementById('mainAdoptActionBtn').href = applyUrl;
+
+      renderRelatedCats(cat.id);
+    }
+
+    function switchMainPhoto(src, caption, clickedBtn) {
+      document.getElementById('mainGalleryImg').src = src;
+      document.querySelectorAll('#thumbnailsContainer button').forEach(b => {
+        b.classList.remove('thumb-active');
+        b.classList.add('border-line');
+      });
+      clickedBtn.classList.add('thumb-active');
+      clickedBtn.classList.remove('border-line');
+    }
+
+    function openLightbox() {
+      const currentSrc = document.getElementById('mainGalleryImg').src;
+      document.getElementById('lightboxImg').src = currentSrc;
+      document.getElementById('lightboxCaption').innerText = `${currentCat.name} — Dokumentasi Resmi Jaga Satwa UNESA`;
+      document.getElementById('lightboxModal').classList.remove('hidden');
+      document.getElementById('lightboxModal').classList.add('flex');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.add('hidden');
+      document.getElementById('lightboxModal').classList.remove('flex');
+    }
+
+    function renderRelatedCats(currentId) {
+      const relatedGrid = document.getElementById('relatedCatsGrid');
+      relatedGrid.innerHTML = '';
+      const otherCats = catsMaster.filter(c => c.id !== currentId).slice(0, 3);
+
+      otherCats.forEach(cat => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-line rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col group';
+        card.innerHTML = `
+          <div class="h-44 bg-cream overflow-hidden relative">
+            <img src="${cat.gallery[0].src}" alt="${cat.name}" class="w-full h-full object-cover group-hover:scale-105 transition">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sun text-ink">
+              ${cat.statusLabel}
+            </span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                <h4 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition">${cat.name}</h4>
+                <span class="text-xs text-magenta font-bold">${cat.gender}</span>
+              </div>
+              <p class="text-[11px] text-ink-muted mt-0.5">${cat.location}</p>
+            </div>
+            <a href="cat-detail.html?id=${cat.id}" class="mt-3 block py-2 rounded-xl bg-cream hover:bg-magenta hover:text-white text-ink text-center text-xs font-bold transition">
+              Lihat Profil ${cat.name} →
+            </a>
+          </div>
+        `;
+        relatedGrid.appendChild(card);
+      });
+    }
+
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+      document.getElementById('mobileMenu').classList.toggle('flex');
+    });
+
+    loadCatProfile(currentCat);
+  </script>
+</body>
+</html>

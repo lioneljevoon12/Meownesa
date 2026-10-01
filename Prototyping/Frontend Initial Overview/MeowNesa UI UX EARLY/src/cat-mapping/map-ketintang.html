@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Peta Sebaran Kucing — UNESA Kampus Ketintang | MeowNesa</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F5',
+              100: '#FBE6ED'
+            },
+            sun: '#FFC53D',
+            coral: '#E4572E',
+            cream: '#FBF6F1',
+            ink: '#2B1220',
+            line: '#F0DCE4',
+            unesa: '#005596'
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <style>
+    :root {
+      --bg: #FBF6F1;
+      --surface: #ffffff;
+      --ink: #2B1220;
+      --line: #F0DCE4;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-display {
+      font-family: 'Baloo 2', sans-serif;
+    }
+    
+    /* Leaflet customization */
+    #map {
+      width: 100%;
+      height: 100%;
+      background: #EAF0E6;
+      border-radius: 1.25rem;
+    }
+    .leaflet-container {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    /* Custom Pin Marker Style */
+    .cat-pin-marker {
+      background: transparent;
+      border: none;
+    }
+    .cat-pin-badge {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #B3184F;
+      color: #ffffff;
+      font-weight: 700;
+      font-family: 'Baloo 2', sans-serif;
+      border: 3px solid #ffffff;
+      border-radius: 9999px;
+      box-shadow: 0 4px 14px rgba(179, 24, 79, 0.4);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .cat-pin-badge:hover {
+      transform: scale(1.15) translateY(-4px);
+      box-shadow: 0 8px 20px rgba(179, 24, 79, 0.5);
+      background: #7F0E38;
+      z-index: 999 !important;
+    }
+    .cat-pin-badge.selected {
+      transform: scale(1.2) translateY(-6px);
+      background: #FFC53D;
+      color: #2B1220;
+      border-color: #B3184F;
+      box-shadow: 0 0 0 4px rgba(255, 197, 61, 0.5), 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .cat-pin-badge.ready-adopt {
+      border-color: #FFC53D;
+    }
+    .cat-pin-badge::after {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 7px solid #ffffff;
+    }
+    
+    /* Pulse glow effect mimicking reflective collar */
+    @keyframes collarPulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0.8); }
+      70% { box-shadow: 0 0 0 12px rgba(255, 197, 61, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0); }
+    }
+    .pulse-collar {
+      animation: collarPulse 2.2s infinite;
+    }
+    
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #F8EDEB;
+      border-radius: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #E36D93;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-line shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../../Meownesa — Landing Page.html" class="flex items-center gap-2">
+          <img src="../../images/jagasatwa-logo.png" alt="Logo Jaga Satwa UNESA" class="w-10 h-10 object-contain rounded-full border border-line bg-white p-0.5">
+          <div>
+            <span class="font-display font-extrabold text-xl text-magenta leading-none block">🐾 MeowNesa</span>
+            <span class="text-[10px] text-ink/60 font-semibold tracking-wider uppercase block">Jaga Satwa UNESA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Campus Switcher Navigation -->
+      <div class="flex items-center bg-magenta-50 p-1 rounded-full border border-magenta/20">
+        <a href="map-ketintang.html" class="px-4 py-1.5 rounded-full bg-magenta text-white font-display font-bold text-sm shadow-sm flex items-center gap-1.5 transition">
+          <span>🏢</span> Ketintang (KTT)
+        </a>
+        <a href="map-lidahwetan.html" class="px-4 py-1.5 rounded-full text-ink/75 hover:text-magenta font-display font-bold text-sm flex items-center gap-1.5 transition">
+          <span>🌳</span> Lidah Wetan (Liwet)
+        </a>
+      </div>
+
+      <!-- Right Action / Info -->
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="../../Meownesa — Landing Page.html#kucing" class="text-sm font-semibold text-ink/80 hover:text-magenta transition">Katalog</a>
+        <a href="../adoption/apply.html" class="px-4 py-2 rounded-full bg-sun text-ink font-bold text-xs hover:bg-sun/90 shadow-sm transition flex items-center gap-1">
+          <span>📝</span> Ajukan Adopsi
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN INTERFACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 flex flex-col gap-3">
+
+    <!-- TOP FILTER BAR (Inspired by Reference) -->
+    <section class="bg-white border border-line rounded-2xl p-3 sm:p-4 shadow-sm flex flex-col gap-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        
+        <!-- Search Input -->
+        <div class="relative flex-1 min-w-[260px]">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </span>
+          <input id="searchInput" type="text" placeholder="Cari gedung (A1, K10, C1...), fakultas, spot, atau nama kucing..."
+            class="w-full pl-10 pr-4 py-2 rounded-xl border border-line bg-cream/40 text-sm focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+        </div>
+
+        <!-- Quick Status Filter Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+          <button onclick="setFilterCategory('all')" id="btn-cat-all" class="filter-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-magenta text-white transition">
+            Semua Spot
+          </button>
+          <button onclick="setFilterCategory('vokasi')" id="btn-cat-vokasi" class="filter-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cream hover:bg-magenta-50 text-ink/80 transition">
+            🎓 Vokasi (K)
+          </button>
+          <button onclick="setFilterCategory('ft')" id="btn-cat-ft" class="filter-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cream hover:bg-magenta-50 text-ink/80 transition">
+            ⚙️ FT (A)
+          </button>
+          <button onclick="setFilterCategory('fmipa')" id="btn-cat-fmipa" class="filter-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cream hover:bg-magenta-50 text-ink/80 transition">
+            🔬 FMIPA (C)
+          </button>
+          <button onclick="setFilterCategory('feb')" id="btn-cat-feb" class="filter-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cream hover:bg-magenta-50 text-ink/80 transition">
+            💼 FEB (G)
+          </button>
+          <button onclick="setFilterCategory('fasum')" id="btn-cat-fasum" class="filter-cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cream hover:bg-magenta-50 text-ink/80 transition">
+            🍜 Kantin / Fasum
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Secondary Info & Stats Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line/60 text-xs text-ink/70">
+        <div class="flex items-center gap-4 flex-wrap">
+          <span class="flex items-center gap-1.5 font-medium">
+            <span class="w-2.5 h-2.5 rounded-full bg-magenta"></span>
+            <strong>Kampus Ketintang:</strong> Jl. Ketintang, Gayungan, Surabaya
+          </span>
+          <span class="inline-flex items-center gap-1 bg-sun/20 text-ink px-2.5 py-0.5 rounded-full font-semibold">
+            🏷️ <span>Semua Kucing Terdata Pakai Kalung Reflektif</span>
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="bg-magenta/10 text-magenta font-bold px-2.5 py-1 rounded-lg" id="statSpotsCount">📍 7 Spot Gedung</span>
+          <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg" id="statCatsCount">🐾 14 Kucing Terdata</span>
+          <span class="bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg" id="statAdoptCount">💖 4 Siap Adopsi</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAP CONTAINER & SIDE DRAWER -->
+    <div class="relative flex-1 grid lg:grid-cols-12 gap-3 min-h-[580px] lg:h-[calc(100vh-250px)]">
+      
+      <!-- LEAFLET MAP VIEWPORT -->
+      <div class="lg:col-span-8 bg-white border border-line rounded-2xl p-2 shadow-sm flex flex-col relative overflow-hidden">
+        
+        <div id="map" class="z-10"></div>
+
+        <!-- Map Control Overlay / Floating Helper -->
+        <div class="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-md px-3 py-2 rounded-xl border border-line shadow-md text-xs font-medium text-ink flex items-center gap-2 pointer-events-none">
+          <span class="text-base">🗺️</span>
+          <span><strong>Denah Ketintang:</strong> Klik salah satu pin untuk melihat daftar kucing di spot tersebut</span>
+        </div>
+
+        <!-- Collar Legend Floating -->
+        <div class="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-md p-2.5 rounded-xl border border-line shadow-md text-[11px] flex flex-col gap-1">
+          <span class="font-bold text-ink">Indikator Pin:</span>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-magenta border border-white"></span>
+            <span>Kucing Terdata Aktif</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-sun border border-magenta pulse-collar"></span>
+            <span class="font-semibold text-magenta-dark">Siap Diadopsi (Ready)</span>
+          </div>
+        </div>
+
+        <!-- Reset View Button -->
+        <button onclick="resetMapView()" class="absolute bottom-4 right-4 z-20 bg-white hover:bg-cream text-ink font-semibold px-3 py-1.5 rounded-xl border border-line shadow-md text-xs flex items-center gap-1.5 transition">
+          <svg class="w-3.5 h-3.5 text-magenta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+          Reset Posisi
+        </button>
+      </div>
+
+      <!-- RIGHT SIDE DETAIL PANEL / DRAWER -->
+      <div class="lg:col-span-4 flex flex-col bg-white border border-line rounded-2xl shadow-sm overflow-hidden h-full">
+        
+        <!-- Drawer Header -->
+        <div class="p-4 border-b border-line bg-magenta-50/50 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold tracking-wider text-magenta uppercase" id="panelSubtitle">Detail Spot Kampus</span>
+            <h2 class="font-display font-extrabold text-xl text-ink leading-tight" id="panelTitle">Pilih Spot di Peta</h2>
+          </div>
+          <span id="panelCatCountBadge" class="px-2.5 py-1 rounded-full bg-magenta text-white font-bold text-xs">
+            0 Kucing
+          </span>
+        </div>
+
+        <!-- Spot Description & Metadata -->
+        <div id="panelMetaBox" class="px-4 py-2.5 bg-cream/40 border-b border-line/60 text-xs text-ink/75 flex items-center justify-between">
+          <span id="panelLocationCode">📍 Kampus Ketintang</span>
+          <span id="panelFeedingSchedule" class="font-medium text-coral">⏰ Feeding Rutin: 07.30 & 16.30 WIB</span>
+        </div>
+
+        <!-- Cats List in Spot -->
+        <div id="catsListContainer" class="flex-1 p-4 overflow-y-auto custom-scroll flex flex-col gap-3">
+          
+          <!-- Empty State Default -->
+          <div id="emptyPanelState" class="my-auto py-8 text-center px-4">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-sun/20 flex items-center justify-center text-3xl mb-3">
+              🐾
+            </div>
+            <h3 class="font-display font-bold text-base text-ink">Belum Ada Spot yang Dipilih</h3>
+            <p class="text-xs text-ink/60 mt-1 max-w-xs mx-auto">
+              Silakan klik salah satu pin gedung/fakultas di peta atau cari spot di bilah pencarian atas untuk melihat data kucing.
+            </p>
+          </div>
+
+          <!-- Dynamic Cat Cards will be injected here -->
+        </div>
+
+        <!-- Panel Footer / Action -->
+        <div class="p-3 border-t border-line bg-cream/30 flex items-center justify-between gap-2 text-xs">
+          <span class="text-ink/60">Temukan kucing sakit / terlantar?</span>
+          <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="font-bold text-magenta hover:underline flex items-center gap-1">
+            <span>🚨 Lapor via G-Form</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- QUICK SPOTS CAROUSEL / LIST BOTTOM -->
+    <section class="bg-white border border-line rounded-2xl p-4 shadow-sm">
+      <h3 class="font-display font-bold text-base text-ink mb-3 flex items-center justify-between">
+        <span>📍 Daftar Spot Terdata di Kampus Ketintang</span>
+        <span class="text-xs text-ink/50 font-normal">Klik nama spot untuk langsung menuju titik di peta</span>
+      </h3>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5" id="quickSpotsList">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DETAIL KUCING POPUP -->
+  <div id="catDetailModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-md w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="relative h-56 bg-cream">
+        <img id="modalCatImg" src="" alt="" class="w-full h-full object-cover">
+        <button onclick="closeCatModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-ink flex items-center justify-center font-bold text-sm shadow">✕</button>
+        <span id="modalCatBadge" class="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-magenta text-white font-bold text-xs shadow-md">
+          Siap Diadopsi
+        </span>
+      </div>
+
+      <div class="p-6 flex flex-col gap-4">
+        <div>
+          <div class="flex items-center justify-between">
+            <h3 id="modalCatName" class="font-display font-extrabold text-2xl text-ink">Mochi</h3>
+            <span id="modalCatGender" class="px-2.5 py-1 rounded-lg bg-cream font-bold text-sm text-magenta">♀ Betina</span>
+          </div>
+          <p id="modalCatSpot" class="text-xs text-ink/60 mt-0.5">Gedung K10 - Fakultas Vokasi</p>
+        </div>
+
+        <!-- Metadata Grid -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-cream/60 border border-line/60">
+            <span class="text-ink/50 block">🏷️ Info Kalung</span>
+            <span id="modalCatCollar" class="font-bold text-ink">Kalung Oranye (KTT-01)</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-cream/60 border border-line/60">
+            <span class="text-ink/50 block">🎂 Perkiraan Usia</span>
+            <span id="modalCatAge" class="font-bold text-ink">± 2 Tahun</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-cream/60 border border-line/60">
+            <span class="text-ink/50 block">🩺 Status Steril</span>
+            <span id="modalCatSteril" class="font-bold text-emerald-700">✅ Sudah Steril</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-cream/60 border border-line/60">
+            <span class="text-ink/50 block">💉 Riwayat Vaksin</span>
+            <span id="modalCatVaccine" class="font-bold text-ink">Vaksin Tricat Lengkap</span>
+          </div>
+        </div>
+
+        <!-- Characteristic & Notes -->
+        <div>
+          <span class="text-xs font-bold text-ink block mb-1">Karakteristik & Kebiasaan:</span>
+          <p id="modalCatDesc" class="text-xs text-ink/75 leading-relaxed bg-magenta-50/40 p-3 rounded-xl border border-magenta/10">
+            Sangat ramah dengan mahasiswa yang lewat di selasar Vokasi. Suka dielus dagunya dan aktif saat jam feeding sore.
+          </p>
+        </div>
+
+        <!-- Action Button -->
+        <div class="flex items-center gap-2 pt-2">
+          <button onclick="closeCatModal()" class="flex-1 py-2.5 rounded-xl border border-line font-semibold text-xs text-ink hover:bg-cream transition">
+            Tutup
+          </button>
+          <a id="modalAdoptBtn" href="../adoption/apply.html" class="flex-1 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs text-center shadow-sm transition">
+            Ajukan Adopsi Kucing Ini
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-line bg-white py-4">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-ink/60">
+      MeowNesa Cat Mapping &copy; 2026 Jaga Satwa UNESA — Kampus Ketintang &amp; Lidah Wetan
+    </div>
+  </footer>
+
+  <!-- SCRIPT DATA & LEAFLET L.CRS.Simple IMPLEMENTATION -->
+  <script>
+    // ==========================================
+    // 1. DATA SPOT & KUCING KAMPUS KETINTANG
+    // ==========================================
+    const ketintangSpots = [
+      {
+        id: 'spot-vokasi',
+        name: 'Gedung K10 — Fakultas Vokasi',
+        category: 'vokasi',
+        categoryLabel: 'Fakultas Vokasi',
+        code: 'Gedung K10 / K4',
+        coord: [350, 480], // [y, x] in L.CRS.Simple pixel grid
+        desc: 'Area teras lantai 1 & selasar Lab Komputer Manajemen Informatika dan Bengkel Vokasi.',
+        cats: [
+          {
+            id: 'ktt-01',
+            name: 'Mochi',
+            gender: '♀ Betina',
+            age: '± 2 Tahun',
+            collar: 'Kalung Merah Reflektif (KTT-01)',
+            status: 'AVAILABLE',
+            statusLabel: 'Siap Diadopsi',
+            steril: '✅ Sudah Steril (Nusantara Vet)',
+            vaccine: 'Vaksin Tricat + Rabies',
+            img: '../../images/cat-images/cat1.jpg',
+            desc: 'Kucing belang tiga (calico) yang manja, sering bersantai di depan lobi Vokasi K10. Sangat ramah saat diajak interaksi.'
+          },
+          {
+            id: 'ktt-02',
+            name: 'Kopiko',
+            gender: '♂ Jantan',
+            age: '± 1.5 Tahun',
+            collar: 'Kalung Cokelat Reflektif (KTT-02)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Rutin',
+            img: '../../images/cat-images/cat1-p2.jpg',
+            desc: 'Suka tidur di bawah tangga gedung K4 vokasi. Nafsu makan sangat bagus dan aktif bermain.'
+          }
+        ]
+      },
+      {
+        id: 'spot-ft-kantin',
+        name: 'Kantin Pusat Ketintang & FT',
+        category: 'fasum',
+        categoryLabel: 'Kantin / Fasilitas Umum',
+        code: 'Food Court Ketintang',
+        coord: [520, 680],
+        desc: 'Spot favorit berkumpul kucing kampus saat jam istirahat makan siang.',
+        cats: [
+          {
+            id: 'ktt-03',
+            name: 'Oyen Barbar',
+            gender: '♂ Jantan',
+            age: '± 1.5 Tahun',
+            collar: 'Kalung Oranye Reflektif (KTT-03)',
+            status: 'AVAILABLE',
+            statusLabel: 'Siap Diadopsi',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/catoyen-p1.jpg',
+            desc: 'Si oyen yang aktif dan pemberani. Selalu menyapa mahasiswa di bangku kantin, sehat dan lincah.'
+          },
+          {
+            id: 'ktt-04',
+            name: 'Ciki',
+            gender: '♀ Betina',
+            age: '± 2 Tahun',
+            collar: 'Kalung Kuning Reflektif (KTT-04)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Rutin',
+            img: '../../images/cat-images/catoyen-p2.jpg',
+            desc: 'Kucing oranye muda berbulu bersih, suka menunggu sesi feeding sore bersama relawan Jaga Satwa.'
+          },
+          {
+            id: 'ktt-05',
+            name: 'Belang',
+            gender: '♂ Jantan',
+            age: '± 3 Tahun',
+            collar: 'Kalung Hijau Reflektif (KTT-05)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_32_cute-ginger-cat.jpg',
+            desc: 'Penunggu setia area gazebo kantin timur. Sangat tenang dan terbiasa dengan keramaian.'
+          }
+        ]
+      },
+      {
+        id: 'spot-ft-dekanat',
+        name: 'Gedung A1–A10 — Fakultas Teknik',
+        category: 'ft',
+        categoryLabel: 'Fakultas Teknik',
+        code: 'Kompleks Gedung A FT',
+        coord: [420, 850],
+        desc: 'Selasar Teknik Elektro, Mesin, Sipil, dan Informatika.',
+        cats: [
+          {
+            id: 'ktt-06',
+            name: 'Baut',
+            gender: '♂ Jantan',
+            age: '± 2.5 Tahun',
+            collar: 'Kalung Biru Reflektif (KTT-06)',
+            status: 'AVAILABLE',
+            statusLabel: 'Siap Diadopsi',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/cat2-p1.jpg',
+            desc: 'Sering terlihat menemani mahasiswa yang sedang mengerjakan tugas di selasar Gedung A1.'
+          },
+          {
+            id: 'ktt-07',
+            name: 'Mur',
+            gender: '♀ Betina',
+            age: '± 1 Tahun',
+            collar: 'Kalung Ungu Reflektif (KTT-07)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Rutin',
+            img: '../../images/cat-images/cat2-p2.jpg',
+            desc: 'Adik dari Baut, bulu abu-abu lembut dan sangat suka dielus lehernya.'
+          }
+        ]
+      },
+      {
+        id: 'spot-fmipa',
+        name: 'Gedung C1–C10 — FMIPA',
+        category: 'fmipa',
+        categoryLabel: 'Fakultas MIPA',
+        code: 'Kompleks Gedung C FMIPA',
+        coord: [280, 720],
+        desc: 'Taman Lab Sains Terpadu, Jurusan Matematika, Fisika, Kimia, dan Biologi.',
+        cats: [
+          {
+            id: 'ktt-08',
+            name: 'Nori',
+            gender: '♂ Jantan',
+            age: '± 2 Tahun',
+            collar: 'Kalung Hijau Neon (KTT-08)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg',
+            desc: 'Kucing bermotif eksotis yang gemar berjemur di taman depan Gedung C1 FMIPA.'
+          },
+          {
+            id: 'ktt-09',
+            name: 'Atom',
+            gender: '♂ Jantan',
+            age: '± 3 Tahun',
+            collar: 'Kalung Hitam Reflektif (KTT-09)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_502_pexels-photo-20335866.jpg',
+            desc: 'Kucing putih hitam yang tenang dan mandiri di sekitar koridor Biologi.'
+          }
+        ]
+      },
+      {
+        id: 'spot-feb',
+        name: 'Gedung G1–G6 — FEB UNESA',
+        category: 'feb',
+        categoryLabel: 'Fakultas Ekonomika & Bisnis',
+        code: 'Kompleks Gedung G FEB',
+        coord: [220, 320],
+        desc: 'Area selasar Akuntansi, Manajemen, dan Gazebo Hijau FEB.',
+        cats: [
+          {
+            id: 'ktt-10',
+            name: 'Cuan',
+            gender: '♀ Betina',
+            age: '± 1 Tahun',
+            collar: 'Kalung Emas Reflektif (KTT-10)',
+            status: 'AVAILABLE',
+            statusLabel: 'Siap Diadopsi',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Rutin',
+            img: '../../images/cat-images/imgi_30_pet-owner-stroking-his-old-cat-and-dog-together.jpg',
+            desc: 'Kucing betina manis yang penurut, sangat cocok untuk keluarga yang ingin mengadopsi.'
+          },
+          {
+            id: 'ktt-11',
+            name: 'Debit',
+            gender: '♂ Jantan',
+            age: '± 2 Tahun',
+            collar: 'Kalung Abu Reflektif (KTT-11)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_496_pexels-photo-13473569.jpg',
+            desc: 'Kucing kalem yang sering tidur di kursi kayu depan Dekanat FEB.'
+          }
+        ]
+      },
+      {
+        id: 'spot-masjid',
+        name: 'Masjid Baiturrahman I Ketintang',
+        category: 'fasum',
+        categoryLabel: 'Fasilitas Ibadah & Taman',
+        code: 'Masjid Kampus Barat FMIPA',
+        coord: [180, 880],
+        desc: 'Serambi wudhu dan taman rindang barat Masjid Ketintang.',
+        cats: [
+          {
+            id: 'ktt-12',
+            name: 'Barokah',
+            gender: '♀ Betina',
+            age: '± 2.5 Tahun',
+            collar: 'Kalung Hijau Toska (KTT-12)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg',
+            desc: 'Kucing putih anggun yang sangat jinak, sering disayangi jamaah masjid saat usai sholat.'
+          }
+        ]
+      },
+      {
+        id: 'spot-ranunesa',
+        name: 'Danau Ranunesa & Rektorat Lama',
+        category: 'fasum',
+        categoryLabel: 'Ruang Terbuka & Danau',
+        code: 'Area Ranunesa Ketintang',
+        coord: [460, 260],
+        desc: 'Area jogging track dan tepian danau buatan Ketintang.',
+        cats: [
+          {
+            id: 'ktt-13',
+            name: 'Ranu',
+            gender: '♂ Jantan',
+            age: '± 3 Tahun',
+            collar: 'Kalung Biru Toska (KTT-13)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_506_pexels-photo-21047227.jpg',
+            desc: 'Suka berjalan santai di tepi danau saat pagi hari sebelum matahari terik.'
+          },
+          {
+            id: 'ktt-14',
+            name: 'Senja',
+            gender: '♀ Betina',
+            age: '± 1.5 Tahun',
+            collar: 'Kalung Oranye Gelap (KTT-14)',
+            status: 'ACTIVE',
+            statusLabel: 'Terdata Aktif',
+            steril: '✅ Sudah Steril',
+            vaccine: 'Vaksin Lengkap',
+            img: '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg',
+            desc: 'Kucing calico lembut yang suka bermain di rerumputan sekitar danau.'
+          }
+        ]
+      }
+    ];
+
+    // ==========================================
+    // 2. GENERATE CAMPUS SITE MAP IMAGE (SVG)
+    // ==========================================
+    // Creating high precision schematic layout of UNESA Kampus Ketintang
+    function createKetintangMapSVG() {
+      const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" style="background:#EBF2E8;">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#DCE8D8" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="lakeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#70C1B3" />
+            <stop offset="100%" stop-color="#247BA0" />
+          </linearGradient>
+          <linearGradient id="roadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#E2D9D2" />
+            <stop offset="100%" stop-color="#D5CAC2" />
+          </linearGradient>
+        </defs>
+
+        <!-- Base Grass Grid -->
+        <rect width="1200" height="800" fill="#EBF2E8" />
+        <rect width="1200" height="800" fill="url(#grid)" />
+
+        <!-- Green Zones & Parks -->
+        <path d="M 150 150 Q 280 120 400 200 T 500 450 Q 400 500 250 480 Z" fill="#D7E8D0" opacity="0.8"/>
+        <path d="M 600 200 Q 900 150 1050 300 T 950 650 Q 750 720 620 580 Z" fill="#D7E8D0" opacity="0.8"/>
+
+        <!-- Ranunesa (Danau Ketintang) -->
+        <ellipse cx="260" cy="460" rx="90" ry="60" fill="url(#lakeGrad)" stroke="#1B6080" stroke-width="3"/>
+        <text x="260" y="465" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="14" fill="#FFFFFF" text-anchor="middle">🌊 Ranunesa (Danau KTT)</text>
+
+        <!-- Main Campus Roads -->
+        <!-- Jl. Raya Ketintang (Utara) -->
+        <rect x="50" y="50" width="1100" height="36" rx="6" fill="#C5BDB6" stroke="#ABA199" stroke-width="2"/>
+        <text x="600" y="73" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#5A4E46" text-anchor="middle" letter-spacing="2">◀ GERBANG UTAMA — JL. KETINTANG SURABAYA ▶</text>
+
+        <!-- Internal Ring Roads -->
+        <path d="M 180 86 L 180 700 L 1020 700 L 1020 86" fill="none" stroke="url(#roadGrad)" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M 520 86 L 520 700" fill="none" stroke="url(#roadGrad)" stroke-width="26" stroke-linecap="round"/>
+        <path d="M 180 380 L 1020 380" fill="none" stroke="url(#roadGrad)" stroke-width="26" stroke-linecap="round"/>
+
+        <!-- ROAD DASH LINES -->
+        <path d="M 180 90 L 180 690 L 1020 690 L 1020 90" fill="none" stroke="#FAF6F0" stroke-width="2" stroke-dasharray="8,8"/>
+        <path d="M 520 90 L 520 690" fill="none" stroke="#FAF6F0" stroke-width="2" stroke-dasharray="8,8"/>
+
+        <!-- ================= BUILDINGS BLOCKS ================= -->
+        
+        <!-- 1. FEB UNESA (Gedung G) -->
+        <g transform="translate(250, 160)">
+          <rect width="140" height="100" rx="10" fill="#FFFFFF" stroke="#B3184F" stroke-width="2.5" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.06))"/>
+          <rect width="140" height="24" rx="8" fill="#FDE8EF" />
+          <text x="70" y="17" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="13" fill="#B3184F" text-anchor="middle">💼 FEB (Gedung G)</text>
+          <text x="70" y="55" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#2B1220" text-anchor="middle">Akuntansi & Manajemen</text>
+          <text x="70" y="75" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#7A6871" text-anchor="middle">G1 s/d G6</text>
+        </g>
+
+        <!-- 2. FAKULTAS VOKASI (Gedung K10 & Bengkel) -->
+        <g transform="translate(410, 280)">
+          <rect width="140" height="120" rx="10" fill="#FFFFFF" stroke="#B3184F" stroke-width="3" filter="drop-shadow(0 6px 10px rgba(179,24,79,0.15))"/>
+          <rect width="140" height="26" rx="8" fill="#B3184F" />
+          <text x="70" y="18" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="13" fill="#FFFFFF" text-anchor="middle">🎓 FAKULTAS VOKASI</text>
+          <text x="70" y="58" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" fill="#2B1220" text-anchor="middle">Gedung K10 / K4</text>
+          <text x="70" y="78" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#555" text-anchor="middle">D4 Manajemen Informatika</text>
+          <text x="70" y="96" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#888" text-anchor="middle">Bengkel & Lab Komputer</text>
+        </g>
+
+        <!-- 3. KANTIN PUSAT KETINTANG (Food Court) -->
+        <g transform="translate(610, 450)">
+          <rect width="130" height="90" rx="10" fill="#FFFDF8" stroke="#FFC53D" stroke-width="3" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.08))"/>
+          <rect width="130" height="24" rx="8" fill="#FFC53D" />
+          <text x="65" y="17" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="12" fill="#2B1220" text-anchor="middle">🍜 Kantin Pusat KTT</text>
+          <text x="65" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#2B1220" text-anchor="middle">Food Court Kampus</text>
+          <text x="65" y="72" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#E4572E" font-weight="bold" text-anchor="middle">★ Hotspot Feeding Kucing</text>
+        </g>
+
+        <!-- 4. FAKULTAS TEKNIK (Gedung A1-A10) -->
+        <g transform="translate(780, 350)">
+          <rect width="160" height="130" rx="10" fill="#FFFFFF" stroke="#005596" stroke-width="2.5" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.08))"/>
+          <rect width="160" height="26" rx="8" fill="#005596" />
+          <text x="80" y="18" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="13" fill="#FFFFFF" text-anchor="middle">⚙️ FAKULTAS TEKNIK (FT)</text>
+          <text x="80" y="55" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#2B1220" text-anchor="middle">Gedung A1 s/d A10</text>
+          <text x="80" y="75" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#555" text-anchor="middle">Informatika, Elektro, Mesin, Sipil</text>
+          <text x="80" y="98" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#888" text-anchor="middle">Gedung Dekanat & Lab Terpadu</text>
+        </g>
+
+        <!-- 5. FMIPA UNESA (Gedung C1-C10) -->
+        <g transform="translate(650, 210)">
+          <rect width="140" height="110" rx="10" fill="#FFFFFF" stroke="#2B7A0B" stroke-width="2.5" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.08))"/>
+          <rect width="140" height="24" rx="8" fill="#E8F5E9" />
+          <text x="70" y="17" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="13" fill="#2B7A0B" text-anchor="middle">🔬 FMIPA (Gedung C)</text>
+          <text x="70" y="50" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#2B1220" text-anchor="middle">Gedung C1 s/d C10</text>
+          <text x="70" y="70" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#555" text-anchor="middle">Matematika, Fisika, Kimia, Biologi</text>
+          <text x="70" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#777" text-anchor="middle">Lab Sains Terpadu</text>
+        </g>
+
+        <!-- 6. MASJID BAITURRAHMAN I -->
+        <g transform="translate(820, 120)">
+          <rect width="120" height="90" rx="10" fill="#FFFFFF" stroke="#00897B" stroke-width="2.5"/>
+          <rect width="120" height="22" rx="8" fill="#E0F2F1" />
+          <text x="60" y="16" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="12" fill="#00695C" text-anchor="middle">🕌 Masjid Baiturrahman I</text>
+          <text x="60" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600" fill="#2B1220" text-anchor="middle">Masjid Kampus Ketintang</text>
+          <text x="60" y="68" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#666" text-anchor="middle">Taman & Serambi Ibadah</text>
+        </g>
+
+        <!-- 7. REKTORAT LAMA / PERPUSTAKAAN KETINTANG -->
+        <g transform="translate(190, 310)">
+          <rect width="130" height="75" rx="8" fill="#FFFFFF" stroke="#5D4037" stroke-width="2"/>
+          <text x="65" y="28" font-family="'Baloo 2', sans-serif" font-weight="bold" font-size="12" fill="#5D4037" text-anchor="middle">📚 Perpustakaan & BAAK</text>
+          <text x="65" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#666" text-anchor="middle">Rektorat Lama Ketintang</text>
+        </g>
+
+        <!-- TREES & DECORATIVE ICONS -->
+        <g fill="#A8D5BA">
+          <circle cx="210" cy="130" r="14"/><circle cx="230" cy="135" r="10"/>
+          <circle cx="580" cy="360" r="16"/><circle cx="600" cy="370" r="12"/>
+          <circle cx="760" cy="520" r="18"/><circle cx="780" cy="530" r="12"/>
+          <circle cx="450" cy="220" r="12"/><circle cx="980" cy="300" r="16"/>
+        </g>
+
+        <!-- COMPASS ROSE -->
+        <g transform="translate(1120, 100)">
+          <circle cx="0" cy="0" r="22" fill="#FFFFFF" stroke="#B3184F" stroke-width="2"/>
+          <polygon points="0,-18 5,-4 0,0 -5,-4" fill="#B3184F"/>
+          <polygon points="0,18 5,4 0,0 -5,4" fill="#2B1220"/>
+          <text x="0" y="-7" font-family="'Plus Jakarta Sans', sans-serif" font-weight="bold" font-size="9" fill="#B3184F" text-anchor="middle">U</text>
+        </g>
+
+        <!-- SCALE BAR -->
+        <g transform="translate(60, 750)">
+          <rect width="140" height="18" fill="#FFFFFF" rx="4" stroke="#B3184F" stroke-width="1"/>
+          <text x="70" y="13" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="bold" fill="#B3184F" text-anchor="middle">DENAH SKALA UNESA KTT</text>
+        </g>
+
+      </svg>`;
+      
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    // ==========================================
+    // 3. LEAFLET INITIALIZATION WITH L.CRS.Simple
+    // ==========================================
+    const mapBounds = [[0, 0], [800, 1200]]; // [Height, Width] of SVG Canvas
+    let currentSelectedSpotId = null;
+    let markersMap = {};
+
+    const map = L.map('map', {
+      crs: L.CRS.Simple,
+      minZoom: -0.6,
+      maxZoom: 2,
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      maxBounds: [[-100, -100], [900, 1300]],
+      maxBoundsViscosity: 0.8,
+      attributionControl: false
+    });
+
+    const campusOverlay = L.imageOverlay(createKetintangMapSVG(), mapBounds).addTo(map);
+    map.fitBounds(mapBounds);
+
+    // ==========================================
+    // 4. RENDER CUSTOM PIN MARKERS
+    // ==========================================
+    function createCustomMarkerIcon(spot, isSelected = false) {
+      const hasAdoptable = spot.cats.some(c => c.status === 'AVAILABLE');
+      const pulseClass = hasAdoptable ? 'pulse-collar ready-adopt' : '';
+      const selectedClass = isSelected ? 'selected' : '';
+
+      const html = `
+        <div class="cat-pin-badge w-11 h-11 text-sm ${pulseClass} ${selectedClass}">
+          <div class="flex flex-col items-center justify-center leading-none">
+            <span class="text-[10px]">🐾</span>
+            <span class="text-xs font-bold">${spot.cats.length}</span>
+          </div>
+        </div>
+      `;
+
+      return L.divIcon({
+        className: 'cat-pin-marker',
+        html: html,
+        iconSize: [44, 44],
+        iconAnchor: [22, 44],
+        popupAnchor: [0, -44]
+      });
+    }
+
+    function renderMarkers(filteredSpots = ketintangSpots) {
+      // Clear existing markers
+      Object.values(markersMap).forEach(m => map.removeLayer(m));
+      markersMap = {};
+
+      filteredSpots.forEach(spot => {
+        const marker = L.marker(spot.coord, {
+          icon: createCustomMarkerIcon(spot, spot.id === currentSelectedSpotId),
+          title: spot.name
+        }).addTo(map);
+
+        // Tooltip hover
+        marker.bindTooltip(`<strong>${spot.name}</strong><br><span class="text-xs text-magenta font-semibold">${spot.cats.length} Kucing Terdata</span>`, {
+          direction: 'top',
+          offset: [0, -38],
+          opacity: 0.95
+        });
+
+        // Click Handler
+        marker.on('click', () => {
+          selectSpot(spot.id);
+        });
+
+        markersMap[spot.id] = marker;
+      });
+
+      updateStatsSummary(filteredSpots);
+    }
+
+    // ==========================================
+    // 5. SPOT SELECTION & SIDE PANEL RENDERING
+    // ==========================================
+    function selectSpot(spotId) {
+      const spot = ketintangSpots.find(s => s.id === spotId);
+      if (!spot) return;
+
+      currentSelectedSpotId = spotId;
+
+      // Update markers appearance
+      Object.keys(markersMap).forEach(id => {
+        const m = markersMap[id];
+        const s = ketintangSpots.find(sp => sp.id === id);
+        if (m && s) {
+          m.setIcon(createCustomMarkerIcon(s, id === spotId));
+        }
+      });
+
+      // Pan to spot
+      map.flyTo(spot.coord, 0.4, {
+        animate: true,
+        duration: 0.8
+      });
+
+      // Render details in side panel
+      document.getElementById('panelSubtitle').innerText = spot.categoryLabel;
+      document.getElementById('panelTitle').innerText = spot.name;
+      document.getElementById('panelLocationCode').innerText = `📍 ${spot.code}`;
+      document.getElementById('panelCatCountBadge').innerText = `${spot.cats.length} Kucing`;
+
+      const catsContainer = document.getElementById('catsListContainer');
+      catsContainer.innerHTML = '';
+
+      spot.cats.forEach(cat => {
+        const isAdoptable = cat.status === 'AVAILABLE';
+        const badgeBg = isAdoptable ? 'bg-sun text-ink font-bold' : 'bg-magenta-100 text-magenta font-semibold';
+        const badgeText = isAdoptable ? '💖 Siap Diadopsi' : '🟢 Terdata Kampus';
+
+        const card = document.createElement('div');
+        card.className = 'border border-line rounded-2xl p-3 bg-white hover:border-magenta/40 hover:shadow-md transition flex flex-col gap-2.5';
+        card.innerHTML = `
+          <div class="flex gap-3 items-start">
+            <img src="${cat.img}" alt="${cat.name}" class="w-20 h-20 rounded-xl object-cover border border-line bg-cream flex-shrink-0 cursor-pointer hover:opacity-90" onclick="openCatModal('${cat.id}')">
+            
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-1">
+                <h4 class="font-display font-bold text-lg text-ink truncate cursor-pointer hover:text-magenta" onclick="openCatModal('${cat.id}')">${cat.name}</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${badgeBg} whitespace-nowrap">${badgeText}</span>
+              </div>
+              
+              <p class="text-xs text-ink/70 mt-0.5">${cat.gender} · ${cat.age}</p>
+              
+              <div class="mt-1.5 flex flex-wrap gap-1">
+                <span class="text-[10px] bg-magenta-50 text-magenta px-2 py-0.5 rounded-md font-medium border border-magenta/15 truncate max-w-full">
+                  🏷️ ${cat.collar}
+                </span>
+                <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-medium border border-emerald-200">
+                  ${cat.steril}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-ink/75 line-clamp-2 bg-cream/40 p-2 rounded-lg leading-relaxed">
+            ${cat.desc}
+          </p>
+
+          <div class="flex items-center gap-2 pt-1 border-t border-line/40">
+            <button onclick="openCatModal('${cat.id}')" class="flex-1 py-1.5 rounded-lg border border-line text-xs font-bold text-ink hover:bg-cream transition">
+              Lihat Detail
+            </button>
+            ${isAdoptable ? `
+              <a href="../adoption/apply.html?cat=${encodeURIComponent(cat.name)}" class="flex-1 py-1.5 rounded-lg bg-magenta hover:bg-magenta-dark text-white text-xs font-bold text-center transition">
+                Ajukan Adopsi
+              </a>
+            ` : ''}
+          </div>
+        `;
+
+        catsContainer.appendChild(card);
+      });
+
+      // Highlight in bottom spots list
+      document.querySelectorAll('.quick-spot-btn').forEach(b => {
+        b.classList.toggle('ring-2', b.dataset.spotId === spotId);
+        b.classList.toggle('ring-magenta', b.dataset.spotId === spotId);
+      });
+    }
+
+    // ==========================================
+    // 6. CAT MODAL DETAIL
+    // ==========================================
+    function openCatModal(catId) {
+      let foundCat = null;
+      let foundSpot = null;
+
+      ketintangSpots.forEach(s => {
+        const c = s.cats.find(x => x.id === catId);
+        if (c) {
+          foundCat = c;
+          foundSpot = s;
+        }
+      });
+
+      if (!foundCat) return;
+
+      document.getElementById('modalCatImg').src = foundCat.img;
+      document.getElementById('modalCatName').innerText = foundCat.name;
+      document.getElementById('modalCatGender').innerText = foundCat.gender;
+      document.getElementById('modalCatSpot').innerText = `${foundSpot.name} (${foundSpot.code})`;
+      document.getElementById('modalCatCollar').innerText = foundCat.collar;
+      document.getElementById('modalCatAge').innerText = foundCat.age;
+      document.getElementById('modalCatSteril').innerText = foundCat.steril;
+      document.getElementById('modalCatVaccine').innerText = foundCat.vaccine;
+      document.getElementById('modalCatDesc').innerText = foundCat.desc;
+
+      const badge = document.getElementById('modalCatBadge');
+      const adoptBtn = document.getElementById('modalAdoptBtn');
+
+      if (foundCat.status === 'AVAILABLE') {
+        badge.className = 'absolute bottom-3 left-3 px-3 py-1 rounded-full bg-sun text-ink font-extrabold text-xs shadow-md';
+        badge.innerText = '💖 Siap Diadopsi';
+        adoptBtn.classList.remove('hidden');
+        adoptBtn.href = `../adoption/apply.html?cat=${encodeURIComponent(foundCat.name)}`;
+      } else {
+        badge.className = 'absolute bottom-3 left-3 px-3 py-1 rounded-full bg-magenta text-white font-bold text-xs shadow-md';
+        badge.innerText = '🟢 Terdata di UNESA';
+        adoptBtn.classList.add('hidden');
+      }
+
+      document.getElementById('catDetailModal').classList.remove('hidden');
+      document.getElementById('catDetailModal').classList.add('flex');
+    }
+
+    function closeCatModal() {
+      document.getElementById('catDetailModal').classList.add('hidden');
+      document.getElementById('catDetailModal').classList.remove('flex');
+    }
+
+    // ==========================================
+    // 7. SEARCH & CATEGORY FILTER
+    // ==========================================
+    let currentCategory = 'all';
+
+    function setFilterCategory(cat) {
+      currentCategory = cat;
+
+      document.querySelectorAll('.filter-cat-btn').forEach(btn => {
+        btn.classList.remove('bg-magenta', 'text-white');
+        btn.classList.add('bg-cream', 'text-ink/80');
+      });
+
+      const activeBtn = document.getElementById(`btn-cat-${cat}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-cream', 'text-ink/80');
+        activeBtn.classList.add('bg-magenta', 'text-white');
+      }
+
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      const filtered = ketintangSpots.filter(spot => {
+        const matchCategory = (currentCategory === 'all') || (spot.category === currentCategory);
+        
+        const matchQuery = !query || 
+          spot.name.toLowerCase().includes(query) ||
+          spot.code.toLowerCase().includes(query) ||
+          spot.desc.toLowerCase().includes(query) ||
+          spot.cats.some(c => c.name.toLowerCase().includes(query) || c.collar.toLowerCase().includes(query));
+
+        return matchCategory && matchQuery;
+      });
+
+      renderMarkers(filtered);
+      renderQuickSpots(filtered);
+
+      if (filtered.length > 0 && !filtered.some(s => s.id === currentSelectedSpotId)) {
+        selectSpot(filtered[0].id);
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+    // ==========================================
+    // 8. QUICK SPOTS LIST (BOTTOM)
+    // ==========================================
+    function renderQuickSpots(spots = ketintangSpots) {
+      const container = document.getElementById('quickSpotsList');
+      container.innerHTML = '';
+
+      spots.forEach(spot => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-spot-btn p-2.5 rounded-xl border border-line bg-cream/30 hover:bg-magenta-50 text-left transition flex flex-col justify-between';
+        btn.dataset.spotId = spot.id;
+        btn.onclick = () => selectSpot(spot.id);
+
+        btn.innerHTML = `
+          <span class="font-display font-bold text-xs text-ink truncate">${spot.name.split('—')[0]}</span>
+          <div class="mt-1 flex items-center justify-between text-[10px] text-ink/60">
+            <span>${spot.code.split('/')[0]}</span>
+            <span class="font-bold text-magenta">🐾 ${spot.cats.length}</span>
+          </div>
+        `;
+
+        container.appendChild(btn);
+      });
+    }
+
+    // ==========================================
+    // 9. STATS COUNTER UPDATE
+    // ==========================================
+    function updateStatsSummary(spots) {
+      let totalCats = 0;
+      let readyAdopt = 0;
+
+      spots.forEach(s => {
+        totalCats += s.cats.length;
+        readyAdopt += s.cats.filter(c => c.status === 'AVAILABLE').length;
+      });
+
+      document.getElementById('statSpotsCount').innerText = `📍 ${spots.length} Spot Gedung`;
+      document.getElementById('statCatsCount').innerText = `🐾 ${totalCats} Kucing Terdata`;
+      document.getElementById('statAdoptCount').innerText = `💖 ${readyAdopt} Siap Adopsi`;
+    }
+
+    function resetMapView() {
+      map.fitBounds(mapBounds);
+    }
+
+    // Initialize Page
+    renderMarkers(ketintangSpots);
+    renderQuickSpots(ketintangSpots);
+    
+    // Auto select first spot on load
+    if (ketintangSpots.length > 0) {
+      selectSpot(ketintangSpots[0].id);
+    }
+  </script>
+</body>
+</html>

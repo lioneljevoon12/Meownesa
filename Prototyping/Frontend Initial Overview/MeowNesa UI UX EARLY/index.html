@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MeowNesa — Sistem Informasi Pengelolaan Kucing Jaga Satwa UNESA</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+  
+  <!-- Google Fonts: Baloo 2 & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            'soft': '0 10px 30px -10px rgba(179, 24, 79, 0.08)',
+            'card': '0 12px 32px -8px rgba(43, 18, 32, 0.06)',
+            'glow': '0 0 20px rgba(255, 197, 61, 0.6)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #FBF6F1;
+      --surface: #ffffff;
+      --ink: #2B1220;
+      --line: #F0DCE4;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    .font-display {
+      font-family: 'Baloo 2', sans-serif;
+    }
+    
+    /* Reflective Collar Glow Animation */
+    @keyframes reflectivePulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 197, 61, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0); }
+    }
+    .collar-glow {
+      animation: reflectivePulse 2.5s infinite;
+    }
+
+    /* Subtle background grid */
+    .bg-pattern {
+      background-image: radial-gradient(#E8D5DE 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- ================= TOP ANNOUNCEMENT / EMERGENCY BAR ================= -->
+  <div class="bg-magenta text-white text-xs py-2 px-4 border-b border-magenta-dark/30">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="bg-sun text-ink font-extrabold px-2 py-0.5 rounded-full text-[10px] tracking-wide uppercase">Info Resmi</span>
+        <span>Kucing berkalung di Kampus UNESA resmi terdata &amp; sudah disteril. <strong>Dilarang melepas kalung kucing!</strong></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="#donasi" class="hover:underline font-semibold flex items-center gap-1 text-sun">
+          <span>💛</span> Kanal Donasi Resmi
+        </a>
+        <span class="text-white/40">•</span>
+        <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="hover:underline font-medium text-white/90">
+          🚨 Lapor Kucing Sakit (G-Form)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN HEADER / NAVBAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-line shadow-sm transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo Lockup: cat-icons.jpg + MeowNesa + Jaga Satwa UNESA Logo -->
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="relative">
+          <img src="images/cat-icons.jpg" alt="Icon MeowNesa" class="w-12 h-12 object-cover rounded-2xl border-2 border-magenta/30 shadow-sm group-hover:scale-105 transition">
+          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-bold" title="Sistem Aktif">✓</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-display font-extrabold text-2xl text-magenta leading-none tracking-tight">MeowNesa</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sun/30 text-ink leading-none">UNESA</span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa UNESA" class="w-3.5 h-3.5 object-contain rounded-full">
+            <span class="text-xs text-ink-muted font-medium">Jaga Satwa UNESA</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links (Clean & Strictly According to Document) -->
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-ink-light">
+        <a href="index.html" class="text-magenta hover:text-magenta-dark transition">Beranda</a>
+        <a href="src/cat-informations/index.html" class="hover:text-magenta transition">Informasi Kucing</a>
+        <a href="src/adoption/apply.html" class="hover:text-magenta transition">Adopsi</a>
+        <a href="src/cms-blog-awarness/blog.html" class="hover:text-magenta transition">Artikel</a>
+        <a href="#donasi" class="hover:text-magenta transition">Donasi</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="hidden sm:flex items-center gap-3">
+        <!-- Quick Tracking Code Button -->
+        <a href="src/adoption/tracking.html" class="px-4 py-2.5 rounded-full border border-line hover:border-magenta text-ink hover:text-magenta text-xs font-bold transition flex items-center gap-1.5 bg-cream/40">
+          <svg class="w-4 h-4 text-magenta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          Lacak Pengajuan
+        </a>
+
+        <!-- CTA Button -->
+        <a href="src/adoption/apply.html" class="px-5 py-2.5 rounded-full bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md hover:shadow-lg transition">
+          Ajukan Adopsi
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button id="mobileMenuBtn" class="lg:hidden w-10 h-10 rounded-xl border border-line flex flex-col items-center justify-center gap-1.5 hover:bg-cream transition" aria-label="Menu Mobile">
+        <span class="w-5 h-0.5 bg-ink rounded"></span>
+        <span class="w-5 h-0.5 bg-ink rounded"></span>
+        <span class="w-5 h-0.5 bg-ink rounded"></span>
+      </button>
+
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobileMenu" class="lg:hidden hidden border-t border-line bg-white px-5 py-4 flex-col gap-3 text-sm font-semibold">
+      <a href="index.html" class="py-2 text-magenta">Beranda</a>
+      <a href="src/cat-informations/index.html" class="py-2 hover:text-magenta">Informasi Kucing</a>
+      <a href="src/adoption/apply.html" class="py-2 hover:text-magenta">Adopsi</a>
+      <a href="src/cms-blog-awarness/blog.html" class="py-2 hover:text-magenta">Artikel</a>
+      <a href="#donasi" class="py-2 hover:text-magenta">Donasi</a>
+      <div class="pt-3 border-t border-line flex flex-col gap-2">
+        <a href="src/adoption/tracking.html" class="w-full py-2.5 rounded-xl border border-line text-xs font-bold text-ink text-center">
+          Lacak Status Pengajuan
+        </a>
+        <a href="src/adoption/apply.html" class="w-full py-2.5 rounded-xl bg-magenta text-white text-xs font-bold text-center">
+          Ajukan Adopsi
+        </a>
+      </div>
+    </div>
+  </header>
+
+  
+  <!-- ================= HERO SECTION ================= -->
+  <section id="beranda" class="relative bg-pattern pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden border-b border-line/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
+      
+      <!-- Left Content -->
+      <div class="lg:col-span-7 flex flex-col gap-6">
+        
+        <!-- Prominent Official Jaga Satwa UNESA Seal -->
+        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border-2 border-magenta/20 shadow-sm w-fit">
+          <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa UNESA" class="w-6 h-6 object-contain rounded-full">
+          <span class="text-xs font-bold text-magenta tracking-wide">Platform Resmi Komunitas Jaga Satwa UNESA</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl text-ink leading-[1.12] tracking-tight">
+          Hewan Sejahtera, <br>
+          <span class="text-magenta relative inline-block">
+            Hidup Gembira
+            <svg class="absolute -bottom-2 left-0 w-full text-sun" viewBox="0 0 200 12" fill="currentColor"><path d="M0,8 Q50,0 100,6 T200,8 L200,12 L0,12 Z"/></svg>
+          </span> di Kampus UNESA.
+        </h1>
+
+        <!-- Description -->
+        <p class="text-base sm:text-lg text-ink-light leading-relaxed max-w-2xl font-normal">
+          MeowNesa membantu komunitas <strong>Jaga Satwa UNESA</strong> mengelola data populasi kucing resmi di <strong>Kampus Ketintang &amp; Lidah Wetan</strong>, riwayat kesehatan &amp; sterilisasi klinik, hingga proses adopsi terverifikasi yang aman dan bertanggung jawab.
+        </p>
+
+        <!-- CTA Buttons Group -->
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <a href="src/cat-informations/index.html" class="px-7 py-3.5 rounded-full bg-magenta hover:bg-magenta-dark text-white font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition">
+            Buka Informasi Kucing
+          </a>
+          <a href="src/cat-mapping/map-ketintang.html" class="px-6 py-3.5 rounded-full bg-white hover:bg-cream border-2 border-magenta/20 hover:border-magenta text-ink font-bold text-sm sm:text-base shadow-sm transition">
+            Peta Persebaran Kampus
+          </a>
+        </div>
+
+        <!-- Quick Trust Indicators -->
+        <div class="grid grid-cols-3 gap-3 pt-6 border-t border-line max-w-xl">
+          <div class="flex flex-col">
+            <span class="font-display font-black text-2xl sm:text-3xl text-magenta">100%</span>
+            <span class="text-xs text-ink-muted font-medium">Sterilisasi Terjadwal</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-display font-black text-2xl sm:text-3xl text-ink">2 Kampus</span>
+            <span class="text-xs text-ink-muted font-medium">Ketintang &amp; Lidah Wetan</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-display font-black text-2xl sm:text-3xl text-coral">Terdata</span>
+            <span class="text-xs text-ink-muted font-medium">Kalung Reflektif Resmi</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Editorial "Cat of The Week" Card -->
+      <div class="lg:col-span-5 relative">
+        
+        <div class="bg-white border-2 border-magenta/20 rounded-3xl p-5 shadow-card hover:shadow-xl transition-all duration-300 flex flex-col gap-4">
+          
+          <!-- Cat of The Week Header -->
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-sun text-ink font-display font-black text-xs uppercase tracking-wider shadow-sm">
+                ⭐ Cat of The Week
+              </span>
+              <span class="text-xs font-semibold text-ink-muted">Pilihan Minggu Ini</span>
+            </div>
+            <span class="text-[11px] font-bold text-magenta bg-magenta-50 px-2.5 py-0.5 rounded-full border border-magenta/20">
+              UNESA Ketintang
+            </span>
+          </div>
+
+          <!-- Cat Photo with subtle badges -->
+          <div class="relative h-72 rounded-2xl overflow-hidden bg-cream group">
+            <img src="images/cat-images/cat1.jpg" alt="Mochi - Cat of The Week" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent"></div>
+
+            <div class="absolute bottom-3 left-3 right-3 text-white flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-sun">Gedung K10 Vokasi</span>
+                <h3 class="font-display font-extrabold text-2xl leading-tight">Mochi</h3>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-500 text-white font-extrabold text-xs shadow">
+                Siap Adopsi
+              </span>
+            </div>
+          </div>
+
+          <!-- Story & Traits -->
+          <div class="space-y-2">
+            <p class="text-xs text-ink-light leading-relaxed">
+              Kucing belang tiga (calico) paling ramah di selasar Fakultas Vokasi. Rutin feeding harian dan sudah tuntas sterilisasi di <strong>Klinik Nusantara Vet</strong>.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[10px] bg-cream text-ink font-semibold px-2 py-0.5 rounded-md border border-line">
+                🏷️ Kalung Merah (KTT-01)
+              </span>
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-md border border-emerald-200">
+                ✅ Sudah Steril
+              </span>
+              <span class="text-[10px] bg-magenta-50 text-magenta font-semibold px-2 py-0.5 rounded-md border border-magenta/15">
+                ♀ Betina • ± 2 Tahun
+              </span>
+            </div>
+          </div>
+
+          <!-- Bottom Action Button -->
+          <div class="pt-2 border-t border-line">
+            <a href="src/cat-informations/cat-detail.html?id=mochi" class="w-full py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs text-center block shadow transition">
+              Lihat Profil Lengkap &amp; Galeri Mochi →
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= EDITORIAL BENTO SHOWCASE (REPLACING 4 EMOJI CARDS) ================= -->
+  <section class="border-b border-line bg-white py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="text-xs font-bold text-magenta tracking-wider uppercase block">🐾 Pilar Pengelolaan Satwa Kampus</span>
+          <h2 class="font-display font-extrabold text-3xl text-ink mt-0.5">
+            Ekosistem Kucing Kampus UNESA Terpadu
+          </h2>
+        </div>
+        <a href="src/cat-informations/index.html" class="text-xs font-bold text-magenta hover:underline flex items-center gap-1">
+          Jelajahi Database Populasi Lengkap →
+        </a>
+      </div>
+
+      <!-- Bento Grid Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+        
+        <!-- Bento 1: Large Collar Campaign Card -->
+        <div class="md:col-span-7 bg-gradient-to-br from-magenta-50 via-white to-sun/10 border-2 border-magenta/20 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-card group">
+          <div class="relative z-10">
+            <span class="px-3 py-1 rounded-full bg-magenta text-white font-extrabold text-[10px] uppercase tracking-wider">
+              Identitas &amp; Proteksi
+            </span>
+            <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-ink mt-3 leading-tight">
+              Bukan Sekadar Aksesoris. <br>
+              <span class="text-magenta">Kalung Kucing UNESA Menyelamatkan Nyawa.</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-ink-light mt-3 max-w-md leading-relaxed">
+              Setiap kucing asli kampus diberikan kalung dengan material khusus reflektif yang menyala saat tersorot lampu kendaraan malam hari dan menandai status sterilisasi medis.
+            </p>
+          </div>
+
+          <div class="pt-6 relative z-10 flex items-center gap-3">
+            <a href="#kalung" class="px-5 py-2.5 rounded-xl bg-magenta text-white text-xs font-bold hover:bg-magenta-dark transition shadow">
+              Baca Filosofi Kalung
+            </a>
+            <span class="text-xs font-bold text-coral flex items-center gap-1">
+              ⚠️ Dilarang Melepas Kalung Kucing
+            </span>
+          </div>
+
+          <!-- Background Graphic Watermark -->
+          <div class="absolute -right-8 -bottom-8 text-magenta/10 text-9xl font-display font-black select-none pointer-events-none group-hover:scale-110 transition">
+            🏷️
+          </div>
+        </div>
+
+        <!-- Bento 2: Nusantara Vet Medical Partnership -->
+        <div class="md:col-span-5 bg-white border border-line rounded-3xl p-6 flex flex-col justify-between shadow-card">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold text-[10px] border border-emerald-200">
+                Kerjasama Medis
+              </span>
+              <span class="text-xs font-bold text-ink-muted">Est. 2021</span>
+            </div>
+            <h3 class="font-display font-bold text-xl text-ink mt-3">
+              Klinik Nusantara Vet
+            </h3>
+            <p class="text-xs text-ink-muted mt-1.5 leading-relaxed">
+              Seluruh sterilisasi, vaksinasi Tricat, dan penanganan kucing sakit di bawah pengawasan dokter hewan berpengalaman.
+            </p>
+          </div>
+
+          <div class="mt-4 p-3 rounded-2xl bg-cream/70 border border-line/70 flex items-center gap-3">
+            <span class="text-2xl">🩺</span>
+            <span class="text-xs text-ink font-semibold">
+              Mencegah overpopulasi kampus secara etis dan manusiawi.
+            </span>
+          </div>
+        </div>
+
+        <!-- Bento 3: Dual Campus Territory -->
+        <div class="md:col-span-4 bg-white border border-line rounded-3xl p-6 flex flex-col justify-between shadow-card">
+          <div>
+            <span class="text-xs font-bold text-ink-muted uppercase tracking-wider block">Wilayah Teritorial</span>
+            <h3 class="font-display font-bold text-lg text-ink mt-1">2 Kampus Utama</h3>
+            <p class="text-xs text-ink-muted mt-1 leading-relaxed">
+              Monitoring harian di Fakultas Vokasi, FT, FMIPA, FEB Ketintang, hingga Danau &amp; FBS Lidah Wetan.
+            </p>
+          </div>
+          <a href="src/cat-mapping/map-ketintang.html" class="mt-4 py-2 px-3 rounded-xl bg-cream hover:bg-magenta-50 text-magenta text-xs font-bold text-center border border-line transition">
+            Buka Peta Persebaran Kampus →
+          </a>
+        </div>
+
+        <!-- Bento 4: Verified Adoption Tracking -->
+        <div class="md:col-span-8 bg-gradient-to-r from-cream via-white to-sun/20 border border-line rounded-3xl p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-card">
+          <div class="flex-1">
+            <span class="px-2.5 py-0.5 rounded-full bg-sun text-ink font-extrabold text-[10px] uppercase">
+              Tanpa Akun di Awal
+            </span>
+            <h3 class="font-display font-bold text-xl text-ink mt-2">
+              Alur Adopsi Terverifikasi &amp; Transparan
+            </h3>
+            <p class="text-xs text-ink-muted mt-1 leading-relaxed">
+              Cukup isi form screening dan pantau perkembangan status verifikasi pengajuan Anda secara mandiri dengan Kode Tracking.
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto flex-shrink-0">
+            <a href="src/adoption/tracking.html" class="px-4 py-2.5 rounded-xl border border-line bg-white hover:bg-cream text-xs font-bold text-ink text-center transition">
+              🔍 Cek Status
+            </a>
+            <a href="src/cat-informations/index.html" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold text-center shadow transition">
+              🐾 Pilih Kucing
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FEATURED CAT CATALOG ================= -->
+  <section id="kucing" class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 w-full">
+    
+    <!-- Section Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div>
+        <div class="inline-flex items-center gap-1 text-xs font-bold text-magenta tracking-wider uppercase mb-1">
+          <span>🐾</span> Katalog Kucing Kampus UNESA
+        </div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-ink">
+          Kucing Terdata &amp; Siap Diadopsi
+        </h2>
+        <p class="text-sm text-ink-muted mt-1 max-w-xl">
+          Semua kucing di bawah ini merupakan kucing binaan resmi Jaga Satwa UNESA yang telah diperiksa kesehatannya dan diberi kalung pengenal.
+        </p>
+      </div>
+
+      <!-- Quick Search Bar -->
+      <div class="relative w-full md:w-80">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </span>
+        <input id="catCatalogSearch" type="text" placeholder="Cari nama kucing atau lokasi..."
+          class="w-full pl-10 pr-4 py-2.5 rounded-full border border-line bg-white text-sm focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition shadow-sm">
+      </div>
+    </div>
+
+    <!-- Filter Buttons Pills -->
+    <div class="flex flex-wrap items-center gap-2 mb-8 border-b border-line pb-4">
+      <button onclick="filterCatalog('ALL')" id="filter-btn-ALL" class="cat-filter-btn px-4 py-2 rounded-full text-xs font-bold bg-magenta text-white shadow-sm transition">
+        Semua Kucing (<span id="count-all">6</span>)
+      </button>
+      <button onclick="filterCatalog('AVAILABLE')" id="filter-btn-AVAILABLE" class="cat-filter-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition">
+        💖 Siap Diadopsi (<span id="count-ready">4</span>)
+      </button>
+      <button onclick="filterCatalog('KETINTANG')" id="filter-btn-KETINTANG" class="cat-filter-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition">
+        🏢 Kampus Ketintang
+      </button>
+      <button onclick="filterCatalog('LIDAH_WETAN')" id="filter-btn-LIDAH_WETAN" class="cat-filter-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition">
+        🌳 Kampus Lidah Wetan
+      </button>
+    </div>
+
+    <!-- Cat Cards Grid -->
+    <div id="catCardsGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Injected via JavaScript with authentic cat images -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="catalogEmpty" class="hidden py-16 text-center">
+      <div class="w-16 h-16 rounded-full bg-sun/20 mx-auto flex items-center justify-center text-3xl mb-3">😿</div>
+      <h3 class="font-display font-bold text-lg text-ink">Kucing Tidak Ditemukan</h3>
+      <p class="text-xs text-ink-muted mt-1">Coba cari dengan kata kunci nama kucing atau kampus yang lain.</p>
+    </div>
+
+  </section>
+
+  <!-- ================= SPECIAL AWARENESS: KENAPA PAKAI KALUNG? ================= -->
+  <section id="kalung" class="py-16 bg-white border-y border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Left Image / Showcase -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative rounded-3xl overflow-hidden border-2 border-magenta/20 shadow-card bg-cream">
+            <img src="images/images-blogs/stop-kalungcover.jpeg" alt="Kampanye Kalung Kucing UNESA" class="w-full h-auto object-cover">
+            <div class="absolute top-4 left-4 bg-coral text-white font-extrabold text-xs px-3 py-1 rounded-full shadow">
+              ⚠️ PENTING UNTUK DIKETAHUI
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Content & Explanation -->
+        <div class="lg:col-span-7 flex flex-col gap-5">
+          <div class="inline-flex items-center gap-1.5 text-xs font-bold text-magenta tracking-wider uppercase">
+            <span>🪪</span> Edukasi Satwa UNESA
+          </div>
+          
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-ink leading-tight">
+            Kenapa Kucing UNESA Pakai Kalung? <br>
+            <span class="text-magenta">Bukan Sekadar Aksesoris!</span>
+          </h2>
+
+          <p class="text-sm sm:text-base text-ink-light leading-relaxed">
+            Setiap kucing asli UNESA yang sudah terdaftar dalam sistem Jaga Satwa dipakaikan kalung khusus. Kalung ini adalah <strong>tanda perlindungan hidup</strong> bagi anabul kampus kita:
+          </p>
+
+          <!-- 3 Key Collar Points -->
+          <div class="grid sm:grid-cols-3 gap-4 pt-2">
+            
+            <div class="p-4 rounded-2xl bg-cream border border-line flex flex-col gap-2">
+              <span class="text-2xl">🌙</span>
+              <h4 class="font-display font-bold text-sm text-ink">Material Reflektif</h4>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                Menyala saat terkena sorotan lampu motor/mobil di malam hari agar kucing tidak tertabrak.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cream border border-line flex flex-col gap-2">
+              <span class="text-2xl">🏷️</span>
+              <h4 class="font-display font-bold text-sm text-ink">Identitas &amp; Lokasi</h4>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                Memuat kode ID kucing dan wilayah teritorialnya (Ketintang / Lidah Wetan) untuk penelusuran.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cream border border-line flex flex-col gap-2">
+              <span class="text-2xl">✂️</span>
+              <h4 class="font-display font-bold text-sm text-ink">Tanda Sudah Steril</h4>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                Menandai bahwa kucing sudah melalui program kebiri/steril guna mengontrol populasi liar secara manusiawi.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="p-4 rounded-2xl bg-magenta-50 border border-magenta/20 flex items-center justify-between flex-wrap gap-3 mt-2">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🛑</span>
+              <p class="text-xs text-magenta-dark font-bold">
+                Melihat seseorang melepas kalung kucing UNESA? Harap tegur secara santun atau laporkan ke pengurus!
+              </p>
+            </div>
+            <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="text-xs font-extrabold text-magenta hover:underline flex items-center gap-1">
+              <span>Instagram @jagasatwa.unesa</span> ↗
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+    <!-- ================= ARTICLES & EDUCATION (CMS PREVIEW) ================= -->
+  <section id="artikel" class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 w-full">
+    
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <span class="text-xs font-bold text-magenta tracking-wider uppercase block">📰 Edukasi &amp; Kabar Satwa</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-ink mt-0.5">
+          Artikel Terbaru Jaga Satwa
+        </h2>
+      </div>
+      <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="text-xs font-bold text-magenta hover:underline flex items-center gap-1">
+        Lihat Semua Kegiatan di Instagram ↗
+      </a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Article 1 -->
+      <article class="bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group">
+        <div class="relative h-48 bg-cream overflow-hidden">
+          <img src="images/images-blogs/stop-kalungcover.jpeg" alt="Edukasi Kalung Kucing" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <span class="absolute top-3 left-3 bg-magenta text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
+            Kampanye Edukasi
+          </span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[11px] text-ink-muted">30 September 2026 • 3 menit baca</span>
+            <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
+              Stop Lepas Kalung Kucing UNESA: Ini Alasan Medis &amp; Keselamatannya
+            </h3>
+            <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
+              Kalung kucing UNESA bukan hiasan biasa. Di dalamnya terdapat material reflektif dan identitas penanda sterilisasi resmi kampus...
+            </p>
+          </div>
+          <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
+            Baca Selengkapnya →
+          </span>
+        </div>
+      </article>
+
+      <!-- Article 2 -->
+      <article class="bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group">
+        <div class="relative h-48 bg-cream overflow-hidden">
+          <img src="images/images-blogs/blog-hari jadi.jpeg" alt="Sejarah Jaga Satwa" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <span class="absolute top-3 left-3 bg-sun text-ink font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
+            Komunitas
+          </span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[11px] text-ink-muted">15 September 2026 • 4 menit baca</span>
+            <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
+              Perjalanan Pendataan Kucing UNESA Sejak 2021 hingga Lahirnya MeowNesa
+            </h3>
+            <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
+              Bagaimana mahasiswa UNESA bertransformasi dari pencatatan spreadsheet sederhana menuju sistem informasi terstruktur yang terintegrasi...
+            </p>
+          </div>
+          <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
+            Baca Selengkapnya →
+          </span>
+        </div>
+      </article>
+
+      <!-- Article 3 -->
+      <article class="bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group">
+        <div class="relative h-48 bg-cream overflow-hidden">
+          <img src="images/images-blogs/pawtogenics-karya-cover.jpeg" alt="Pawtogenics UNESA" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <span class="absolute top-3 left-3 bg-emerald-600 text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
+            Kreativitas Mahasiswa
+          </span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[11px] text-ink-muted">05 September 2026 • 2 menit baca</span>
+            <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
+              Pawtogenics: Kolaborasi Seni &amp; Fotografi Mahasiswa untuk Satwa Kampus
+            </h3>
+            <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
+              Pameran karya visual mahasiswa Fakultas Bahasa dan Seni (FBS) yang mengabadikan keseharian kucing-kucing kampus UNESA...
+            </p>
+          </div>
+          <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
+            Baca Selengkapnya →
+          </span>
+        </div>
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= ABOUT JAGA SATWA SECTION ================= -->
+  <section id="jagasatwa" class="py-16 sm:py-20 bg-magenta text-white relative overflow-hidden">
+    <!-- Background Watermark Pattern -->
+    <div class="absolute -right-16 -bottom-16 text-white/5 text-[240px] font-display select-none pointer-events-none">🐾</div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+      <div class="max-w-3xl mx-auto text-center flex flex-col items-center gap-4">
+        
+        <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa UNESA" class="w-20 h-20 object-contain rounded-3xl bg-white p-1.5 shadow-xl">
+        
+        <span class="px-3.5 py-1 rounded-full bg-white/15 text-sun text-xs font-bold uppercase tracking-wider">
+          Komunitas Peduli Satwa Kampus
+        </span>
+
+        <h2 class="font-display font-extrabold text-3xl sm:text-5xl leading-tight">
+          "Hewan Sejahtera, Hidup Gembira"
+        </h2>
+
+        <p class="text-sm sm:text-base text-white/85 leading-relaxed">
+          Jaga Satwa UNESA adalah komunitas mahasiswa dan civitas akademika Universitas Negeri Surabaya yang bergerak di bidang perlindungan, feeding rutin, sterilisasi populasi, serta edukasi anti-penelantaran satwa di lingkungan kampus.
+        </p>
+
+        <!-- Activities Highlights -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full my-4 text-ink">
+          <div class="bg-white rounded-2xl p-4 text-center shadow-sm">
+            <span class="text-2xl block mb-1">🍲</span>
+            <span class="font-bold text-xs block">Feeding Rutin</span>
+            <span class="text-[10px] text-ink-muted">Pagi &amp; Sore Hari</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 text-center shadow-sm">
+            <span class="text-2xl block mb-1">💉</span>
+            <span class="font-bold text-xs block">Steril &amp; Vaksin</span>
+            <span class="text-[10px] text-ink-muted">Mitra Nusantara Vet</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 text-center shadow-sm">
+            <span class="text-2xl block mb-1">🏠</span>
+            <span class="font-bold text-xs block">Adopsi Terverifikasi</span>
+            <span class="text-[10px] text-ink-muted">Screening &amp; Monitoring</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 text-center shadow-sm">
+            <span class="text-2xl block mb-1">📢</span>
+            <span class="font-bold text-xs block">Edukasi Kampus</span>
+            <span class="text-[10px] text-ink-muted">Stop Buang Kucing</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 pt-2 text-xs font-bold">
+          <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="px-6 py-3 rounded-full bg-sun text-ink hover:bg-sun-light shadow-md transition">
+            Instagram @jagasatwa.unesa
+          </a>
+          <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white transition">
+            Formulir Pelaporan Rescue ↗
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DONATION & RESCUE TRANSPARENCY SECTION ================= -->
+  <section id="donasi" class="py-16 bg-cream-dark/50 border-t border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- Left: Donation Account Info -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-line shadow-card flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-xs font-bold text-magenta tracking-wider uppercase mb-1">
+              <span>💛</span> Dukung Operasional Satwa
+            </div>
+            <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+              Kanal Donasi Resmi Jaga Satwa UNESA
+            </h3>
+            <p class="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
+              Seluruh donasi dari Sobat Jagat 100% digunakan untuk pembiayaan pakan harian (dry &amp; wet food), biaya sterilisasi klinik, pengobatan kucing sakit, dan pengadaan kalung reflektif.
+            </p>
+
+            <!-- Bank Accounts Cards -->
+            <div class="grid sm:grid-cols-2 gap-3.5 my-6">
+              
+              <!-- BCA Card -->
+              <div class="p-4 rounded-2xl bg-cream border border-line flex flex-col justify-between">
+                <div>
+                  <span class="text-[11px] font-bold text-unesa block uppercase">Bank BCA</span>
+                  <span class="font-display font-extrabold text-lg text-ink block mt-0.5 tracking-wider" id="bcaAcc">088-7261-9921</span>
+                  <span class="text-[11px] text-ink-muted block">a.n. Jaga Satwa UNESA</span>
+                </div>
+                <button onclick="copyToClipboard('08872619921', this)" class="mt-3 py-1.5 px-3 rounded-lg bg-white hover:bg-magenta-50 border border-line text-[11px] font-bold text-magenta flex items-center justify-center gap-1 transition">
+                  <span>📋 Salin No. Rekening</span>
+                </button>
+              </div>
+
+              <!-- E-Wallet Card -->
+              <div class="p-4 rounded-2xl bg-cream border border-line flex flex-col justify-between">
+                <div>
+                  <span class="text-[11px] font-bold text-coral block uppercase">E-Wallet (GoPay / ShopeePay)</span>
+                  <span class="font-display font-extrabold text-lg text-ink block mt-0.5 tracking-wider" id="ewalletAcc">0812-3456-7890</span>
+                  <span class="text-[11px] text-ink-muted block">a.n. Jaga Satwa UNESA</span>
+                </div>
+                <button onclick="copyToClipboard('081234567890', this)" class="mt-3 py-1.5 px-3 rounded-lg bg-white hover:bg-magenta-50 border border-line text-[11px] font-bold text-magenta flex items-center justify-center gap-1 transition">
+                  <span>📋 Salin No. E-Wallet</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-magenta-50 text-xs text-ink-muted flex items-center justify-between flex-wrap gap-2">
+            <span>Konfirmasi donasi via Direct Message (DM):</span>
+            <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="font-bold text-magenta hover:underline">
+              @jagasatwa.unesa ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Rescue & Google Form Disclaimer -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-white to-magenta-50 rounded-3xl p-6 sm:p-8 border border-line shadow-card flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-coral/15 text-coral flex items-center justify-center text-2xl mb-4">
+              🚨
+            </div>
+            <h3 class="font-display font-extrabold text-2xl text-ink">
+              Pelaporan Kucing Sakit / Terlantar
+            </h3>
+            <p class="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
+              Menemukan kucing kampus yang terluka, sakit parah, atau butuh pertolongan darurat di Kampus Ketintang atau Lidah Wetan?
+            </p>
+
+            <div class="mt-4 p-3.5 rounded-2xl bg-white border border-line text-xs text-ink-light leading-relaxed">
+              <strong>Catatan Sistem:</strong> MeowNesa bukan aplikasi rescue umum. Segala bentuk pelaporan satwa darurat ditangani langsung oleh tim lapangan melalui formulir Google Form resmi Jaga Satwa UNESA.
+            </div>
+          </div>
+
+          <div class="pt-6">
+            <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="w-full py-3.5 rounded-full bg-coral hover:bg-coral/90 text-white font-bold text-sm text-center shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <span>📝</span>
+              <span>Buka Google Form Pelaporan Rescue</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-ink text-white border-t border-magenta-900/40 pt-16 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      
+      <div class="grid sm:grid-cols-2 lg:grid-cols-12 gap-8 pb-12 border-b border-white/10">
+        
+        <!-- Col 1: Brand & Organization Info (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <img src="images/cat-icons.jpg" alt="Icon MeowNesa" class="w-11 h-11 object-cover rounded-2xl border-2 border-magenta shadow-md">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-display font-extrabold text-2xl text-white tracking-tight">MeowNesa</span>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sun text-ink leading-none">UNESA</span>
+              </div>
+              <span class="text-xs text-white/60 font-medium">Sistem Informasi Pengelolaan Kucing Kampus</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-white/75 leading-relaxed max-w-sm">
+            Platform terpadu pengelolaan populasi kucing resmi, rekam sterilisasi medis, dan adopsi terverifikasi di Universitas Negeri Surabaya.
+          </p>
+
+          <!-- Official Partner Badge -->
+          <div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 w-fit mt-1">
+            <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa UNESA" class="w-9 h-9 object-contain rounded-xl bg-white p-0.5">
+            <div>
+              <span class="text-xs font-bold text-white block">Jaga Satwa UNESA</span>
+              <span class="text-[10px] text-sun block">"Hewan Sejahtera, Hidup Gembira"</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 2: Navigasi Web (2 cols) -->
+        <div class="lg:col-span-2 flex flex-col gap-2.5 text-xs text-white/80">
+          <span class="font-display font-bold text-sm text-white mb-1">Navigasi</span>
+          <a href="index.html" class="hover:text-sun transition">Beranda</a>
+          <a href="src/cat-informations/index.html" class="hover:text-sun transition">Informasi Kucing</a>
+          <a href="src/adoption/apply.html" class="hover:text-sun transition">Adopsi Kucing</a>
+          <a href="src/cms-blog-awarness/blog.html" class="hover:text-sun transition">Artikel &amp; Edukasi</a>
+          <a href="#donasi" class="hover:text-sun transition">Donasi Resmi</a>
+        </div>
+
+        <!-- Col 3: Layanan & Tracking (2 cols) -->
+        <div class="lg:col-span-2 flex flex-col gap-2.5 text-xs text-white/80">
+          <span class="font-display font-bold text-sm text-white mb-1">Layanan</span>
+          <a href="src/adoption/apply.html" class="hover:text-sun transition">Formulir Adopsi</a>
+          <a href="src/adoption/tracking.html" class="hover:text-sun transition">Lacak Pengajuan</a>
+          <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="hover:text-sun transition">Lapor Kucing (G-Form)</a>
+          <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="hover:text-sun transition">Instagram Resmi</a>
+        </div>
+
+        <!-- Col 4: Kampus UNESA (3 cols) -->
+        <div class="lg:col-span-3 flex flex-col gap-2.5 text-xs text-white/80">
+          <span class="font-display font-bold text-sm text-white mb-1">Wilayah Kampus</span>
+          <div class="p-3 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-1.5">
+            <p class="leading-relaxed">
+              <strong class="text-white">Kampus Ketintang:</strong><br>
+              <span class="text-white/60">Jl. Ketintang, Gayungan, Surabaya</span>
+            </p>
+            <p class="leading-relaxed border-t border-white/10 pt-1.5">
+              <strong class="text-white">Kampus Lidah Wetan:</strong><br>
+              <span class="text-white/60">Jl. Raya Kampus UNESA, Lakarsantri</span>
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Copyright Bottom Bar -->
+      <div class="pt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-white/60">
+        <p>© 2026 MeowNesa &amp; Jaga Satwa UNESA. Dikembangkan oleh Kelompok 7 D4 Manajemen Informatika UNESA.</p>
+        <div class="flex items-center gap-2 text-white/80">
+          <img src="images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="w-5 h-5 object-contain rounded-full bg-white p-0.5">
+          <span class="font-semibold text-sun">Jaga Satwa UNESA</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ================= MODAL: QUICK CAT PROFILE PREVIEW ================= -->
+  <div id="catQuickModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="relative h-64 bg-cream">
+        <img id="modalCatImg" src="" alt="" class="w-full h-full object-cover">
+        <button onclick="closeQuickModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-ink flex items-center justify-center font-bold text-sm shadow">✕</button>
+        <span id="modalCatBadge" class="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-magenta text-white font-extrabold text-xs shadow-md">
+          Siap Diadopsi
+        </span>
+      </div>
+
+      <div class="p-6 flex flex-col gap-4">
+        <div>
+          <div class="flex items-center justify-between">
+            <h3 id="modalCatName" class="font-display font-extrabold text-2xl text-ink">Mochi</h3>
+            <span id="modalCatGender" class="px-2.5 py-1 rounded-lg bg-cream font-bold text-sm text-magenta">♀ Betina</span>
+          </div>
+          <p id="modalCatCampus" class="text-xs text-ink-muted mt-0.5">Kampus Ketintang • Gedung K10 (Fakultas Vokasi)</p>
+        </div>
+
+        <!-- Metadata Grid -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2.5 rounded-xl bg-cream border border-line">
+            <span class="text-ink-muted block text-[11px]">🏷️ Info Kalung</span>
+            <span id="modalCatCollar" class="font-bold text-ink">Kalung Merah Reflektif</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-cream border border-line">
+            <span class="text-ink-muted block text-[11px]">🎂 Usia</span>
+            <span id="modalCatAge" class="font-bold text-ink">± 2 Tahun</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-cream border border-line">
+            <span class="text-ink-muted block text-[11px]">🩺 Sterilisasi</span>
+            <span id="modalCatSteril" class="font-bold text-emerald-700">✅ Sudah Steril</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-cream border border-line">
+            <span class="text-ink-muted block text-[11px]">💉 Vaksin</span>
+            <span id="modalCatVaccine" class="font-bold text-ink">Vaksin Tricat Lengkap</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-xs font-bold text-ink block mb-1">Karakteristik &amp; Kebiasaan:</span>
+          <p id="modalCatDesc" class="text-xs text-ink-light leading-relaxed bg-magenta-50/50 p-3 rounded-xl border border-magenta/10">
+            Kucing ramah dan senang berinteraksi dengan mahasiswa. Sering menyapa di depan lobi Vokasi.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 pt-2">
+          <button onclick="closeQuickModal()" class="flex-1 py-2.5 rounded-xl border border-line font-bold text-xs text-ink hover:bg-cream transition">
+            Tutup
+          </button>
+          <a id="modalAdoptLink" href="#kucing" class="flex-1 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs text-center shadow-md transition">
+            Ajukan Adopsi Kucing Ini
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: STATUS TRACKING CHECKER ================= -->
+  <div id="trackingModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-md w-full overflow-hidden shadow-2xl p-6 flex flex-col gap-4">
+      
+      <div class="flex items-center justify-between border-b border-line pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center text-base">🔍</span>
+          <h3 class="font-display font-bold text-xl text-ink">Cek Status Pengajuan</h3>
+        </div>
+        <button onclick="closeTrackingModal()" class="w-8 h-8 rounded-full bg-cream text-ink flex items-center justify-center font-bold text-xs">✕</button>
+      </div>
+
+      <p class="text-xs text-ink-muted leading-relaxed">
+        Masukkan <strong>Nomor Pengajuan</strong> dan <strong>Kode Tracking</strong> yang Anda dapatkan setelah mengisi formulir adopsi.
+      </p>
+
+      <form id="trackingForm" onsubmit="handleTrackingSearch(event)" class="flex flex-col gap-3">
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Nomor Pengajuan</label>
+          <input id="trackAppId" type="text" placeholder="Contoh: ADP-2026-00125" required
+            class="w-full px-3.5 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta font-mono uppercase">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Kode Tracking (PIN 6 Karakter)</label>
+          <input id="trackPin" type="text" placeholder="Contoh: 8F4K2P" required maxlength="6"
+            class="w-full px-3.5 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta font-mono uppercase">
+        </div>
+
+        <button type="submit" class="w-full mt-2 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs transition shadow-sm">
+          Periksa Status Pengajuan
+        </button>
+      </form>
+
+      <!-- Tracking Result Box -->
+      <div id="trackingResultBox" class="hidden p-4 rounded-2xl bg-cream border border-line flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-mono font-bold text-ink-muted" id="resAppNo">ADP-2026-00125</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800" id="resStatusBadge">SEDANG DITINJAU</span>
+        </div>
+        <div class="pt-2 border-t border-line/60 flex flex-col gap-1 text-xs">
+          <span class="text-ink">Kucing yang diajukan: <strong id="resCatName">Mochi</strong></span>
+          <span class="text-ink-muted text-[11px]" id="resDate">Tanggal Pengajuan: 30 September 2026</span>
+          <p class="text-[11px] text-ink-light bg-white p-2 rounded-lg border border-line/60 mt-1" id="resNote">
+            Tim Jaga Satwa UNESA sedang melakukan verifikasi data dan screening kriteria tempat tinggal. Harap pantau berkala.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // ==========================================
+    // 1. DATA KUCING RESMI UNESA
+    // ==========================================
+    const unesaCats = [
+      {
+        id: 'mochi',
+        name: 'Mochi',
+        gender: '♀ Betina',
+        age: '± 2 Tahun',
+        campus: 'KETINTANG',
+        campusLabel: 'Kampus Ketintang (Gedung K10 Vokasi)',
+        collar: 'Kalung Merah Reflektif (KTT-01)',
+        status: 'AVAILABLE',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Tricat Lengkap',
+        img: 'images/cat-images/cat1.jpg',
+        desc: 'Kucing calico manis yang sangat jinak. Sering menyambut mahasiswa di lobi Fakultas Vokasi.'
+      },
+      {
+        id: 'milo',
+        name: 'Milo',
+        gender: '♂ Jantan',
+        age: '± 3 Tahun',
+        campus: 'LIDAH_WETAN',
+        campusLabel: 'Kampus Lidah Wetan (Danau UNESA)',
+        collar: 'Kalung Biru Reflektif (LWT-01)',
+        status: 'AVAILABLE',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: 'images/cat-images/cat2-p1.jpg',
+        desc: 'Kucing abu-abu kalem yang suka bersantai di dermaga danau UNESA Lidah Wetan. Sangat bersahabat.'
+      },
+      {
+        id: 'oyen',
+        name: 'Oyen Barbar',
+        gender: '♂ Jantan',
+        age: '± 1.5 Tahun',
+        campus: 'KETINTANG',
+        campusLabel: 'Kampus Ketintang (Kantin FT & Vokasi)',
+        collar: 'Kalung Oranye Reflektif (KTT-03)',
+        status: 'AVAILABLE',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Rutin',
+        img: 'images/cat-images/catoyen-p1.jpg',
+        desc: 'Aktif, lincah, dan gemar menemani mahasiswa yang sedang santai di Food Court Ketintang.'
+      },
+      {
+        id: 'kismis',
+        name: 'Kismis',
+        gender: '♀ Betina',
+        age: '± 4 Tahun',
+        campus: 'LIDAH_WETAN',
+        campusLabel: 'Kampus Lidah Wetan (Gedung Sawunggaling FBS)',
+        collar: 'Kalung Kuning Reflektif (LWT-06)',
+        status: 'AVAILABLE',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: 'images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg',
+        desc: 'Kucing berbulu totol artistik yang tenang. Maskot favorit mahasiswa seni pertunjukan FBS.'
+      },
+      {
+        id: 'nori',
+        name: 'Nori',
+        gender: '♂ Jantan',
+        age: '± 2 Tahun',
+        campus: 'KETINTANG',
+        campusLabel: 'Kampus Ketintang (FMIPA Gedung C)',
+        collar: 'Kalung Hijau Neon (KTT-08)',
+        status: 'ACTIVE',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: 'images/cat-images/imgi_32_cute-ginger-cat.jpg',
+        desc: 'Suka berjemur di taman lab terpadu FMIPA Ketintang. Terdata aktif dan sehat.'
+      },
+      {
+        id: 'luna',
+        name: 'Luna',
+        gender: '♀ Betina',
+        age: '± 1 Tahun',
+        campus: 'LIDAH_WETAN',
+        campusLabel: 'Kampus Lidah Wetan (FIP Gedung O)',
+        collar: 'Kalung Ungu Reflektif (LWT-09)',
+        status: 'ACTIVE',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Rutin',
+        img: 'images/cat-images/imgi_503_pexels-photo-8727895.jpg',
+        desc: 'Kucing putih anggun yang sangat manja di selasar ruang kuliah PGSD FIP.'
+      }
+    ];
+
+    // ==========================================
+    // 2. RENDER CATALOG CARDS
+    // ==========================================
+    const catalogContainer = document.getElementById('catCardsGrid');
+    const catalogEmpty = document.getElementById('catalogEmpty');
+    let currentFilter = 'ALL';
+
+    function renderCatalogCards(catsList) {
+      catalogContainer.innerHTML = '';
+      
+      if (catsList.length === 0) {
+        catalogEmpty.classList.remove('hidden');
+        return;
+      }
+      catalogEmpty.classList.add('hidden');
+
+      catsList.forEach(cat => {
+        const isReady = cat.status === 'AVAILABLE';
+        const badgeBg = isReady ? 'bg-sun text-ink font-extrabold' : 'bg-magenta-100 text-magenta font-bold';
+        const badgeText = isReady ? '💖 Siap Diadopsi' : '🟢 Terdata Kampus';
+
+        const card = document.createElement('div');
+        card.className = 'bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 flex flex-col group';
+        
+        card.innerHTML = `
+          <div class="relative h-56 bg-cream overflow-hidden cursor-pointer" onclick="openQuickModal('${cat.id}')">
+            <img src="${cat.img}" alt="${cat.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs ${badgeBg} shadow-md">
+              ${badgeText}
+            </span>
+            <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-ink/75 backdrop-blur-sm text-white font-bold text-[10px]">
+              🏷️ ${cat.collar.split('(')[0]}
+            </span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between gap-4">
+            <div>
+              <div class="flex items-center justify-between">
+                <h3 class="font-display font-extrabold text-xl text-ink group-hover:text-magenta transition cursor-pointer" onclick="openQuickModal('${cat.id}')">
+                  ${cat.name}
+                </h3>
+                <span class="text-xs font-bold text-magenta px-2 py-0.5 rounded-md bg-magenta-50">${cat.gender}</span>
+              </div>
+              <p class="text-xs text-ink-muted mt-1 font-medium">${cat.age} • ${cat.campusLabel}</p>
+
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-semibold border border-emerald-200">
+                  ✅ ${cat.steril}
+                </span>
+                <span class="text-[10px] bg-sun/20 text-ink px-2 py-0.5 rounded-md font-semibold border border-sun/30">
+                  💉 ${cat.vaccine}
+                </span>
+              </div>
+
+              <p class="text-xs text-ink-light mt-3 line-clamp-2 leading-relaxed bg-cream/50 p-2.5 rounded-xl border border-line/50">
+                ${cat.desc}
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2 border-t border-line">
+              <a href="src/cat-informations/cat-detail.html?id=${cat.id}" class="flex-1 py-2 rounded-xl border border-line text-xs font-bold text-ink hover:bg-cream text-center transition">
+                Detail &amp; Galeri
+              </a>
+              ${isReady ? `
+                <a href="src/adoption/apply.html?cat=${encodeURIComponent(cat.name)}" class="flex-1 py-2 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold text-center shadow transition">
+                  Ajukan Adopsi
+                </a>
+              ` : `
+                <span class="flex-1 py-2 rounded-xl bg-cream text-ink-muted text-xs font-semibold text-center">
+                  Binaan Kampus
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+
+        catalogContainer.appendChild(card);
+      });
+    }
+
+    // Filter by category
+    function filterCatalog(type) {
+      currentFilter = type;
+
+      document.querySelectorAll('.cat-filter-btn').forEach(b => {
+        b.classList.remove('bg-magenta', 'text-white');
+        b.classList.add('bg-white', 'text-ink');
+      });
+
+      const activeBtn = document.getElementById(`filter-btn-${type}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-white', 'text-ink');
+        activeBtn.classList.add('bg-magenta', 'text-white');
+      }
+
+      applyCatalogFilters();
+    }
+
+    function applyCatalogFilters() {
+      const query = document.getElementById('catCatalogSearch').value.toLowerCase().trim();
+
+      const filtered = unesaCats.filter(cat => {
+        let matchFilter = true;
+        if (currentFilter === 'AVAILABLE') matchFilter = cat.status === 'AVAILABLE';
+        else if (currentFilter === 'KETINTANG') matchFilter = cat.campus === 'KETINTANG';
+        else if (currentFilter === 'LIDAH_WETAN') matchFilter = cat.campus === 'LIDAH_WETAN';
+
+        const matchQuery = !query || 
+          cat.name.toLowerCase().includes(query) ||
+          cat.campusLabel.toLowerCase().includes(query) ||
+          cat.desc.toLowerCase().includes(query);
+
+        return matchFilter && matchQuery;
+      });
+
+      renderCatalogCards(filtered);
+    }
+
+    document.getElementById('catCatalogSearch').addEventListener('input', applyCatalogFilters);
+
+    // ==========================================
+    // 3. QUICK MODAL LOGIC
+    // ==========================================
+    function openQuickModal(catId) {
+      const cat = unesaCats.find(c => c.id === catId);
+      if (!cat) return;
+
+      document.getElementById('modalCatImg').src = cat.img;
+      document.getElementById('modalCatName').innerText = cat.name;
+      document.getElementById('modalCatGender').innerText = cat.gender;
+      document.getElementById('modalCatCampus').innerText = cat.campusLabel;
+      document.getElementById('modalCatCollar').innerText = cat.collar;
+      document.getElementById('modalCatAge').innerText = cat.age;
+      document.getElementById('modalCatSteril').innerText = `✅ ${cat.steril}`;
+      document.getElementById('modalCatVaccine').innerText = cat.vaccine;
+      document.getElementById('modalCatDesc').innerText = cat.desc;
+
+      const badge = document.getElementById('modalCatBadge');
+      const adoptLink = document.getElementById('modalAdoptLink');
+
+      if (cat.status === 'AVAILABLE') {
+        badge.className = 'absolute bottom-3 left-3 px-3 py-1 rounded-full bg-sun text-ink font-extrabold text-xs shadow-md';
+        badge.innerText = '💖 Siap Diadopsi';
+        adoptLink.classList.remove('hidden');
+        adoptLink.onclick = () => { closeQuickModal(); openAdoptAlert(cat.name); };
+      } else {
+        badge.className = 'absolute bottom-3 left-3 px-3 py-1 rounded-full bg-magenta text-white font-bold text-xs shadow-md';
+        badge.innerText = '🟢 Terdata di UNESA';
+        adoptLink.classList.add('hidden');
+      }
+
+      document.getElementById('catQuickModal').classList.remove('hidden');
+      document.getElementById('catQuickModal').classList.add('flex');
+    }
+
+    function closeQuickModal() {
+      document.getElementById('catQuickModal').classList.add('hidden');
+      document.getElementById('catQuickModal').classList.remove('flex');
+    }
+
+    function openAdoptAlert(catName) {
+      alert(`Untuk mengajukan adopsi ${catName}, modul formulir pengajuan adopsi terverifikasi akan segera kita integrasikan!`);
+    }
+
+    // ==========================================
+    // 4. TRACKING MODAL & SEARCH SIMULATION
+    // ==========================================
+    function openTrackingModal() {
+      document.getElementById('trackingModal').classList.remove('hidden');
+      document.getElementById('trackingModal').classList.add('flex');
+    }
+
+    function closeTrackingModal() {
+      document.getElementById('trackingModal').classList.add('hidden');
+      document.getElementById('trackingModal').classList.remove('flex');
+    }
+
+    function handleTrackingSearch(e) {
+      e.preventDefault();
+      const appId = document.getElementById('trackAppId').value.trim();
+      const pin = document.getElementById('trackPin').value.trim();
+
+      const resBox = document.getElementById('trackingResultBox');
+      resBox.classList.remove('hidden');
+      resBox.classList.add('flex');
+
+      document.getElementById('resAppNo').innerText = appId.toUpperCase();
+    }
+
+    // ==========================================
+    // 5. COPY TO CLIPBOARD HELPER
+    // ==========================================
+    function copyToClipboard(text, btnElement) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btnElement.innerHTML;
+        btnElement.innerHTML = '<span>✅ Berhasil Disalin!</span>';
+        btnElement.classList.add('bg-emerald-50', 'text-emerald-700');
+        setTimeout(() => {
+          btnElement.innerHTML = originalText;
+          btnElement.classList.remove('bg-emerald-50', 'text-emerald-700');
+        }, 2000);
+      });
+    }
+
+    // Mobile Menu Toggle
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('flex');
+    });
+
+    // Initialize Catalog
+    renderCatalogCards(unesaCats);
+  </script>
+</body>
+</html>
