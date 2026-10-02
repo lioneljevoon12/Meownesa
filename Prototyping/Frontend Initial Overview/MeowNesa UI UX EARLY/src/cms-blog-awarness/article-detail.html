@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title id="pageTitle">Detail Artikel — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.15)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- ================= APP HEADER COMPONENT ================= -->
+  <div id="app-header" data-active-nav="artikel"></div>
+
+  <!-- ================= MAIN ARTICLE READER ================= -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-ink-muted mb-6 font-medium">
+      <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
+      <span>/</span>
+      <a href="blog.html" class="hover:text-magenta transition">Artikel &amp; Edukasi</a>
+      <span>/</span>
+      <span class="text-magenta font-bold truncate max-w-xs sm:max-w-md" id="breadArticleTitle">Detail Artikel</span>
+    </nav>
+
+    <!-- 2 Columns Grid: Article Content (Left 8 cols) & Sidebar (Right 4 cols) -->
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      <article class="lg:col-span-8 bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card flex flex-col gap-6">
+        
+        <!-- Header Metadata -->
+        <div>
+          <span id="artCategoryBadge" class="inline-block px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3 bg-magenta text-white">
+            Edukasi &amp; Kampanye
+          </span>
+          <h1 id="artTitle" class="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-ink leading-tight">
+            Kenapa Kucing UNESA Pakai Kalung? Jangan Sembarangan Dilepas!
+          </h1>
+          
+          <div class="flex flex-wrap items-center gap-4 text-xs text-ink-muted mt-4 pt-4 border-t border-line font-medium">
+            <div class="flex items-center gap-2">
+              <img src="../../images/jagasatwa-logo.png" alt="Author" class="w-6 h-6 rounded-full border border-line bg-cream brightness-0">
+              <span id="artAuthor" class="font-bold text-ink">Divisi Edukasi Jaga Satwa</span>
+            </div>
+            <span>•</span>
+            <span id="artDate" class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> 30 September 2026</span>
+            <span>•</span>
+            <span id="artReadTime" class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 3 menit baca</span>
+          </div>
+        </div>
+
+        <!-- Cover Image with Click-to-Zoom Lightbox -->
+        <div class="relative rounded-2xl overflow-hidden bg-cream border border-line shadow-sm group cursor-zoom-in" onclick="zoomCoverImage()">
+          <img id="artCoverImg" src="../../images/images-blogs/stop-kalungcover.jpeg" alt="Cover Artikel" class="w-full h-auto max-h-[420px] object-cover transition duration-300 group-hover:scale-102">
+          
+          <!-- Zoom Floating Hint Badge -->
+          <div class="absolute bottom-10 right-3 bg-ink/80 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition shadow">
+            <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-sun"></i>
+            <span>Klik untuk Perbesar Foto</span>
+          </div>
+
+          <p id="artCoverCaption" class="text-[11px] text-ink-muted px-4 py-2.5 bg-cream/90 border-t border-line font-medium italic">
+            Dokumentasi resmi program proteksi kalung reflektif kucing kampus UNESA.
+          </p>
+        </div>
+
+        <!-- Article Dynamic Body Content -->
+        <div id="artBodyContent" class="text-ink-light text-sm sm:text-base leading-relaxed flex flex-col gap-5">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Image Gallery / Supplemental Visuals (Interactive Zoomable Grid) -->
+        <div id="artGallerySection" class="mt-4 pt-6 border-t border-line flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-display font-bold text-base sm:text-lg text-ink flex items-center gap-2">
+              <i data-lucide="image" class="w-4 h-4 text-magenta"></i>
+              <span>Dokumentasi Terkait</span>
+            </h4>
+            <span class="text-xs text-ink-muted font-medium flex items-center gap-1">
+              <i data-lucide="zoom-in" class="w-3 h-3 text-magenta"></i>
+              Klik gambar untuk melihat penuh
+            </span>
+          </div>
+
+          <div id="artGalleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Social Share & Tags -->
+        <div class="mt-6 pt-6 border-t border-line flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-ink">Bagikan Artikel:</span>
+            <button onclick="shareLink()" id="shareBtn" class="px-3 py-1.5 rounded-xl border border-line hover:border-magenta hover:text-magenta text-xs font-bold transition flex items-center gap-1.5 bg-cream/50">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i>
+              <span id="shareBtnText">Salin Tautan</span>
+            </button>
+          </div>
+
+          <a href="blog.html" class="text-xs font-bold text-magenta hover:underline flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Kembali ke Daftar Artikel</span>
+          </a>
+        </div>
+
+      </article>
+
+      <!-- ================= RIGHT: SIDEBAR ================= -->
+      <aside class="lg:col-span-4 flex flex-col gap-6 sticky top-28">
+        
+        <!-- Jaga Satwa Profile Box -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <img src="../../images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="h-10 w-auto object-contain brightness-0">
+            <div>
+              <h3 class="font-display font-bold text-base text-ink leading-tight">Jaga Satwa UNESA</h3>
+              <span class="text-[11px] text-magenta font-semibold">Komunitas Resmi Kampus</span>
+            </div>
+          </div>
+          <p class="text-xs text-ink-muted leading-relaxed">
+            Organisasi kepedulian satwa di Universitas Negeri Surabaya yang mengelola feeding, sterilisasi medis, vaksinasi, dan adopsi kucing kampus.
+          </p>
+          <div class="pt-2 flex flex-col gap-2">
+            <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="w-full py-2 rounded-xl bg-magenta text-white text-center text-xs font-bold hover:bg-magenta-dark transition flex items-center justify-center gap-1.5">
+              <i data-lucide="instagram" class="w-3.5 h-3.5"></i>
+              <span>Ikuti Instagram Resmi</span>
+            </a>
+            <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="w-full py-2 rounded-xl border border-coral text-coral hover:bg-coral hover:text-white text-center text-xs font-bold transition flex items-center justify-center gap-1.5">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+              <span>Lapor Kondisi Kucing</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Related Articles Recommendations -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-4">
+          <h3 class="font-display font-bold text-base text-ink border-b border-line pb-2 flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-sun"></i>
+            <span>Artikel Rekomendasi</span>
+          </h3>
+          <div id="relatedArticlesList" class="flex flex-col gap-4">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- ================= LIGHTBOX MODAL FULLSCREEN ZOOM ================= -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-ink/90 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeLightbox()">
+    <div class="relative max-w-4xl w-full max-h-[92vh] flex flex-col items-center" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white hover:text-sun font-bold text-xs sm:text-sm flex items-center gap-1.5 transition bg-white/15 px-3.5 py-1.5 rounded-full border border-white/20">
+        <i data-lucide="x" class="w-4 h-4"></i>
+        <span>Tutup (ESC)</span>
+      </button>
+      <img id="lightboxImg" src="" alt="Zoom Foto" class="max-h-[80vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl border border-white/20 bg-ink/60">
+      <p id="lightboxCaption" class="text-white/90 text-xs sm:text-sm mt-3 font-semibold text-center max-w-xl"></p>
+    </div>
+  </div>
+
+  <!-- ================= APP FOOTER COMPONENT ================= -->
+  <div id="app-footer"></div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    let currentArticleData = null;
+
+    const articlesMaster = [
+      {
+        id: 'stop-lepas-kalung',
+        title: 'Kenapa Kucing UNESA Pakai Kalung? Jangan Sembarangan Dilepas!',
+        category: 'EDUKASI',
+        categoryLabel: 'Edukasi & Kampanye',
+        categoryColor: 'bg-magenta text-white',
+        readTime: '3 menit',
+        date: '30 September 2026',
+        author: 'Divisi Edukasi Jaga Satwa UNESA',
+        coverImg: '../../images/images-blogs/stop-kalungcover.jpeg',
+        coverCaption: 'Kampanye Stop Melepas Kalung Kucing UNESA — Lindungi Anabul Kampus.',
+        gallery: [
+          { src: '../../images/images-blogs/stop-kalung1.jpeg', caption: 'Informasi Alasan Medis Penggunaan Kalung Kucing UNESA' },
+          { src: '../../images/images-blogs/stop-kalung2.jpeg', caption: 'Petunjuk Penanda Sterilisasi dan Warna Kalung Kampus' },
+          { src: '../../images/images-blogs/stop-kalung3.jpeg', caption: 'Material Kalung Reflektif Keselamatan Malam Hari' }
+        ],
+        body: `
+          <p class="text-base leading-relaxed">
+            Mungkin banyak civitas akademika UNESA, baik mahasiswa, dosen, maupun staf yang sering melihat anabul-anabul kampus mengenakan kalung lonceng warna-warni bergaris reflektif. Beberapa orang mungkin mengira kalung ini hanya sekadar hiasan atau aksesoris lucu. Namun sebenarnya, kalung tersebut memiliki <strong>fungsi vital untuk keselamatan hidup mereka</strong>.
+          </p>
+
+          <div class="bg-magenta-50 border-l-4 border-magenta p-4 rounded-r-2xl my-2">
+            <h4 class="font-bold text-magenta text-sm mb-1 flex items-center gap-1.5">
+              <i data-lucide="shield-alert" class="w-4 h-4"></i>
+              Peringatan Keras Bagi Siapapun:
+            </h4>
+            <p class="text-xs text-ink leading-relaxed">
+              Dilarang keras mencopot atau membuang kalung kucing kampus UNESA! Setiap kalung memiliki kode identitas dan proteksi keselamatan malam hari.
+            </p>
+          </div>
+
+          <h3 class="font-display font-bold text-xl text-ink mt-2">1. Sebagai Tanda Kucing Binaan &amp; Sudah Steril</h3>
+          <p>
+            Kucing yang berkalung adalah kucing yang telah melalui proses pemeriksaan medis di Klinik Nusantara Vet, mendapatkan vaksinasi, dan disterilisasi agar populasi di kampus tetap terkontrol secara sehat dan manusiawi.
+          </p>
+
+          <h3 class="font-display font-bold text-xl text-ink mt-2">2. Reflektif di Malam Hari (Mencegah Tertabrak)</h3>
+          <p>
+            Area kampus yang luas sering kali dilewati kendaraan roda dua dan roda empat saat malam hari. Kalung ini dilapisi bahan khusus yang memantulkan sorot lampu motor/mobil sehingga pengendara dapat melihat posisi kucing dari kejauhan.
+          </p>
+
+          <h3 class="font-display font-bold text-xl text-ink mt-2">3. Kode Wilayah Kampus &amp; Pencatatan</h3>
+          <p>
+            Setiap warna kalung membedakan zonasi feeding dan pemantauan relawan (misalnya Merah untuk Vokasi Ketintang, Biru untuk Danau Lidah Wetan). Jika kalung dicopot, relawan akan kesulitan memantau riwayat medis kucing tersebut.
+          </p>
+        `
+      },
+      {
+        id: 'sejarah-jaga-satwa',
+        title: 'Perjalanan Jaga Satwa UNESA: Dari Relawan Kampus Menjadi Pelindung Kucing',
+        category: 'KOMUNITAS',
+        categoryLabel: 'Kabar Komunitas',
+        categoryColor: 'bg-sun text-ink',
+        readTime: '4 menit',
+        date: '28 September 2026',
+        author: 'Pengurus Jaga Satwa UNESA',
+        coverImg: '../../images/images-blogs/blog-hari jadi.jpeg',
+        coverCaption: 'Momen kebersamaan relawan Jaga Satwa UNESA dalam memperingati hari jadi komunitas.',
+        gallery: [
+          { src: '../../images/images-blogs/blog-hari jadi.jpeg', caption: 'Dokumentasi kegiatan HUT dan gathering relawan Jaga Satwa UNESA' }
+        ],
+        body: `
+          <p class="text-base leading-relaxed">
+            Komunitas <strong>Jaga Satwa UNESA</strong> bermula dari inisiatif sekelompok mahasiswa pecinta hewan di Kampus Ketintang dan Lidah Wetan yang merasa prihatin melihat kondisi anabul liar yang kelaparan, terluka, dan populasinya tidak terkontrol.
+          </p>
+
+          <h3 class="font-display font-bold text-xl text-ink mt-2">Program Rutin Komunitas</h3>
+          <ul class="list-disc pl-5 space-y-2 text-sm">
+            <li><strong>Street Feeding Terjadwal:</strong> Memberikan makanan bergizi setiap sore di titik-titik kumpul anabul.</li>
+            <li><strong>TNSR (Trap-Neuter-Sterilize-Return):</strong> Menekan laju populasi tanpa menyakiti, bekerja sama dengan dokter hewan.</li>
+            <li><strong>Tanggap Darurat Penyelamatan:</strong> Mengobati kucing kampus yang sakit atau tertabrak.</li>
+          </ul>
+
+          <p class="mt-2">
+            Dengan adanya platform digital <strong>MeowNesa</strong>, kini seluruh civitas akademika dapat ikut serta memantau data populasi kucing dan mengajukan adopsi secara resmi.
+          </p>
+        `
+      },
+      {
+        id: 'pawtogenics-karya-mahasiswa',
+        title: 'Pawtogenics UNESA: Wadah Kreativitas Mahasiswa Menyuarakannya Lewat Seni',
+        category: 'KARYA',
+        categoryLabel: 'Kreativitas Mahasiswa',
+        categoryColor: 'bg-emerald-600 text-white',
+        readTime: '3 menit',
+        date: '25 September 2026',
+        author: 'Tim Media & Kreatif UNESA',
+        coverImg: '../../images/images-blogs/pawtogenics-karya-cover.jpeg',
+        coverCaption: 'Karya ilustrasi dan desain grafis kampanye kepedulian satwa karya mahasiswa UNESA.',
+        gallery: [
+          { src: '../../images/images-blogs/pawtogenics-farrell.jpeg', caption: 'Ilustrasi Farrel si Kucing Danau oleh Mahasiswa Desain UNESA' },
+          { src: '../../images/images-blogs/pawtogenics-shelen.jpeg', caption: 'Karya Shelen: Kampanye Peduli Anabul Gedung Teknik Sipil' }
+        ],
+        body: `
+          <p class="text-base leading-relaxed">
+            <strong>Pawtogenics</strong> merupakan inisiatif kolaborasi antara mahasiswa Fakultas Bahasa dan Seni (FBS), Vokasi, dan komunitas Jaga Satwa untuk mengkampanyekan kepedulian satwa melalui karya ilustrasi, fotografi, dan poster kreatif.
+          </p>
+
+          <p>
+            Karya-karya ini menjadi media komunikasi visual yang efektif untuk mengajak mahasiswa tidak menyiksa anabul, tidak membuang kucing peliharaan ke kampus, serta menghargai hak hidup makhluk hidup di sekitar kita.
+          </p>
+        `
+      },
+      {
+        id: 'kucing-hilang-darurat',
+        title: 'Info Pencarian: Kucing Hilang di Sekitar Gedung Sawunggaling FBS & Vokasi',
+        category: 'HILANG',
+        categoryLabel: 'Info Kucing Hilang',
+        categoryColor: 'bg-coral text-white',
+        readTime: '2 menit',
+        date: '24 September 2026',
+        author: 'Rescue Coordinator Jaga Satwa',
+        coverImg: '../../images/images-blogs/announcement-kucing-hilang.jpeg',
+        coverCaption: 'Poster resmi pencarian anabul kampus yang belum kembali.',
+        gallery: [
+          { src: '../../images/images-blogs/emma-hilang.jpeg', caption: 'Foto Terakhir Emma: Betina Calico Kalung Kuning' },
+          { src: '../../images/images-blogs/jeni-hilang.jpeg', caption: 'Foto Terakhir Jeni: Betina Tabby Abu-abu Ekor Panjang' }
+        ],
+        body: `
+          <p class="text-base leading-relaxed">
+            Diberitahukan kepada seluruh mahasiswa dan staf UNESA bahwa dua kucing binaan bernama <strong>Emma</strong> dan <strong>Jeni</strong> tidak terlihat di titik feeding reguler Gedung Sawunggaling FBS dan Fakultas Vokasi sejak beberapa hari terakhir.
+          </p>
+
+          <div class="bg-coral/10 border-2 border-coral/30 p-4 rounded-2xl my-3">
+            <h4 class="font-bold text-coral text-sm mb-1">Ciri-Ciri Kucing:</h4>
+            <p class="text-xs text-ink">
+              • <strong>Emma:</strong> Betina, bulu belang tiga (calico), berkalung kuning reflektif.<br>
+              • <strong>Jeni:</strong> Betina, bulu abu-abu corak tabby, ekor panjang, sangat ramah jika dipanggil.
+            </p>
+          </div>
+
+          <p>
+            Jika teman-teman melihat anabul tersebut di sekitar kampus, mohon tidak diusir secara kasar dan segera hubungi tim relawan melalui kanal pelaporan atau Instagram resmi.
+          </p>
+        `
+      },
+      {
+        id: 'etika-interaksi-kucing',
+        title: 'Etika Berinteraksi & Memberi Makan Kucing di Lingkungan Kampus UNESA',
+        category: 'EDUKASI',
+        categoryLabel: 'Edukasi & Kampanye',
+        categoryColor: 'bg-magenta text-white',
+        readTime: '3 menit',
+        date: '20 September 2026',
+        author: 'Divisi Kesehatan Satwa',
+        coverImg: '../../images/images-blogs/stop-kalung1.jpeg',
+        coverCaption: 'Pedoman berinteraksi yang ramah dan aman bersama kucing kampus.',
+        gallery: [
+          { src: '../../images/images-blogs/stop-kalung2.jpeg', caption: 'Panduan Penandaan dan Pemeriksaan Kesehatan Berkala' },
+          { src: '../../images/images-blogs/stop-kalung3.jpeg', caption: 'Standar Kalung Pengaman Reflektif UNESA' }
+        ],
+        body: `
+          <p class="text-base leading-relaxed">
+            Interaksi dengan kucing dapat menjadi pelepas stres yang menyenangkan di sela-sela jam perkuliahan. Namun, ada beberapa hal mendasar yang perlu diperhatikan demi kesehatan kucing maupun kenyamanan bersama di lingkungan akademik.
+          </p>
+
+          <h3 class="font-display font-bold text-xl text-ink mt-2">Makanan yang Aman &amp; Dilarang</h3>
+          <p>
+            Hindari memberi sisa makanan manusia yang mengandung banyak cabai, minyak, tulang ayam tajam, bawang, atau cokelat karena dapat merusak organ pencernaan anabul. Berikanlah cat food kering (dry food) atau basah (wet food) di wadah yang bersih.
+          </p>
+        `
+      }
+    ];
+
+    function loadArticle() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const articleId = urlParams.get('id') || 'stop-lepas-kalung';
+
+      const article = articlesMaster.find(a => a.id === articleId) || articlesMaster[0];
+      currentArticleData = article;
+
+      // Set Page Title & Breadcrumb
+      document.title = `${article.title} — MeowNesa | Jaga Satwa UNESA`;
+      document.getElementById('breadArticleTitle').innerText = article.title;
+
+      // Fill Elements
+      document.getElementById('artCategoryBadge').className = `inline-block px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3 ${article.categoryColor}`;
+      document.getElementById('artCategoryBadge').innerText = article.categoryLabel;
+      document.getElementById('artTitle').innerText = article.title;
+      document.getElementById('artAuthor').innerText = article.author;
+      document.getElementById('artDate').innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${article.date}`;
+      document.getElementById('artReadTime').innerHTML = `<i data-lucide="clock" class="w-3.5 h-3.5"></i> ${article.readTime} baca`;
+      document.getElementById('artCoverImg').src = article.coverImg;
+      document.getElementById('artCoverCaption').innerText = article.coverCaption;
+      document.getElementById('artBodyContent').innerHTML = article.body;
+
+      // Fill Gallery with Zoomable Lightbox Cards
+      const galleryGrid = document.getElementById('artGalleryGrid');
+      galleryGrid.innerHTML = '';
+      if (article.gallery && article.gallery.length > 0) {
+        article.gallery.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'relative rounded-2xl overflow-hidden bg-cream border border-line p-2 hover:border-magenta transition cursor-zoom-in group shadow-sm flex flex-col items-center';
+          card.onclick = () => openLightbox(item.src, item.caption);
+          card.innerHTML = `
+            <div class="h-48 sm:h-56 w-full flex items-center justify-center overflow-hidden rounded-xl bg-white/60">
+              <img src="${item.src}" alt="${item.caption}" class="max-h-full max-w-full object-contain transition duration-300 group-hover:scale-105">
+            </div>
+            <div class="mt-2 w-full flex items-center justify-between text-[11px] text-ink font-medium px-1">
+              <span class="truncate max-w-[80%] text-ink-muted">${item.caption}</span>
+              <span class="text-magenta font-bold flex items-center gap-0.5"><i data-lucide="zoom-in" class="w-3 h-3"></i> Zoom</span>
+            </div>
+          `;
+          galleryGrid.appendChild(card);
+        });
+      } else {
+        document.getElementById('artGallerySection').classList.add('hidden');
+      }
+
+      // Render Related Articles in Sidebar
+      const relatedList = document.getElementById('relatedArticlesList');
+      relatedList.innerHTML = '';
+      const otherArticles = articlesMaster.filter(a => a.id !== article.id).slice(0, 3);
+      otherArticles.forEach(rel => {
+        const item = document.createElement('a');
+        item.href = `article-detail.html?id=${rel.id}`;
+        item.className = 'flex gap-3 group items-center';
+        item.innerHTML = `
+          <div class="w-16 h-16 rounded-xl overflow-hidden bg-cream flex-shrink-0 border border-line">
+            <img src="${rel.coverImg}" alt="${rel.title}" class="w-full h-full object-cover group-hover:scale-105 transition">
+          </div>
+          <div class="flex-1">
+            <span class="text-[10px] text-magenta font-bold block">${rel.categoryLabel}</span>
+            <h4 class="font-display font-bold text-xs text-ink group-hover:text-magenta transition line-clamp-2 leading-snug">${rel.title}</h4>
+            <span class="text-[10px] text-ink-muted">${rel.date}</span>
+          </div>
+        `;
+        relatedList.appendChild(item);
+      });
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Lightbox Modal Functions
+    function zoomCoverImage() {
+      if (currentArticleData) {
+        openLightbox(currentArticleData.coverImg, currentArticleData.coverCaption);
+      }
+    }
+
+    function openLightbox(src, caption) {
+      const modal = document.getElementById('lightboxModal');
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      if (!modal || !img) return;
+
+      img.src = src;
+      cap.innerText = caption || 'Dokumentasi Resmi Jaga Satwa UNESA';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    function shareLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const btnText = document.getElementById('shareBtnText');
+        btnText.innerText = 'Tautan Disalin!';
+        setTimeout(() => {
+          btnText.innerText = 'Salin Tautan';
+        }, 2000);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', loadArticle);
+  </script>
+
+  <!-- MeowNesa Shared Layout Script -->
+  <script src="../../components/layout.js"></script>
+</body>
+</html>

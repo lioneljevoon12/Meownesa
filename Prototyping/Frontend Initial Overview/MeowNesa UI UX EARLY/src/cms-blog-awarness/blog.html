@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Artikel & Edukasi — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 10px 30px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- ================= APP HEADER COMPONENT ================= -->
+  <div id="app-header" data-active-nav="artikel"></div>
+
+  <!-- ================= MAIN BLOG CONTENT ================= -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-ink-muted mb-6 font-medium">
+      <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
+      <span>/</span>
+      <span class="text-magenta font-bold">Artikel &amp; Edukasi Satwa</span>
+    </nav>
+
+    <!-- Page Header Banner (Compact & Clean) -->
+    <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card mb-8 relative overflow-hidden">
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2.5 border border-magenta/20">
+          <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+          <span>Pusat Edukasi &amp; Publikasi Komunitas Jaga Satwa UNESA</span>
+        </div>
+        <h1 class="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-ink leading-tight">
+          Artikel, Edukasi &amp; Kabar Anabul Kampus
+        </h1>
+        <p class="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
+          Temukan panduan kepedulian satwa, cerita kegiatan Jaga Satwa UNESA, kampanye perlindungan kalung kucing kampus, informasi kucing hilang, dan karya seni mahasiswa.
+        </p>
+      </div>
+      <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-sun/10 rounded-full blur-2xl pointer-events-none"></div>
+    </div>
+
+    <!-- Featured Headline Story (Sleek & Compact Horizontal Card) -->
+    <section class="mb-8">
+      <div class="bg-white border-2 border-magenta/20 rounded-3xl overflow-hidden shadow-card hover:shadow-highlight transition-all duration-300 flex flex-col md:flex-row group">
+        
+        <!-- Left Thumbnail (Compact Aspect Ratio with Zoom) -->
+        <div class="md:w-72 lg:w-80 relative bg-cream flex-shrink-0 h-48 sm:h-56 md:h-auto overflow-hidden">
+          <img src="../../images/images-blogs/stop-kalungcover.jpeg" alt="Kampanye Kalung Kucing UNESA" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-zoom-in" onclick="openLightbox('../../images/images-blogs/stop-kalungcover.jpeg', 'Kampanye Stop Melepas Kalung Kucing UNESA')">
+          <span class="absolute top-3 left-3 bg-coral text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow flex items-center gap-1">
+            <i data-lucide="alert-circle" class="w-3 h-3"></i>
+            <span>KAMPANYE UTAMA</span>
+          </span>
+          <span class="absolute bottom-2.5 right-2.5 bg-ink/75 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded font-medium flex items-center gap-1 cursor-zoom-in" onclick="openLightbox('../../images/images-blogs/stop-kalungcover.jpeg', 'Kampanye Stop Melepas Kalung Kucing UNESA')">
+            <i data-lucide="zoom-in" class="w-2.5 h-2.5 text-sun"></i> Zoom
+          </span>
+        </div>
+
+        <!-- Right Content Info -->
+        <div class="p-5 sm:p-6 lg:p-7 flex-1 flex flex-col justify-between gap-4">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2.5 text-xs text-ink-muted font-semibold">
+              <span class="text-magenta font-bold">Edukasi &amp; Advokasi</span>
+              <span>•</span>
+              <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 3 Menit Baca</span>
+              <span>•</span>
+              <span>30 Sep 2026</span>
+            </div>
+
+            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-ink group-hover:text-magenta transition leading-snug">
+              <a href="article-detail.html?id=stop-lepas-kalung">Kenapa Kucing UNESA Pakai Kalung? Jangan Sembarangan Dilepas!</a>
+            </h2>
+
+            <p class="text-xs sm:text-sm text-ink-muted leading-relaxed line-clamp-2 sm:line-clamp-3">
+              Kalung reflektif pada kucing UNESA bukan aksesoris hiasan belaka. Kalung ini adalah tanda bahwa kucing telah steril &amp; divaksinasi, sekaligus memantulkan cahaya lampu kendaraan saat malam hari agar kucing tidak tertabrak.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between pt-3 border-t border-line">
+            <div class="flex items-center gap-2">
+              <img src="../../images/jagasatwa-logo.png" alt="Tim Jaga Satwa" class="w-7 h-7 rounded-full border border-line p-0.5 bg-cream brightness-0">
+              <div>
+                <span class="text-xs font-bold text-ink block leading-none">Tim Relawan Jaga Satwa</span>
+                <span class="text-[10px] text-ink-muted">Divisi Edukasi UNESA</span>
+              </div>
+            </div>
+
+            <a href="article-detail.html?id=stop-lepas-kalung" class="px-4 py-2 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+              <span>Baca Artikel</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Missing Pet Urgent Notice Callout Banner (Sleek) -->
+    <section class="mb-8">
+      <div class="bg-gradient-to-r from-coral/10 via-sun/15 to-coral/10 border-2 border-coral/30 rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-coral text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-extrabold text-coral uppercase tracking-wider block">PENGUMUMAN DARURAT</span>
+            <h3 class="font-display font-bold text-base sm:text-lg text-ink">Bantu Temukan Anabul Hilang: Emma &amp; Jeni</h3>
+            <p class="text-xs text-ink-muted mt-0.5 max-w-xl">
+              Dua anabul binaan kampus dilaporkan hilang di sekitar selasar gedung FBS &amp; Vokasi. Jika melihat, mohon segera lapor.
+            </p>
+          </div>
+        </div>
+        <a href="article-detail.html?id=kucing-hilang-darurat" class="px-4 py-2 rounded-xl bg-coral hover:bg-coral/90 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm flex-shrink-0 transition">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i>
+          <span>Lihat Foto &amp; Ciri Kucing</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Search & Filter Controls -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none" id="categoryFilters">
+        <button onclick="filterCategory('ALL')" class="cat-pill active px-4 py-2 rounded-full text-xs font-bold bg-magenta text-white shadow-sm transition flex-shrink-0" data-cat="ALL">
+          Semua Artikel (5)
+        </button>
+        <button onclick="filterCategory('EDUKASI')" class="cat-pill px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition flex-shrink-0" data-cat="EDUKASI">
+          Edukasi &amp; Kampanye (2)
+        </button>
+        <button onclick="filterCategory('KOMUNITAS')" class="cat-pill px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition flex-shrink-0" data-cat="KOMUNITAS">
+          Kabar Komunitas (1)
+        </button>
+        <button onclick="filterCategory('HILANG')" class="cat-pill px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition flex-shrink-0" data-cat="HILANG">
+          Info Kucing Hilang (1)
+        </button>
+        <button onclick="filterCategory('KARYA')" class="cat-pill px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition flex-shrink-0" data-cat="KARYA">
+          Kreativitas Mahasiswa (1)
+        </button>
+      </div>
+
+      <!-- Live Search Bar -->
+      <div class="relative w-full md:w-72 flex-shrink-0">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </span>
+        <input id="articleSearchInput" type="text" placeholder="Cari judul artikel atau topik..." oninput="handleSearch(this.value)"
+          class="w-full pl-10 pr-4 py-2.5 rounded-full border border-line bg-white text-xs focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition shadow-sm">
+      </div>
+
+    </div>
+
+    <!-- Article Cards Grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+      <!-- Generated via JS -->
+    </div>
+
+    <!-- Empty State Message -->
+    <div id="noArticlesFound" class="hidden text-center py-16 bg-white border border-line rounded-3xl shadow-sm">
+      <div class="w-14 h-14 rounded-2xl bg-cream flex items-center justify-center mx-auto mb-3 text-ink-muted">
+        <i data-lucide="book-x" class="w-7 h-7"></i>
+      </div>
+      <h3 class="font-display font-bold text-lg text-ink">Tidak Ada Artikel Ditemukan</h3>
+      <p class="text-xs text-ink-muted mt-1">Coba gunakan kata kunci pencarian lain atau pilih kategori Semua.</p>
+    </div>
+
+  </main>
+
+  <!-- ================= LIGHTBOX MODAL FULLSCREEN ZOOM ================= -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-ink/90 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeLightbox()">
+    <div class="relative max-w-4xl w-full max-h-[92vh] flex flex-col items-center" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white hover:text-sun font-bold text-xs sm:text-sm flex items-center gap-1.5 transition bg-white/15 px-3.5 py-1.5 rounded-full border border-white/20">
+        <i data-lucide="x" class="w-4 h-4"></i>
+        <span>Tutup (ESC)</span>
+      </button>
+      <img id="lightboxImg" src="" alt="Zoom Foto" class="max-h-[80vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl border border-white/20 bg-ink/60">
+      <p id="lightboxCaption" class="text-white/90 text-xs sm:text-sm mt-3 font-semibold text-center max-w-xl"></p>
+    </div>
+  </div>
+
+  <!-- ================= APP FOOTER COMPONENT ================= -->
+  <div id="app-footer"></div>
+
+  <!-- ================= CLIENT JAVASCRIPT ================= -->
+  <script>
+    const articlesData = [
+      {
+        id: 'stop-lepas-kalung',
+        title: 'Kenapa Kucing UNESA Pakai Kalung? Jangan Sembarangan Dilepas!',
+        summary: 'Ketahui alasan vital penggunaan kalung reflektif kucing kampus UNESA: tanda steril, identitas resmi, dan proteksi keselamatan malam hari.',
+        category: 'EDUKASI',
+        categoryLabel: 'Edukasi & Kampanye',
+        categoryColor: 'bg-magenta text-white',
+        readTime: '3 menit',
+        date: '30 September 2026',
+        author: 'Divisi Edukasi Jaga Satwa',
+        coverImg: '../../images/images-blogs/stop-kalungcover.jpeg'
+      },
+      {
+        id: 'sejarah-jaga-satwa',
+        title: 'Perjalanan Jaga Satwa UNESA: Dari Relawan Kampus Menjadi Pelindung Kucing',
+        summary: 'Kisah awal terbentuknya gerakan peduli kucing kampus di UNESA Ketintang dan Lidah Wetan serta kolaborasi bersama klinik dokter hewan.',
+        category: 'KOMUNITAS',
+        categoryLabel: 'Kabar Komunitas',
+        categoryColor: 'bg-sun text-ink',
+        readTime: '4 menit',
+        date: '28 September 2026',
+        author: 'Pengurus Jaga Satwa',
+        coverImg: '../../images/images-blogs/blog-hari jadi.jpeg'
+      },
+      {
+        id: 'pawtogenics-karya-mahasiswa',
+        title: 'Pawtogenics UNESA: Wadah Kreativitas Mahasiswa Menyuarakannya Lewat Seni',
+        summary: 'Koleksi ilustrasi dan fotografi karya mahasiswa UNESA yang menggambarkan kehangatan anabul kampus dalam berbagai sudut pandang artistik.',
+        category: 'KARYA',
+        categoryLabel: 'Kreativitas Mahasiswa',
+        categoryColor: 'bg-emerald-600 text-white',
+        readTime: '3 menit',
+        date: '25 September 2026',
+        author: 'Tim Media & Kreatif',
+        coverImg: '../../images/images-blogs/pawtogenics-karya-cover.jpeg'
+      },
+      {
+        id: 'kucing-hilang-darurat',
+        title: 'Info Pencarian: Kucing Hilang di Sekitar Gedung Sawunggaling FBS & Vokasi',
+        summary: 'Bantu cari Emma dan Jeni yang belum kembali ke titik feeding reguler sejak 2 hari lalu. Cek tanda khusus dan foto terbaru.',
+        category: 'HILANG',
+        categoryLabel: 'Info Kucing Hilang',
+        categoryColor: 'bg-coral text-white',
+        readTime: '2 menit',
+        date: '24 September 2026',
+        author: 'Rescue Coordinator',
+        coverImg: '../../images/images-blogs/announcement-kucing-hilang.jpeg'
+      },
+      {
+        id: 'etika-interaksi-kucing',
+        title: 'Etika Berinteraksi & Memberi Makan Kucing di Lingkungan Kampus UNESA',
+        summary: 'Aturan memberi makanan yang aman bagi anabul, tempat yang tepat, serta larangan memberikan makanan beracun seperti cokelat dan bawang.',
+        category: 'EDUKASI',
+        categoryLabel: 'Edukasi & Kampanye',
+        categoryColor: 'bg-magenta text-white',
+        readTime: '3 menit',
+        date: '20 September 2026',
+        author: 'Divisi Kesehatan Satwa',
+        coverImg: '../../images/images-blogs/stop-kalung1.jpeg'
+      }
+    ];
+
+    let currentCategory = 'ALL';
+    let currentSearch = '';
+
+    function renderArticles() {
+      const grid = document.getElementById('articlesGrid');
+      const emptyState = document.getElementById('noArticlesFound');
+      grid.innerHTML = '';
+
+      const filtered = articlesData.filter(art => {
+        const matchesCat = currentCategory === 'ALL' || art.category === currentCategory;
+        const matchesSearch = art.title.toLowerCase().includes(currentSearch.toLowerCase()) || 
+                              art.summary.toLowerCase().includes(currentSearch.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      filtered.forEach(article => {
+        const card = document.createElement('article');
+        card.className = 'bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-highlight transition-all duration-300 flex flex-col group';
+        card.innerHTML = `
+          <div class="relative h-48 bg-cream overflow-hidden cursor-pointer" onclick="location.href='article-detail.html?id=${article.id}'">
+            <img src="${article.coverImg}" alt="${article.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <span class="absolute top-3.5 left-3.5 ${article.categoryColor} font-bold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider shadow">
+              ${article.categoryLabel}
+            </span>
+          </div>
+
+          <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 text-xs text-ink-muted mb-2 font-medium">
+                <span>${article.date}</span>
+                <span>•</span>
+                <span>${article.readTime} baca</span>
+              </div>
+
+              <h3 class="font-display font-bold text-base sm:text-lg text-ink group-hover:text-magenta transition leading-snug">
+                <a href="article-detail.html?id=${article.id}">${article.title}</a>
+              </h3>
+
+              <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
+                ${article.summary}
+              </p>
+            </div>
+
+            <div class="pt-4 mt-4 border-t border-line flex items-center justify-between">
+              <span class="text-[11px] font-bold text-ink-muted">${article.author}</span>
+              <a href="article-detail.html?id=${article.id}" class="text-xs font-bold text-magenta group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                <span>Baca Selengkapnya</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.className = 'cat-pill active px-4 py-2 rounded-full text-xs font-bold bg-magenta text-white shadow-sm transition flex-shrink-0';
+        } else {
+          btn.className = 'cat-pill px-4 py-2 rounded-full text-xs font-bold bg-white text-ink hover:bg-magenta-50 border border-line transition flex-shrink-0';
+        }
+      });
+      renderArticles();
+    }
+
+    function handleSearch(query) {
+      currentSearch = query;
+      renderArticles();
+    }
+
+    // Lightbox Modal Functions
+    function openLightbox(src, caption) {
+      const modal = document.getElementById('lightboxModal');
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      if (!modal || !img) return;
+
+      img.src = src;
+      cap.innerText = caption || 'Dokumentasi Resmi Jaga Satwa UNESA';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      renderArticles();
+    });
+  </script>
+
+  <!-- MeowNesa Shared Layout Script -->
+  <script src="../../components/layout.js"></script>
+</body>
+</html>

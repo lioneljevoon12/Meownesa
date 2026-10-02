@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kanal Donasi Resmi — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- ================= APP HEADER COMPONENT ================= -->
+  <div id="app-header" data-active-nav="donasi"></div>
+
+  <!-- ================= MAIN DONATION CONTENT ================= -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-ink-muted mb-6 font-medium">
+      <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
+      <span>/</span>
+      <span class="text-magenta font-bold">Kanal Donasi Resmi</span>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <div class="bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card mb-10 relative overflow-hidden">
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-3 border border-magenta/20">
+          <i data-lucide="heart-handshake" class="w-4 h-4 text-magenta"></i>
+          <span>Dukungan Operasional Kesejahteraan Satwa Kampus</span>
+        </div>
+        <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
+          Kanal Donasi Resmi Jaga Satwa UNESA
+        </h1>
+        <p class="text-sm sm:text-base text-ink-muted mt-3 leading-relaxed">
+          Seluruh donasi dari Sobat Jagat 100% digunakan untuk pembiayaan pakan harian (dry &amp; wet food), biaya sterilisasi medis klinik dokter hewan, pengobatan anabul sakit, serta pengadaan kalung reflektif pengaman di lingkungan kampus.
+        </p>
+      </div>
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-magenta/5 rounded-full blur-2xl pointer-events-none"></div>
+    </div>
+
+    <!-- 2 Columns Grid: Donation Accounts (Left) & Usage Transparency / Note (Right) -->
+    <div class="grid lg:grid-cols-12 gap-8 items-start mb-12">
+      
+      <!-- ================= LEFT COLUMN: OFFICIAL PAYMENT ACCOUNTS (7 cols) ================= -->
+      <div class="lg:col-span-7 flex flex-col gap-6">
+        
+        <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-6">
+          <div>
+            <span class="text-xs font-bold text-magenta tracking-wider uppercase block">Rekening Resmi Komunitas</span>
+            <h2 class="font-display font-bold text-xl sm:text-2xl text-ink mt-1">Pilihan Saluran Donasi</h2>
+            <p class="text-xs sm:text-sm text-ink-muted mt-1">Silakan transfer donasi terbaik Anda melalui rekening bank atau e-wallet resmi di bawah ini:</p>
+          </div>
+
+          <!-- Accounts Cards Grid -->
+          <div class="grid sm:grid-cols-2 gap-4">
+            
+            <!-- Bank BCA Card -->
+            <div class="p-5 rounded-2xl bg-cream border border-line flex flex-col justify-between gap-4">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-magenta uppercase tracking-wider">Bank BCA</span>
+                  <i data-lucide="credit-card" class="w-4 h-4 text-magenta"></i>
+                </div>
+                <span class="font-display font-extrabold text-xl text-ink block mt-2 tracking-wider" id="bcaAccNumber">088-7261-9921</span>
+                <span class="text-xs text-ink-muted block mt-0.5 font-medium">a.n. Jaga Satwa UNESA</span>
+              </div>
+              <button onclick="copyToClipboard('08872619921', this)" class="w-full py-2 px-3 rounded-xl bg-white hover:bg-magenta-50 border border-line text-xs font-bold text-magenta flex items-center justify-center gap-1.5 transition shadow-sm">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span>Salin No. Rekening</span>
+              </button>
+            </div>
+
+            <!-- E-Wallet Card -->
+            <div class="p-5 rounded-2xl bg-cream border border-line flex flex-col justify-between gap-4">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-coral uppercase tracking-wider">GoPay / ShopeePay</span>
+                  <i data-lucide="smartphone" class="w-4 h-4 text-coral"></i>
+                </div>
+                <span class="font-display font-extrabold text-xl text-ink block mt-2 tracking-wider" id="ewalletAccNumber">0812-3456-7890</span>
+                <span class="text-xs text-ink-muted block mt-0.5 font-medium">a.n. Jaga Satwa UNESA</span>
+              </div>
+              <button onclick="copyToClipboard('081234567890', this)" class="w-full py-2 px-3 rounded-xl bg-white hover:bg-magenta-50 border border-line text-xs font-bold text-magenta flex items-center justify-center gap-1.5 transition shadow-sm">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span>Salin No. E-Wallet</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Confirmation Banner Box -->
+          <div class="p-4 rounded-2xl bg-magenta-50 border border-magenta/20 text-xs text-ink flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <i data-lucide="message-circle" class="w-5 h-5 text-magenta flex-shrink-0"></i>
+              <span>Konfirmasi bukti transfer donasi via Direct Message (DM) Instagram:</span>
+            </div>
+            <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="font-bold text-white bg-magenta hover:bg-magenta-dark px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 w-fit flex-shrink-0 shadow-sm">
+              <i data-lucide="instagram" class="w-3.5 h-3.5"></i>
+              <span>@jagasatwa.unesa</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= RIGHT COLUMN: ALLOCATION & SYSTEM DISCLAIMER (5 cols) ================= -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        
+        <!-- Allocation Breakdown Card -->
+        <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-4">
+          <h3 class="font-display font-bold text-lg text-ink flex items-center gap-2 border-b border-line pb-3">
+            <i data-lucide="pie-chart" class="w-4 h-4 text-magenta"></i>
+            <span>Penyaluran Dana Donasi</span>
+          </h3>
+
+          <ul class="space-y-3.5 text-xs text-ink-light">
+            <li class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-xl bg-sun-light text-ink flex items-center justify-center font-bold text-sm flex-shrink-0">
+                🍲
+              </div>
+              <div>
+                <strong class="text-ink block font-semibold text-xs">Pakan Harian (Street Feeding)</strong>
+                <span class="text-ink-muted">Penyediaan dry food dan wet food bernutrisi di titik-titik kumpul kucing Ketintang &amp; Lidah Wetan.</span>
+              </div>
+            </li>
+
+            <li class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm flex-shrink-0 border border-emerald-200">
+                💉
+              </div>
+              <div>
+                <strong class="text-ink block font-semibold text-xs">Sterilisasi &amp; Vaksinasi Medis</strong>
+                <span class="text-ink-muted">Bekerja sama secara resmi dengan Klinik Nusantara Vet untuk kontrol populasi sehat &amp; bebas rabies.</span>
+              </div>
+            </li>
+
+            <li class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-xl bg-coral-light text-coral flex items-center justify-center font-bold text-sm flex-shrink-0">
+                🩹
+              </div>
+              <div>
+                <strong class="text-ink block font-semibold text-xs">Pengobatan Darurat</strong>
+                <span class="text-ink-muted">Biaya rawat inap, salep jamur/luka, obat flu, dan pertolongan pertama anabul kampus yang sakit.</span>
+              </div>
+            </li>
+
+            <li class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center font-bold text-sm flex-shrink-0 border border-magenta/20">
+                🏷️
+              </div>
+              <div>
+                <strong class="text-ink block font-semibold text-xs">Pengadaan Kalung Reflektif</strong>
+                <span class="text-ink-muted">Identitas penanda steril sekaligus pelindung keselamatan kucing dari kendaraan di malam hari.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- System Scope Notice / Disclaimer -->
+        <div class="bg-cream/60 border border-line rounded-3xl p-5 text-xs text-ink-muted leading-relaxed">
+          <strong class="text-ink block font-semibold mb-1 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-magenta"></i>
+            Catatan Sistem MeowNesa:
+          </strong>
+          MeowNesa bukan aplikasi payment gateway atau pengelola transaksi keuangan otomatis. Seluruh bantuan disalurkan langsung secara transparan kepada rekening pengurus komunitas Jaga Satwa UNESA.
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= APP FOOTER COMPONENT ================= -->
+  <div id="app-footer"></div>
+
+  <!-- ================= CLIENT JAVASCRIPT ================= -->
+  <script>
+    function copyToClipboard(text, btnElement) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalHTML = btnElement.innerHTML;
+        btnElement.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-700"></i><span class="text-emerald-700">Berhasil Disalin!</span>';
+        btnElement.classList.add('bg-emerald-50', 'border-emerald-200');
+        if (window.lucide) lucide.createIcons();
+        setTimeout(() => {
+          btnElement.innerHTML = originalHTML;
+          btnElement.classList.remove('bg-emerald-50', 'border-emerald-200');
+          if (window.lucide) lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+
+  <!-- MeowNesa Shared Layout Script -->
+  <script src="../../components/layout.js"></script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Formulir Pengajuan Adopsi — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.15)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- ================= APP HEADER COMPONENT ================= -->
+  <div id="app-header"></div>
+
+  <!-- ================= MAIN ADOPTION FORM CONTENT ================= -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-ink-muted mb-6 font-medium">
+      <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
+      <span>/</span>
+      <a href="../cat-informations/index.html" class="hover:text-magenta transition">Informasi Kucing</a>
+      <span>/</span>
+      <span class="text-magenta font-bold">Pengajuan Adopsi</span>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <div class="bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card mb-8 relative overflow-hidden">
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-3 border border-magenta/20">
+          <i data-lucide="heart" class="w-4 h-4 text-magenta fill-magenta"></i>
+          <span>Program Adopsi Terverifikasi Jaga Satwa UNESA</span>
+        </div>
+        <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
+          Formulir Pengajuan Adopsi Kucing
+        </h1>
+        <p class="text-xs sm:text-sm text-ink-muted mt-3 leading-relaxed">
+          Terima kasih atas kepedulian Anda untuk memberikan rumah yang penuh kasih bagi anabul kampus UNESA. Seluruh kucing yang terdaftar telah melalui pemeriksaan kesehatan berkala, divaksinasi, dan disterilisasi.
+        </p>
+      </div>
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-sun/10 rounded-full blur-2xl pointer-events-none"></div>
+    </div>
+
+    <!-- 2 Columns Grid: Form (Left 8 cols) & Sidebar Requirements (Right 4 cols) -->
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- ================= LEFT: ADOPTION APPLICATION FORM ================= -->
+      <div class="lg:col-span-8 bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card flex flex-col gap-8">
+        
+        <form id="adoptionApplyForm" onsubmit="handleApplySubmit(event)" class="flex flex-col gap-8">
+          
+          <!-- STEP 1: PILIH KUCING -->
+          <div class="border-b border-line pb-8">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-7 h-7 rounded-full bg-magenta text-white font-display font-bold text-xs flex items-center justify-center">1</span>
+              <h3 class="font-display font-bold text-xl text-ink">Pilih Kucing yang Ingin Diadopsi</h3>
+            </div>
+
+            <!-- Selected Cat Dynamic Card Preview -->
+            <div id="catPreviewBox" class="p-4 rounded-2xl bg-cream border border-line flex flex-col sm:flex-row items-center gap-4 mb-4">
+              <img id="catPreviewImg" src="../../images/cat-images/cat1.jpg" alt="Foto Kucing" class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover border border-line shadow-sm">
+              <div class="flex-1 text-center sm:text-left">
+                <div class="flex items-center justify-center sm:justify-start gap-2">
+                  <h4 class="font-display font-extrabold text-lg text-ink" id="catPreviewName">Mochi</h4>
+                  <span id="catPreviewGender" class="text-xs font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded-md border border-magenta/20">Betina</span>
+                  <span class="text-xs font-bold text-ink bg-sun px-2 py-0.5 rounded-md">Siap Diadopsi</span>
+                </div>
+                <p class="text-xs text-ink-muted mt-1" id="catPreviewDetails">± 2 Tahun • Kampus Ketintang (Gedung K10 Vokasi)</p>
+                <p class="text-xs text-ink-light mt-1.5 font-medium" id="catPreviewCollar">🏷️ Kalung: Merah Reflektif (KTT-01) • Sudah Steril &amp; Vaksin</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-ink mb-1.5">Ganti Pilihan Kucing Lain:</label>
+              <select id="catSelectInput" onchange="onCatSelectionChange(this.value)" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs text-ink font-semibold focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+                <option value="Mochi">Mochi — Betina, ± 2 Tahun (Kampus Ketintang)</option>
+                <option value="Milo">Milo — Jantan, ± 3 Tahun (Kampus Lidah Wetan)</option>
+                <option value="Oyen">Oyen Barbar — Jantan, ± 1.5 Tahun (Kampus Ketintang)</option>
+                <option value="Kismis">Kismis — Betina, ± 4 Tahun (Kampus Lidah Wetan)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- STEP 2: DATA IDENTITAS CALON ADOPTER -->
+          <div class="border-b border-line pb-8">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-7 h-7 rounded-full bg-magenta text-white font-display font-bold text-xs flex items-center justify-center">2</span>
+              <h3 class="font-display font-bold text-xl text-ink">Identitas &amp; Kontak Calon Adopter</h3>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-ink mb-1.5">Nama Lengkap Sesuai KTP <span class="text-coral">*</span></label>
+                <input type="text" id="adopterName" required placeholder="Contoh: Budi Santoso" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Nomor WhatsApp Aktif <span class="text-coral">*</span></label>
+                <input type="tel" id="adopterPhone" required placeholder="Contoh: 081234567890" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+                <span class="text-[10px] text-ink-muted mt-1 block">Digunakan tim Jaga Satwa untuk koordinasi screening &amp; jadwal serah terima.</span>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Alamat Email Aktif <span class="text-coral">*</span></label>
+                <input type="email" id="adopterEmail" required placeholder="Contoh: budi@gmail.com" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-ink mb-1.5">Alamat Lengkap Tempat Tinggal (Domisili) <span class="text-coral">*</span></label>
+                <textarea id="adopterAddress" required rows="2.5" placeholder="Contoh: Jl. Ketintang Madya No. 45, Gayungan, Surabaya" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition leading-relaxed"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: KONDISI TEMPAT TINGGAL & KESIAPAN FINANSIAL -->
+          <div class="border-b border-line pb-8">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-7 h-7 rounded-full bg-magenta text-white font-display font-bold text-xs flex items-center justify-center">3</span>
+              <h3 class="font-display font-bold text-xl text-ink">Kondisi Hunian &amp; Kesiapan Finansial</h3>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Status Tempat Tinggal <span class="text-coral">*</span></label>
+                <select id="adopterHousing" required class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+                  <option value="RUMAH_SENDIRI">Rumah Pribadi Milik Sendiri</option>
+                  <option value="RUMAH_KELUARGA">Rumah Orang Tua / Keluarga</option>
+                  <option value="KONTRAKAN_RAMAH_HEWAN">Kontrakan / Sewa (Sudah Izin Pemilik)</option>
+                  <option value="KOST_RAMAH_HEWAN">Kost Bebas Hewan (Sudah Izin Ibu Kost)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Persetujuan Seluruh Penghuni Rumah <span class="text-coral">*</span></label>
+                <select id="adopterFamilyConsent" required class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+                  <option value="SETUJU">Semua anggota keluarga/teman serumah setuju &amp; tidak ada alergi</option>
+                  <option value="SEBAGIAN">Sebagian besar setuju</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Pekerjaan / Sumber Penghasilan <span class="text-coral">*</span></label>
+                <select id="adopterIncome" required class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+                  <option value="KARYAWAN_TETAP">Karyawan Swasta / BUMN / PNS (Penghasilan Tetap)</option>
+                  <option value="WIRAUSAHA">Wiraswasta / Profesional Mandiri</option>
+                  <option value="MAHASISWA_MANDIRI">Mahasiswa (Memiliki Pekerjaan Sampingan / Usaha)</option>
+                  <option value="LAINNYA">Didukung Finansial Keluarga Penuh</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Sistem Pemeliharaan Kucing <span class="text-coral">*</span></label>
+                <select id="adopterIndoorPlan" required class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+                  <option value="INDOOR_LEPAS">Indoor di dalam rumah (bebas beraktivitas tanpa kandang sempit)</option>
+                  <option value="INDOOR_SEMI_OUTDOOR">Indoor dengan akses halaman tertutup berpagar aman</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: PEMAHAMAN PERAWATAN & KOMITMEN ADOPSI -->
+          <div class="border-b border-line pb-8">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-7 h-7 rounded-full bg-magenta text-white font-display font-bold text-xs flex items-center justify-center">4</span>
+              <h3 class="font-display font-bold text-xl text-ink">Pemahaman Perawatan &amp; Komitmen Adopsi</h3>
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Pengalaman Memelihara Kucing Sebelumnya <span class="text-coral">*</span></label>
+                <select id="adopterExperience" required class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+                  <option value="BERPENGALAMAN">Sedang / Pernah memelihara kucing sebelumnya dan paham perawatannya</option>
+                  <option value="PEMULA_SIAP_BELAJAR">Pemula pertama kali namun siap belajar &amp; mengikuti panduan Jaga Satwa</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-ink mb-1.5">Rencana Pakan Harian <span class="text-coral">*</span></label>
+                <input type="text" id="adopterFoodPlan" required placeholder="Contoh: Dry food berkualitas + selingan wet food dan air minum bersih setiap hari" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta transition">
+              </div>
+
+              <!-- Checkbox Agreements -->
+              <div class="mt-2 space-y-3 bg-cream/60 p-5 rounded-2xl border border-line">
+                <label class="flex items-start gap-3 cursor-pointer select-none">
+                  <input type="checkbox" required class="mt-1 w-4 h-4 rounded text-magenta focus:ring-magenta accent-magenta">
+                  <span class="text-xs text-ink-light leading-relaxed">
+                    <strong class="text-ink font-semibold">Pro Klinik Dokter Hewan:</strong> Bersedia membawa kucing ke dokter hewan/klinik jika kucing sakit dan memberikan vaksinasi tahunan secara rutin.
+                  </span>
+                </label>
+
+                <label class="flex items-start gap-3 cursor-pointer select-none">
+                  <input type="checkbox" required class="mt-1 w-4 h-4 rounded text-magenta focus:ring-magenta accent-magenta">
+                  <span class="text-xs text-ink-light leading-relaxed">
+                    <strong class="text-ink font-semibold">Serah Terima Resmi:</strong> Bersedia kucing diantarkan ke rumah, menandatangani <em>Surat Perjanjian Adopsi Resmi</em>, dan foto serah terima bersama relawan.
+                  </span>
+                </label>
+
+                <label class="flex items-start gap-3 cursor-pointer select-none">
+                  <input type="checkbox" required class="mt-1 w-4 h-4 rounded text-magenta focus:ring-magenta accent-magenta">
+                  <span class="text-xs text-ink-light leading-relaxed">
+                    <strong class="text-ink font-semibold">Follow-Up Berkala:</strong> Bersedia memberikan kabar update kondisi mingguan kepada CP Humas Jaga Satwa UNESA selama masa adaptasi.
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-[11px] text-ink-muted">
+              🔒 Data Anda aman dan hanya digunakan untuk keperluan verifikasi adopsi Jaga Satwa UNESA.
+            </p>
+            <button type="submit" id="submitAdoptBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-magenta hover:bg-magenta-dark text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Kirim Pengajuan Adopsi</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- ================= RIGHT: ADOPTION REQUIREMENTS & FLOW GUIDE ================= -->
+      <aside class="lg:col-span-4 flex flex-col gap-6 sticky top-28">
+        
+        <!-- Alur Seleksi Adopsi Box -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-4">
+          <h3 class="font-display font-bold text-base text-ink flex items-center gap-2 border-b border-line pb-3">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+            <span>Alur Resmi Adopsi Jaga Satwa</span>
+          </h3>
+
+          <ol class="space-y-3.5 text-xs text-ink-light relative border-l-2 border-magenta/20 ml-2 pl-4">
+            <li>
+              <span class="font-bold text-magenta block">1. Pengisian Formulir</span>
+              <span class="text-ink-muted text-[11px]">Mengisi data diri dan komitmen perawatan melalui formulir ini.</span>
+            </li>
+            <li>
+              <span class="font-bold text-ink block">2. Screening &amp; Verifikasi</span>
+              <span class="text-ink-muted text-[11px]">Tim Jaga Satwa memeriksa kesiapan hunian, finansial, dan pemahaman adopter.</span>
+            </li>
+            <li>
+              <span class="font-bold text-ink block">3. Keputusan &amp; Koordinasi</span>
+              <span class="text-ink-muted text-[11px]">Jika disetujui, relawan menghubungi via WhatsApp untuk jadwal antar.</span>
+            </li>
+            <li>
+              <span class="font-bold text-ink block">4. Serah Terima &amp; Surat Perjanjian</span>
+              <span class="text-ink-muted text-[11px]">Kucing diantar ke rumah, tanda tangan surat adopsi, dan foto bersama.</span>
+            </li>
+            <li>
+              <span class="font-bold text-ink block">5. Monitoring Mingguan</span>
+              <span class="text-ink-muted text-[11px]">Adopter membagikan update kondisi anabul ke CP Jaga Satwa secara berkala.</span>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Cek Status Pengajuan Box -->
+        <div class="bg-gradient-to-br from-magenta-50 to-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-3">
+          <div class="flex items-center gap-2 text-magenta font-bold text-xs">
+            <i data-lucide="search" class="w-4 h-4"></i>
+            <span>Sudah Pernah Mengajukan?</span>
+          </div>
+          <h4 class="font-display font-bold text-base text-ink">Lacak Status Pengajuan Anda</h4>
+          <p class="text-xs text-ink-muted leading-relaxed">
+            Gunakan Nomor Pengajuan dan Kode Tracking Anda untuk memeriksa tahapan screening secara langsung.
+          </p>
+          <a href="tracking.html" class="mt-2 py-2 px-4 rounded-xl bg-white border border-line hover:border-magenta text-magenta text-center font-bold text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+            <span>Buka Halaman Pelacakan</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- ================= SUCCESS MODAL (NOMOR PENGAJUAN & TRACKING CODE) ================= -->
+  <div id="successAdoptModal" class="fixed inset-0 z-50 bg-ink/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="relative max-w-lg w-full bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5 text-center">
+      
+      <!-- Icon Success -->
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl shadow-sm">
+        <i data-lucide="heart-handshake" class="w-8 h-8 text-emerald-600"></i>
+      </div>
+
+      <div>
+        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider block">BERHASIL DIKIRIM</span>
+        <h3 class="font-display font-extrabold text-2xl text-ink mt-1">Pengajuan Adopsi Telah Diterima!</h3>
+        <p class="text-xs text-ink-muted mt-2 leading-relaxed">
+          Terima kasih telah mengajukan adopsi anabul <strong id="successModalCatName" class="text-magenta">Mochi</strong>. Simpan Nomor Pengajuan &amp; Kode Tracking di bawah untuk memantau proses screening:
+        </p>
+      </div>
+
+      <!-- Ticket Box Credentials -->
+      <div class="bg-cream border-2 border-dashed border-magenta/30 rounded-2xl p-4 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between border-b border-line pb-2">
+          <span class="text-xs font-semibold text-ink-muted">Nomor Pengajuan:</span>
+          <span class="font-mono font-extrabold text-sm text-magenta" id="modalAppNumber">ADP-2026-00125</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-ink-muted">Kode Tracking:</span>
+          <span class="font-mono font-extrabold text-sm text-ink bg-sun/40 px-2.5 py-0.5 rounded-md" id="modalTrackingCode">8F4K2P</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2.5 pt-2">
+        <button onclick="copySubmissionData()" id="copyCodeBtn" class="w-full py-2.5 rounded-xl border border-line hover:border-magenta text-ink hover:text-magenta font-bold text-xs transition flex items-center justify-center gap-1.5 bg-cream/40">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span id="copyCodeBtnText">Salin Nomor &amp; Kode Tracking</span>
+        </button>
+        
+        <a id="directTrackBtn" href="tracking.html" class="w-full py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i>
+          <span>Lacak Status Pengajuan Sekarang</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= APP FOOTER COMPONENT ================= -->
+  <div id="app-footer"></div>
+
+  <!-- ================= CLIENT JAVASCRIPT ================= -->
+  <script>
+    const availableCats = {
+      'Mochi': {
+        name: 'Mochi',
+        gender: 'Betina',
+        age: '± 2 Tahun',
+        campus: 'Kampus Ketintang',
+        location: 'Gedung K10 Vokasi',
+        collar: 'Kalung Merah Reflektif (KTT-01)',
+        img: '../../images/cat-images/cat1.jpg'
+      },
+      'Milo': {
+        name: 'Milo',
+        gender: 'Jantan',
+        age: '± 3 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Dermaga Danau UNESA',
+        collar: 'Kalung Biru Reflektif (LWT-01)',
+        img: '../../images/cat-images/cat2-p1.jpg'
+      },
+      'Oyen': {
+        name: 'Oyen Barbar',
+        gender: 'Jantan',
+        age: '± 1.5 Tahun',
+        campus: 'Kampus Ketintang',
+        location: 'Kantin Pusat FT Ketintang',
+        collar: 'Kalung Oranye Reflektif (KTT-03)',
+        img: '../../images/cat-images/catoyen-p1.jpg'
+      },
+      'Kismis': {
+        name: 'Kismis',
+        gender: 'Betina',
+        age: '± 4 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Gedung Sawunggaling & FBS',
+        collar: 'Kalung Kuning Reflektif (LWT-06)',
+        img: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg'
+      }
+    };
+
+    let selectedCatKey = 'Mochi';
+    let currentAppNumber = '';
+    let currentTrackingCode = '';
+
+    function initCatSelection() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('cat');
+
+      if (catParam) {
+        const foundKey = Object.keys(availableCats).find(k => k.toLowerCase() === catParam.toLowerCase() || availableCats[k].name.toLowerCase().includes(catParam.toLowerCase()));
+        if (foundKey) {
+          selectedCatKey = foundKey;
+          document.getElementById('catSelectInput').value = foundKey;
+        }
+      }
+      updateCatPreview(selectedCatKey);
+    }
+
+    function onCatSelectionChange(key) {
+      selectedCatKey = key;
+      updateCatPreview(key);
+    }
+
+    function updateCatPreview(key) {
+      const cat = availableCats[key] || availableCats['Mochi'];
+      document.getElementById('catPreviewImg').src = cat.img;
+      document.getElementById('catPreviewName').innerText = cat.name;
+      document.getElementById('catPreviewGender').innerText = cat.gender;
+      document.getElementById('catPreviewDetails').innerText = `${cat.age} • ${cat.campus} (${cat.location})`;
+      document.getElementById('catPreviewCollar').innerText = `🏷️ Kalung: ${cat.collar} • Sudah Steril & Vaksin`;
+    }
+
+    function generateRandomCode(length = 6) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let res = '';
+      for (let i = 0; i < length; i++) {
+        res += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return res;
+    }
+
+    function generateAppNumber() {
+      const num = Math.floor(10000 + Math.random() * 90000);
+      return `ADP-2026-${num}`;
+    }
+
+    function handleApplySubmit(e) {
+      e.preventDefault();
+
+      const cat = availableCats[selectedCatKey];
+      const adopterName = document.getElementById('adopterName').value.trim();
+      const adopterPhone = document.getElementById('adopterPhone').value.trim();
+      const adopterEmail = document.getElementById('adopterEmail').value.trim();
+      const adopterAddress = document.getElementById('adopterAddress').value.trim();
+      const adopterHousing = document.getElementById('adopterHousing').value;
+      const adopterIncome = document.getElementById('adopterIncome').value;
+
+      currentAppNumber = generateAppNumber();
+      currentTrackingCode = generateRandomCode(6);
+
+      const submission = {
+        appNumber: currentAppNumber,
+        trackingCode: currentTrackingCode,
+        catName: cat.name,
+        catGender: cat.gender,
+        catCampus: cat.campus,
+        catImg: cat.img,
+        adopterName: adopterName,
+        adopterPhone: adopterPhone,
+        adopterEmail: adopterEmail,
+        adopterAddress: adopterAddress,
+        adopterHousing: adopterHousing,
+        adopterIncome: adopterIncome,
+        status: 'UNDER_REVIEW',
+        statusLabel: 'SEDANG DITINJAU (SCREENING)',
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        timeline: [
+          { time: 'Hari ini', title: 'Pengajuan Berhasil Diterima', desc: 'Data pengajuan telah masuk ke antrean verifikasi Jaga Satwa UNESA.', done: true },
+          { time: 'Dalam 1-2 Hari', title: 'Screening Kelayakan & Kontak Adopter', desc: 'Tim Jaga Satwa menghubungi via WhatsApp untuk verifikasi.', done: false },
+          { time: 'Tahap Akhir', title: 'Jadwal Serah Terima & Surat Perjanjian', desc: 'Kucing diantar ke alamat rumah dan penandatanganan dokumen.', done: false }
+        ]
+      };
+
+      // Save to localStorage for instant tracking
+      try {
+        const existing = JSON.parse(localStorage.getItem('meownesa_adoptions') || '[]');
+        existing.unshift(submission);
+        localStorage.setItem('meownesa_adoptions', JSON.stringify(existing));
+      } catch (err) {
+        console.error('LocalStorage error', err);
+      }
+
+      // Show Success Modal
+      document.getElementById('successModalCatName').innerText = cat.name;
+      document.getElementById('modalAppNumber').innerText = currentAppNumber;
+      document.getElementById('modalTrackingCode').innerText = currentTrackingCode;
+      document.getElementById('directTrackBtn').href = `tracking.html?appId=${currentAppNumber}&code=${currentTrackingCode}`;
+
+      document.getElementById('successAdoptModal').classList.remove('hidden');
+      document.getElementById('successAdoptModal').classList.add('flex');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function copySubmissionData() {
+      const text = `Nomor Pengajuan: ${currentAppNumber}\nKode Tracking: ${currentTrackingCode}\nKucing: ${selectedCatKey}`;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyCodeBtnText');
+        btnText.innerText = 'Nomor & Kode Berhasil Disalin!';
+        setTimeout(() => {
+          btnText.innerText = 'Salin Nomor & Kode Tracking';
+        }, 2000);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initCatSelection();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+
+  <!-- MeowNesa Shared Layout Script -->
+  <script src="../../components/layout.js"></script>
+</body>
+</html>

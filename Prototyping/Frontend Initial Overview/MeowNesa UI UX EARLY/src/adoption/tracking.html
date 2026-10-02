@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lacak Status Pengajuan Adopsi — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- ================= APP HEADER COMPONENT ================= -->
+  <div id="app-header"></div>
+
+  <!-- ================= MAIN TRACKING CONTENT ================= -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-ink-muted mb-6 font-medium">
+      <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
+      <span>/</span>
+      <a href="apply.html" class="hover:text-magenta transition">Adopsi Kucing</a>
+      <span>/</span>
+      <span class="text-magenta font-bold">Lacak Status Pengajuan</span>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <div class="bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card mb-8 relative overflow-hidden">
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-3 border border-magenta/20">
+          <i data-lucide="search" class="w-4 h-4 text-magenta"></i>
+          <span>Sistem Pemantauan Status Pengajuan Adopsi</span>
+        </div>
+        <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
+          Lacak Proses Pengajuan Adopsi
+        </h1>
+        <p class="text-xs sm:text-sm text-ink-muted mt-3 leading-relaxed">
+          Masukkan <strong>Nomor Pengajuan</strong> dan <strong>Kode Tracking</strong> yang Anda peroleh saat mengirimkan formulir untuk melihat tahapan screening dan jadwal serah terima anabul.
+        </p>
+      </div>
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-magenta/5 rounded-full blur-2xl pointer-events-none"></div>
+    </div>
+
+    <!-- Tracking Input Search Card -->
+    <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card mb-8">
+      <form id="trackingSearchForm" onsubmit="handleTrackingSearch(event)" class="grid sm:grid-cols-12 gap-4 items-end">
+        
+        <div class="sm:col-span-5">
+          <label class="block text-xs font-bold text-ink mb-1.5">Nomor Pengajuan <span class="text-coral">*</span></label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="inputAppNumber" required placeholder="Contoh: ADP-2026-00125" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs font-mono uppercase focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+          </div>
+        </div>
+
+        <div class="sm:col-span-4">
+          <label class="block text-xs font-bold text-ink mb-1.5">Kode Tracking (6 Karakter) <span class="text-coral">*</span></label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+              <i data-lucide="key" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="inputTrackingCode" required maxlength="10" placeholder="Contoh: 8F4K2P" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs font-mono uppercase focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs transition shadow-sm flex items-center justify-center gap-1.5">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <span>Periksa Status</span>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Quick Demo Presets -->
+      <div class="mt-4 pt-4 border-t border-line flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+        <span class="font-bold text-ink text-[11px]">Coba Demo Cepat:</span>
+        <button onclick="fillDemo('ADP-2026-00125', '8F4K2P')" class="px-2.5 py-1 rounded-lg bg-cream hover:bg-magenta-50 text-magenta font-semibold text-[11px] border border-line transition">
+          1. Sedang Ditinjau (Mochi)
+        </button>
+        <button onclick="fillDemo('ADP-2026-00098', '7B9X21')" class="px-2.5 py-1 rounded-lg bg-cream hover:bg-emerald-50 text-emerald-700 font-semibold text-[11px] border border-line transition">
+          2. Disetujui (Milo)
+        </button>
+        <button onclick="fillDemo('ADP-2026-00084', '3K5M90')" class="px-2.5 py-1 rounded-lg bg-cream hover:bg-purple-50 text-purple-700 font-semibold text-[11px] border border-line transition">
+          3. Selesai / Monitoring (Oyen)
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= TRACKING RESULT SECTION ================= -->
+    <div id="trackingResultArea" class="hidden flex-col gap-6">
+      
+      <!-- Main Status Card -->
+      <div class="bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card flex flex-col gap-8">
+        
+        <!-- Header Status Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-line">
+          <div>
+            <div class="flex items-center gap-2 text-xs text-ink-muted font-medium mb-1">
+              <span>Nomor Pengajuan: <strong id="resAppNumber" class="font-mono text-magenta">ADP-2026-00125</strong></span>
+              <span>•</span>
+              <span id="resSubmitDate">Diajukan: 30 September 2026</span>
+            </div>
+            <h2 class="font-display font-extrabold text-2xl text-ink">Status Pengajuan Adopsi</h2>
+          </div>
+
+          <div id="resStatusBadge" class="px-4 py-2 rounded-full font-bold text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit bg-sun text-ink">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+            <span id="resStatusText">SEDANG DITINJAU (SCREENING)</span>
+          </div>
+        </div>
+
+        <!-- Cat Preview & Adopter Info -->
+        <div class="grid sm:grid-cols-12 gap-6 items-center bg-cream/60 p-5 rounded-2xl border border-line">
+          <div class="sm:col-span-3 relative h-32 sm:h-36 rounded-xl overflow-hidden bg-cream border border-line">
+            <img id="resCatImg" src="../../images/cat-images/cat1.jpg" alt="Foto Kucing" class="w-full h-full object-cover">
+          </div>
+          <div class="sm:col-span-9 flex flex-col justify-between h-full gap-2">
+            <div>
+              <span class="text-[10px] font-bold text-magenta uppercase tracking-wider">Kucing yang Diajukan</span>
+              <h3 class="font-display font-extrabold text-xl text-ink" id="resCatName">Mochi</h3>
+              <p class="text-xs text-ink-muted" id="resCatCampus">Kampus Ketintang • Gedung K10 Vokasi (Kalung Merah Reflektif)</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-2 text-xs text-ink-light pt-2 border-t border-line/60">
+              <div><strong>Nama Pemohon:</strong> <span id="resAdopterName">Budi Santoso</span></div>
+              <div><strong>No. WhatsApp:</strong> <span id="resAdopterPhone">0812-3456-7890</span></div>
+              <div class="sm:col-span-2"><strong>Domisili Antar:</strong> <span id="resAdopterAddress">Jl. Ketintang Madya, Gayungan, Surabaya</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Steps Progress Stepper Visual -->
+        <div>
+          <h4 class="font-display font-bold text-base text-ink mb-6 flex items-center gap-2">
+            <i data-lucide="git-commit" class="w-4 h-4 text-magenta"></i>
+            <span>Tahapan Proses Adopsi</span>
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4" id="stepperContainer">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Current Step Action Box / Next Instructions -->
+        <div id="resNextInstructionBox" class="p-5 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <!-- Populated via JS -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Error / Not Found Message -->
+    <div id="trackingNotFoundBox" class="hidden text-center py-16 bg-white border border-line rounded-3xl shadow-sm">
+      <div class="w-14 h-14 rounded-2xl bg-coral/15 text-coral flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="search-x" class="w-7 h-7"></i>
+      </div>
+      <h3 class="font-display font-bold text-lg text-ink">Pengajuan Tidak Ditemukan</h3>
+      <p class="text-xs text-ink-muted mt-1 max-w-md mx-auto">
+        Pastikan kombinasi <strong>Nomor Pengajuan</strong> dan <strong>Kode Tracking</strong> yang Anda masukkan sudah sesuai. Jika masih mengalami kendala, hubungi CP relawan Jaga Satwa UNESA.
+      </p>
+    </div>
+
+  </main>
+
+  <!-- ================= APP FOOTER COMPONENT ================= -->
+  <div id="app-footer"></div>
+
+  <!-- ================= CLIENT JAVASCRIPT ================= -->
+  <script>
+    const demoSubmissions = [
+      {
+        appNumber: 'ADP-2026-00125',
+        trackingCode: '8F4K2P',
+        catName: 'Mochi',
+        catCampus: 'Kampus Ketintang • Gedung K10 Vokasi',
+        catImg: '../../images/cat-images/cat1.jpg',
+        adopterName: 'Reissa Nathania',
+        adopterPhone: '0812-3456-7890',
+        adopterAddress: 'Jl. Ketintang Baru No. 12, Gayungan, Surabaya',
+        date: '30 September 2026',
+        step: 2, // 1: Diterima, 2: Screening, 3: Approved, 4: Handover
+        statusLabel: 'SEDANG DITINJAU (SCREENING)',
+        badgeClass: 'bg-sun text-ink',
+        badgeIcon: 'clock',
+        instructionType: 'warning',
+        instructionTitle: 'Proses Verifikasi Berkas Sedang Berjalan',
+        instructionText: 'Tim relawan Jaga Satwa sedang meninjau formulir kesiapan tempat tinggal dan finansial Anda. CP relawan akan menghubungi nomor WhatsApp Anda dalam 1x24 jam untuk konfirmasi.',
+        contactLink: 'https://instagram.com/jagasatwa.unesa'
+      },
+      {
+        appNumber: 'ADP-2026-00098',
+        trackingCode: '7B9X21',
+        catName: 'Milo',
+        catCampus: 'Kampus Lidah Wetan • Dermaga Danau',
+        catImg: '../../images/cat-images/cat2-p1.jpg',
+        adopterName: 'Lionel Jevon',
+        adopterPhone: '0857-9876-5432',
+        adopterAddress: 'Jl. Raya Darmo Permai, Sukomanunggal, Surabaya',
+        date: '27 September 2026',
+        step: 3,
+        statusLabel: 'DISETUJUI (APPROVED)',
+        badgeClass: 'bg-emerald-600 text-white',
+        badgeIcon: 'check-circle',
+        instructionType: 'success',
+        instructionTitle: 'Selamat! Pengajuan Adopsi Anda Telah Disetujui',
+        instructionText: 'Kucing telah siap dan steril. Relawan Jaga Satwa akan menjadwalkan pengantaran anabul ke alamat rumah Anda, penandatanganan Surat Perjanjian Adopsi Resmi, dan sesi foto bersama.',
+        contactLink: 'https://instagram.com/jagasatwa.unesa'
+      },
+      {
+        appNumber: 'ADP-2026-00084',
+        trackingCode: '3K5M90',
+        catName: 'Oyen Barbar',
+        catCampus: 'Kampus Ketintang • Kantin FT',
+        catImg: '../../images/cat-images/catoyen-p1.jpg',
+        adopterName: 'Adhitya Rizqullah',
+        adopterPhone: '0813-1122-3344',
+        adopterAddress: 'Jl. Rungkut Asri Timur, Rungkut, Surabaya',
+        date: '20 September 2026',
+        step: 4,
+        statusLabel: 'SELESAI (ADOPTED / MONITORING AKTIF)',
+        badgeClass: 'bg-magenta text-white',
+        badgeIcon: 'heart-handshake',
+        instructionType: 'info',
+        instructionTitle: 'Serah Terima Selesai — Masa Monitoring Mingguan',
+        instructionText: 'Anabul telah resmi tinggal di rumah baru. Mohon berkenan mengirimkan foto dan kabar perkembangan kondisi mingguan kepada CP Humas Jaga Satwa UNESA.',
+        contactLink: 'https://instagram.com/jagasatwa.unesa'
+      }
+    ];
+
+    function fillDemo(appNum, code) {
+      document.getElementById('inputAppNumber').value = appNum;
+      document.getElementById('inputTrackingCode').value = code;
+      executeSearch(appNum, code);
+    }
+
+    function handleTrackingSearch(e) {
+      e.preventDefault();
+      const appNum = document.getElementById('inputAppNumber').value.trim();
+      const code = document.getElementById('inputTrackingCode').value.trim();
+      executeSearch(appNum, code);
+    }
+
+    function executeSearch(appNum, code) {
+      const resultArea = document.getElementById('trackingResultArea');
+      const notFoundBox = document.getElementById('trackingNotFoundBox');
+
+      // Search in localStorage + demo array
+      let allSubmissions = [...demoSubmissions];
+      try {
+        const local = JSON.parse(localStorage.getItem('meownesa_adoptions') || '[]');
+        allSubmissions = [...local, ...allSubmissions];
+      } catch (err) {}
+
+      const found = allSubmissions.find(s => 
+        s.appNumber.toUpperCase() === appNum.toUpperCase() && 
+        s.trackingCode.toUpperCase() === code.toUpperCase()
+      );
+
+      if (!found) {
+        resultArea.classList.add('hidden');
+        resultArea.classList.remove('flex');
+        notFoundBox.classList.remove('hidden');
+        return;
+      }
+
+      notFoundBox.classList.add('hidden');
+      renderTrackingResult(found);
+      resultArea.classList.remove('hidden');
+      resultArea.classList.add('flex');
+    }
+
+    function renderTrackingResult(data) {
+      document.getElementById('resAppNumber').innerText = data.appNumber;
+      document.getElementById('resSubmitDate').innerText = `Diajukan: ${data.date}`;
+      document.getElementById('resCatName').innerText = data.catName;
+      document.getElementById('resCatCampus').innerText = data.catCampus || 'Kampus UNESA';
+      document.getElementById('resCatImg').src = data.catImg || '../../images/cat-images/cat1.jpg';
+      document.getElementById('resAdopterName').innerText = data.adopterName;
+      document.getElementById('resAdopterPhone').innerText = data.adopterPhone;
+      document.getElementById('resAdopterAddress').innerText = data.adopterAddress;
+
+      const badge = document.getElementById('resStatusBadge');
+      badge.className = `px-4 py-2 rounded-full font-bold text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 w-fit ${data.badgeClass || 'bg-sun text-ink'}`;
+      document.getElementById('resStatusText').innerText = data.statusLabel || 'SEDANG DITINJAU';
+
+      // Render 4-step Stepper
+      const currentStep = data.step || 2;
+      const steps = [
+        { num: 1, title: 'Formulir Diterima', desc: 'Data pengajuan tersimpan di sistem.' },
+        { num: 2, title: 'Screening Jaga Satwa', desc: 'Pemeriksaan kesiapan hunian & finansial.' },
+        { num: 3, title: 'Persetujuan (Approved)', desc: 'Pengajuan disetujui & persiapan antar.' },
+        { num: 4, title: 'Serah Terima & Monitoring', desc: 'Surat perjanjian & kabar berkala.' }
+      ];
+
+      const stepperContainer = document.getElementById('stepperContainer');
+      stepperContainer.innerHTML = '';
+
+      steps.forEach(s => {
+        const isDone = s.num < currentStep;
+        const isCurrent = s.num === currentStep;
+        const isUpcoming = s.num > currentStep;
+
+        let boxClass = 'bg-cream/50 border-line text-ink-muted';
+        let circleClass = 'bg-line text-ink-muted';
+        let statusTag = `<span class="text-[10px] text-ink-muted">Menunggu</span>`;
+
+        if (isDone) {
+          boxClass = 'bg-emerald-50/70 border-emerald-300 text-emerald-900';
+          circleClass = 'bg-emerald-600 text-white';
+          statusTag = `<span class="text-[10px] text-emerald-700 font-bold flex items-center gap-0.5"><i data-lucide="check" class="w-3 h-3"></i> Selesai</span>`;
+        } else if (isCurrent) {
+          boxClass = 'bg-magenta-50 border-magenta text-magenta-900 shadow-sm ring-2 ring-magenta/20';
+          circleClass = 'bg-magenta text-white animate-pulse';
+          statusTag = `<span class="text-[10px] text-magenta font-extrabold uppercase tracking-wide">Tahap Ini</span>`;
+        }
+
+        const div = document.createElement('div');
+        div.className = `p-4 rounded-2xl border ${boxClass} flex flex-col justify-between gap-3 transition`;
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center ${circleClass}">${s.num}</span>
+            ${statusTag}
+          </div>
+          <div>
+            <h5 class="font-display font-bold text-xs sm:text-sm text-ink leading-snug">${s.title}</h5>
+            <p class="text-[11px] text-ink-muted mt-1 leading-relaxed">${s.desc}</p>
+          </div>
+        `;
+        stepperContainer.appendChild(div);
+      });
+
+      // Next Instructions Box
+      const instructionBox = document.getElementById('resNextInstructionBox');
+      if (data.instructionType === 'success') {
+        instructionBox.className = 'p-5 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
+      } else if (data.instructionType === 'info') {
+        instructionBox.className = 'p-5 rounded-2xl border bg-purple-50 border-purple-200 text-purple-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
+      } else {
+        instructionBox.className = 'p-5 rounded-2xl border bg-sun/15 border-sun text-ink flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
+      }
+
+      instructionBox.innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
+            <i data-lucide="info" class="w-4 h-4 text-magenta"></i>
+          </div>
+          <div>
+            <h5 class="font-display font-bold text-sm text-ink">${data.instructionTitle || 'Informasi Lanjutan'}</h5>
+            <p class="text-xs text-ink-muted mt-0.5 leading-relaxed">${data.instructionText || 'Silakan pantau berkala atau hubungi tim Jaga Satwa UNESA.'}</p>
+          </div>
+        </div>
+        <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="px-4 py-2 rounded-xl bg-white border border-line hover:border-magenta text-magenta font-bold text-xs shadow-sm flex items-center gap-1.5 flex-shrink-0 transition">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+          <span>Hubungi CP Relawan</span>
+        </a>
+      `;
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Auto-search if query params exist in URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const appId = params.get('appId');
+      const code = params.get('code');
+
+      if (appId && code) {
+        document.getElementById('inputAppNumber').value = appId;
+        document.getElementById('inputTrackingCode').value = code;
+        executeSearch(appId, code);
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+
+  <!-- MeowNesa Shared Layout Script -->
+  <script src="../../components/layout.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title id="pageTitle">Profil Detail Kucing — MeowNesa | Jaga Satwa UNESA</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +13,8 @@
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -90,75 +92,8 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col selection:bg-magenta selection:text-white">
 
-  <!-- ================= TOP BAR ================= -->
-  <div class="bg-magenta text-white text-xs py-2 px-4 border-b border-magenta-dark/30">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
-        <span class="bg-sun text-ink font-extrabold px-2 py-0.5 rounded-full text-[10px] tracking-wide uppercase">Profil Kucing Resmi</span>
-        <span>Terdata dalam sistem Jaga Satwa UNESA • Kampus Ketintang &amp; Lidah Wetan</span>
-      </div>
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="hover:underline font-bold text-sun">
-          Kembali ke Informasi Kucing
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= HEADER (STRICT DOCUMENT STRUCTURE) ================= -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-line shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-      
-      <!-- Brand Logo -->
-      <a href="../../index.html" class="flex items-center">
-        <img src="../../images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="h-10 sm:h-11 w-auto object-contain brightness-0">
-      </a>
-
-      <!-- Navigation Links (Strictly According to Document) -->
-      <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-ink-light">
-        <a href="../../index.html" class="hover:text-magenta transition">Beranda</a>
-        <a href="index.html" class="text-magenta font-bold transition">Informasi Kucing</a>
-        <a href="../adoption/apply.html" class="hover:text-magenta transition">Adopsi</a>
-        <a href="../cms-blog-awarness/blog.html" class="hover:text-magenta transition">Artikel</a>
-        <a href="../../index.html#donasi" class="hover:text-magenta transition">Donasi</a>
-      </nav>
-
-      <!-- Action -->
-      <div class="hidden sm:flex items-center gap-3">
-        <a href="../adoption/tracking.html" class="px-4 py-2.5 rounded-full border border-line hover:border-magenta text-ink hover:text-magenta text-xs font-bold transition bg-cream/40">
-          Lacak Pengajuan
-        </a>
-        <a id="navAdoptBtn" href="../adoption/apply.html" class="px-5 py-2.5 rounded-full bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition">
-          Ajukan Adopsi
-        </a>
-      </div>
-
-      <!-- Mobile Button -->
-      <button id="mobileMenuBtn" class="lg:hidden w-10 h-10 rounded-xl border border-line flex flex-col items-center justify-center gap-1.5 hover:bg-cream transition">
-        <span class="w-5 h-0.5 bg-ink rounded"></span>
-        <span class="w-5 h-0.5 bg-ink rounded"></span>
-        <span class="w-5 h-0.5 bg-ink rounded"></span>
-      </button>
-
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="lg:hidden hidden border-t border-line bg-white px-5 py-4 flex-col gap-3 text-sm font-semibold">
-      <a href="../../index.html" class="py-2 hover:text-magenta">Beranda</a>
-      <a href="index.html" class="py-2 text-magenta font-bold">Informasi Kucing</a>
-      <a href="../adoption/apply.html" class="py-2 hover:text-magenta">Adopsi</a>
-      <a href="../cms-blog-awarness/blog.html" class="py-2 hover:text-magenta">Artikel</a>
-      <a href="../../index.html#donasi" class="py-2 hover:text-magenta">Donasi</a>
-      <div class="pt-3 border-t border-line flex flex-col gap-2">
-        <a href="../adoption/tracking.html" class="w-full py-2.5 rounded-xl border border-line text-xs font-bold text-ink text-center">
-          Lacak Pengajuan
-        </a>
-        <a href="../adoption/apply.html" class="w-full py-2.5 rounded-xl bg-magenta text-white text-xs font-bold text-center">
-          Ajukan Adopsi
-        </a>
-      </div>
-    </div>
-  </header>
+  <!-- ================= APP HEADER COMPONENT (3 ROTATING NOTIFS + NAVBAR) ================= -->
+  <div id="app-header" data-active-nav="informasi"></div>
 
   <!-- ================= MAIN PROFILE CONTENT ================= -->
   <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
@@ -190,7 +125,9 @@
 
             <!-- Reflective Collar Tag Floating -->
             <div class="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-line shadow-md flex items-center gap-2 pulse-collar">
-              <span class="text-lg">🏷️</span>
+              <div class="w-8 h-8 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center flex-shrink-0">
+                <i data-lucide="tag" class="w-4 h-4"></i>
+              </div>
               <div>
                 <span class="font-display font-bold text-xs text-ink block leading-none" id="detailCollarTag">Kalung Merah Reflektif</span>
                 <span class="text-[10px] text-ink-muted block mt-0.5 font-mono" id="detailCollarId">ID: KTT-01</span>
@@ -198,8 +135,8 @@
             </div>
 
             <!-- Fullscreen Hint Icon -->
-            <button onclick="openLightbox()" class="absolute bottom-4 right-4 w-9 h-9 rounded-xl bg-ink/70 hover:bg-ink text-white flex items-center justify-center text-sm backdrop-blur-sm shadow transition">
-              🔍
+            <button onclick="openLightbox()" class="absolute bottom-4 right-4 w-9 h-9 rounded-xl bg-ink/70 hover:bg-ink text-white flex items-center justify-center text-sm backdrop-blur-sm shadow transition" aria-label="Perbesar Foto">
+              <i data-lucide="zoom-in" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
@@ -218,8 +155,8 @@
         <!-- Campus Habitat Quick Info -->
         <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center text-xl flex-shrink-0">
-              📍
+            <div class="w-11 h-11 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center flex-shrink-0">
+              <i data-lucide="map-pin" class="w-5 h-5"></i>
             </div>
             <div>
               <span class="text-[11px] text-ink-muted font-bold block uppercase">Wilayah Teritorial di Kampus</span>
@@ -227,8 +164,9 @@
               <span class="text-xs text-ink-muted block" id="detailCampus">Kampus Ketintang UNESA</span>
             </div>
           </div>
-          <a href="index.html" onclick="sessionStorage.setItem('openMapView', 'true')" class="px-3.5 py-2 rounded-xl bg-cream hover:bg-magenta-50 text-magenta text-xs font-bold transition flex items-center gap-1 border border-line flex-shrink-0">
-            Lihat di Peta
+          <a href="index.html?view=map" class="px-3.5 py-2 rounded-xl bg-cream hover:bg-magenta-50 text-magenta text-xs font-bold transition flex items-center gap-1 border border-line flex-shrink-0">
+            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+            <span>Lihat di Peta</span>
           </a>
         </div>
 
@@ -303,7 +241,9 @@
           <div class="space-y-3 text-xs">
             
             <div class="flex items-start gap-3 p-3 rounded-2xl bg-cream/60 border border-line/70">
-              <span class="w-8 h-8 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center text-sm font-bold flex-shrink-0">✂️</span>
+              <div class="w-8 h-8 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center flex-shrink-0">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+              </div>
               <div>
                 <span class="font-bold text-ink block">Sterilisasi Tuntas (Kebiri Betina/Jantan)</span>
                 <span class="text-ink-muted text-[11px] block mt-0.5">Telah disterilkan secara medis di klinik mitra: <strong>Nusantara Vet Surabaya</strong></span>
@@ -311,7 +251,9 @@
             </div>
 
             <div class="flex items-start gap-3 p-3 rounded-2xl bg-cream/60 border border-line/70">
-              <span class="w-8 h-8 rounded-xl bg-sun/30 text-ink flex items-center justify-center text-sm font-bold flex-shrink-0">💉</span>
+              <div class="w-8 h-8 rounded-xl bg-sun/30 text-ink flex items-center justify-center flex-shrink-0">
+                <i data-lucide="syringe" class="w-4 h-4"></i>
+              </div>
               <div>
                 <span class="font-bold text-ink block">Vaksinasi &amp; Vitamin Rutin</span>
                 <span class="text-ink-muted text-[11px] block mt-0.5" id="detailVaccine">Vaksin Tricat Lengkap + Pemberian Obat Cacing Terjadwal</span>
@@ -319,7 +261,9 @@
             </div>
 
             <div class="flex items-start gap-3 p-3 rounded-2xl bg-cream/60 border border-line/70">
-              <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-bold flex-shrink-0">🍲</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="utensils" class="w-4 h-4"></i>
+              </div>
               <div>
                 <span class="font-bold text-ink block">Pola Pakan &amp; Feeding Harian</span>
                 <span class="text-ink-muted text-[11px] block mt-0.5">Pakan kering (Dry food) berkualitas &amp; wet food berkala saat sesi feeding pagi &amp; sore.</span>
@@ -334,8 +278,8 @@
         <div id="adoptionBoxCard" class="bg-gradient-to-br from-magenta-50 via-white to-sun/10 border-2 border-magenta/20 rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-4">
           
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-magenta text-white flex items-center justify-center text-2xl shadow-md flex-shrink-0">
-              🏠
+            <div class="w-12 h-12 rounded-2xl bg-magenta text-white flex items-center justify-center shadow-md flex-shrink-0">
+              <i data-lucide="home" class="w-6 h-6"></i>
             </div>
             <div>
               <span class="text-[11px] font-bold text-magenta uppercase tracking-wider block">Program Adopsi Terverifikasi</span>
@@ -351,21 +295,26 @@
 
           <div class="grid sm:grid-cols-2 gap-2 text-[11px] font-semibold text-ink-light">
             <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
-              <span>✓</span> <span>Tanpa pungutan biaya adopsi</span>
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+              <span>Tanpa pungutan biaya adopsi</span>
             </div>
             <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
-              <span>✓</span> <span>Sudah include steril &amp; vaksin</span>
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+              <span>Sudah include steril &amp; vaksin</span>
             </div>
             <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
-              <span>✓</span> <span>Lacak status via Kode Tracking</span>
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+              <span>Lacak status via Kode Tracking</span>
             </div>
             <div class="flex items-center gap-1.5 p-2 rounded-xl bg-white border border-line/80">
-              <span>✓</span> <span>Serah terima resmi &amp; perjanjian</span>
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+              <span>Serah terima resmi &amp; perjanjian</span>
             </div>
           </div>
 
           <div class="pt-2">
             <a id="mainAdoptActionBtn" href="../adoption/apply.html" class="w-full py-4 rounded-2xl bg-magenta hover:bg-magenta-dark text-white font-display font-extrabold text-base text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition flex items-center justify-center gap-2">
+              <i data-lucide="file-text" class="w-5 h-5"></i>
               <span>Isi Formulir Pengajuan Adopsi Sekarang</span>
             </a>
           </div>
@@ -402,13 +351,8 @@
     </div>
   </div>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="bg-white border-t border-line mt-16 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4 text-xs text-ink-muted">
-      <p>© 2026 MeowNesa &amp; Jaga Satwa UNESA. Seluruh hak cipta dilindungi.</p>
-      <a href="index.html" class="font-bold text-magenta hover:underline">Kembali ke Informasi Kucing</a>
-    </div>
-  </footer>
+  <!-- ================= APP FOOTER COMPONENT ================= -->
+  <div id="app-footer"></div>
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
@@ -582,10 +526,18 @@
       });
 
       const applyUrl = `../adoption/apply.html?cat=${encodeURIComponent(cat.name)}`;
-      document.getElementById('navAdoptBtn').href = applyUrl;
-      document.getElementById('mainAdoptActionBtn').href = applyUrl;
+      if (document.getElementById('navAdoptBtn')) {
+        document.getElementById('navAdoptBtn').href = applyUrl;
+      }
+      if (document.getElementById('mainAdoptActionBtn')) {
+        document.getElementById('mainAdoptActionBtn').href = applyUrl;
+      }
 
       renderRelatedCats(cat.id);
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     function switchMainPhoto(src, caption, clickedBtn) {
@@ -643,12 +595,12 @@
       });
     }
 
-    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-      document.getElementById('mobileMenu').classList.toggle('hidden');
-      document.getElementById('mobileMenu').classList.toggle('flex');
-    });
-
     loadCatProfile(currentCat);
+    if (window.lucide) {
+      lucide.createIcons();
+    }
   </script>
+  <!-- MeowNesa Shared Layout (Header + Footer) Component -->
+  <script src="../../components/layout.js"></script>
 </body>
 </html>
