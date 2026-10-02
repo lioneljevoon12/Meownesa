@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Login Admin — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.15)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between bg-cream text-ink selection:bg-magenta selection:text-white relative overflow-x-hidden">
+
+  <!-- Background Decorative Shapes -->
+  <div class="absolute -top-24 -left-24 w-96 h-96 bg-magenta/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-sun/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Top Simple Navigation -->
+  <header class="p-6 max-w-7xl mx-auto w-full flex items-center justify-between z-10">
+    <a href="../../index.html" class="inline-flex items-center gap-2 text-xs font-bold text-ink hover:text-magenta transition bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-line shadow-xs">
+      <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+      <span>Kembali ke Website Publik</span>
+    </a>
+
+    <div class="flex items-center gap-2 text-xs text-ink-muted">
+      <img src="../../images/jagasatwa-logo.png" alt="Jaga Satwa" class="h-4 w-auto object-contain brightness-0">
+      <span class="font-semibold hidden sm:inline">Portal Resmi Jaga Satwa UNESA</span>
+    </div>
+  </header>
+
+  <!-- Login Form Card Container -->
+  <main class="flex-1 flex items-center justify-center p-4 z-10 w-full max-w-md mx-auto">
+    <div class="bg-white border border-line rounded-3xl p-6 sm:p-10 shadow-card w-full flex flex-col gap-6">
+      
+      <!-- Brand & Header -->
+      <div class="text-center flex flex-col items-center">
+        <div class="flex items-center gap-2.5 mb-3">
+          <img src="../../images/meownesa-logo.png" alt="MeowNesa" class="h-7 w-auto object-contain brightness-0">
+          <span class="text-ink/20 font-bold text-xs select-none">✕</span>
+          <img src="../../images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="h-6 w-auto object-contain brightness-0">
+        </div>
+
+        <span class="text-[10px] font-extrabold uppercase tracking-wider bg-magenta-50 text-magenta px-3 py-1 rounded-full border border-magenta/20 mb-2">
+          Admin &amp; Relawan Jaga Satwa
+        </span>
+        <h2 class="font-display font-extrabold text-2xl text-ink">Masuk ke Dashboard</h2>
+        <p class="text-xs text-ink-muted mt-1">Gunakan akun pengurus resmi untuk mengelola data kucing &amp; screening adopsi.</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="adminLoginForm" onsubmit="handleLoginSubmit(event)" class="flex flex-col gap-4">
+        
+        <!-- Email Input -->
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1.5">Email Pengurus / ID Relawan</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+              <i data-lucide="user-check" class="w-4 h-4"></i>
+            </span>
+            <input type="email" id="loginEmail" required value="admin@jagasatwa.unesa.ac.id" placeholder="admin@jagasatwa.unesa.ac.id" 
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs text-ink focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-ink">Kata Sandi</label>
+            <span class="text-[10px] text-magenta font-semibold">Demo: admin123</span>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </span>
+            <input type="password" id="loginPassword" required value="admin123" placeholder="••••••••" 
+              class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-line bg-cream/30 text-xs text-ink focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-ink-muted hover:text-ink">
+              <i data-lucide="eye" id="eyeIcon" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me & Security Note -->
+        <div class="flex items-center justify-between text-xs pt-1">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" checked class="w-4 h-4 rounded text-magenta focus:ring-magenta accent-magenta">
+            <span class="text-ink-light text-[11px]">Ingat sesi login</span>
+          </label>
+          <span class="text-[10px] text-ink-muted">Sesi Terenkripsi</span>
+        </div>
+
+        <!-- Error Banner (Hidden by default) -->
+        <div id="loginErrorBox" class="hidden p-3 rounded-xl bg-coral/10 border border-coral/30 text-xs text-coral font-semibold items-center gap-2">
+          <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+          <span id="loginErrorMsg">Email atau kata sandi pengurus tidak sesuai.</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="loginBtn" class="mt-2 w-full py-3 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Masuk ke Dashboard Admin</span>
+        </button>
+
+      </form>
+
+      <!-- Demo Quick Auto-Fill / Fast Pass -->
+      <div class="pt-4 border-t border-line text-center">
+        <button onclick="quickDemoLogin()" class="text-xs font-bold text-magenta hover:underline flex items-center justify-center gap-1 mx-auto">
+          <i data-lucide="zap" class="w-3.5 h-3.5 text-sun fill-sun"></i>
+          <span>Akses Instan Demo Pengurus</span>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Bottom Copyright Footer -->
+  <footer class="p-6 text-center text-xs text-ink-muted z-10">
+    <p>© 2026 MeowNesa × Jaga Satwa UNESA. Dikelola oleh Tim Relawan &amp; Divisi Informasi UNESA.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('loginPassword');
+      const eyeIcon = document.getElementById('eyeIcon');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+      } else {
+        passInput.type = 'password';
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+
+      if (email && pass) {
+        sessionStorage.setItem('meownesa_admin_auth', 'true');
+        sessionStorage.setItem('meownesa_admin_user', email);
+        window.location.href = 'dashboard.html';
+      } else {
+        const errorBox = document.getElementById('loginErrorBox');
+        errorBox.classList.remove('hidden');
+        errorBox.classList.add('flex');
+      }
+    }
+
+    function quickDemoLogin() {
+      sessionStorage.setItem('meownesa_admin_auth', 'true');
+      sessionStorage.setItem('meownesa_admin_user', 'admin@jagasatwa.unesa.ac.id');
+      window.location.href = 'dashboard.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Admin Dashboard — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="dashboard" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Dashboard Utama" data-breadcrumb="Dashboard Ringkasan"></header>
+
+    <!-- Main Dashboard Body Content -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-8">
+      
+      <!-- Welcome Greeting Banner -->
+      <div class="bg-gradient-to-r from-white via-white to-magenta-50 border border-line rounded-3xl p-6 sm:p-8 shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2.5 border border-magenta/20">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Sistem Operasional MeowNesa Aktif</span>
+          </div>
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Selamat Datang, Tim Relawan Jaga Satwa! 👋
+          </h2>
+          <p class="text-xs sm:text-sm text-ink-muted mt-1 leading-relaxed">
+            Data populasi, feeding harian, dan antrean adopsi tersinkronisasi. Terdapat <strong>2 pengajuan adopsi baru</strong> yang menunggu proses screening dan <strong>1 jadwal reminder mingguan</strong>.
+          </p>
+        </div>
+
+        <!-- Quick Top Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2.5 relative z-10 flex-shrink-0">
+          <a href="feeding.html" class="px-4 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Catat Feeding Hari Ini</span>
+          </a>
+          <a href="adoptions.html" class="px-4 py-2.5 rounded-xl bg-white hover:bg-cream border border-line text-ink font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
+            <i data-lucide="clipboard-check" class="w-4 h-4 text-magenta"></i>
+            <span>Screening Adopsi (2)</span>
+          </a>
+        </div>
+
+        <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-sun/15 rounded-full blur-2xl pointer-events-none"></div>
+      </div>
+
+      <!-- Action Required Alerts (Callout Banners) -->
+      <div class="grid md:grid-cols-2 gap-4">
+        
+        <!-- Alert 1: Adoption Screening Queue -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-sun/15 border border-sun/40 flex items-start justify-between gap-4">
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-sun text-ink flex items-center justify-center flex-shrink-0 font-bold text-lg shadow-xs">
+              <i data-lucide="clipboard-check" class="w-5 h-5 text-ink"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-extrabold text-ink uppercase tracking-wider block">ANTREAN ADOPSI</span>
+              <h4 class="font-display font-bold text-sm text-ink mt-0.5">2 Calon Adopter Baru Menunggu Verifikasi</h4>
+              <p class="text-xs text-ink-muted mt-0.5">Pengajuan untuk Mochi (Reissa N.) dan Milo (Lionel J.) siap ditinjau berkasnya.</p>
+            </div>
+          </div>
+          <a href="adoptions.html" class="px-3.5 py-2 rounded-xl bg-white hover:bg-magenta hover:text-white border border-line text-xs font-bold text-ink transition flex-shrink-0 shadow-xs">
+            Screening →
+          </a>
+        </div>
+
+        <!-- Alert 2: Overdue Weekly Monitoring Reminder -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-coral/10 border border-coral/30 flex items-start justify-between gap-4">
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-coral text-white flex items-center justify-center flex-shrink-0 font-bold text-lg shadow-xs">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-extrabold text-coral uppercase tracking-wider block">REMINDER MINGGUAN</span>
+              <h4 class="font-display font-bold text-sm text-ink mt-0.5">1 Adopter Melewati Jatuh Tempo Kabar</h4>
+              <p class="text-xs text-ink-muted mt-0.5">Adopter anabul Emma sudah 8 hari belum mengirim update kondisi ke CP.</p>
+            </div>
+          </div>
+          <a href="monitoring.html" class="px-3.5 py-2 rounded-xl bg-coral hover:bg-coral/90 text-white text-xs font-bold transition flex-shrink-0 shadow-xs">
+            Kirim WA →
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Key Statistical Metrics Grid (6 Cards Matching Document Spec) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        
+        <!-- Card 1: Total Cat Population -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-ink-muted">Total Kucing</span>
+            <div class="w-7 h-7 rounded-lg bg-magenta-50 text-magenta flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="font-display font-extrabold text-2xl text-ink">6</span>
+            <span class="text-[10px] text-emerald-600 block font-semibold">100% Berkalung</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Ready for Adoption -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-ink-muted">Siap Adopsi</span>
+            <div class="w-7 h-7 rounded-lg bg-sun/20 text-ink flex items-center justify-center">
+              <i data-lucide="sparkles" class="w-4 h-4 text-sun-dark"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="font-display font-extrabold text-2xl text-ink">4</span>
+            <span class="text-[10px] text-magenta font-semibold">Tersedia Publik</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Adoptions Queue -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-ink-muted">Antrean Adopsi</span>
+            <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
+              <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="font-display font-extrabold text-2xl text-ink">3</span>
+            <span class="text-[10px] text-purple-700 font-semibold">2 Butuh Review</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Daily Feeding Sessions -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-ink-muted">Feeding Hari Ini</span>
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <i data-lucide="utensils" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="font-display font-extrabold text-2xl text-ink">8</span>
+            <span class="text-[10px] text-emerald-600 font-semibold">Sore &amp; Pagi Tuntas</span>
+          </div>
+        </div>
+
+        <!-- Card 5: Medical Sterilization -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-ink-muted">Status Steril</span>
+            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+              <i data-lucide="stethoscope" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="font-display font-extrabold text-2xl text-ink">100%</span>
+            <span class="text-[10px] text-blue-700 font-semibold">Nusantara Vet</span>
+          </div>
+        </div>
+
+        <!-- Card 6: Overdue Monitoring Reminder -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-ink-muted">Reminder Tempo</span>
+            <div class="w-7 h-7 rounded-lg bg-coral/15 text-coral flex items-center justify-center">
+              <i data-lucide="bell" class="w-4 h-4 text-coral"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="font-display font-extrabold text-2xl text-coral">1</span>
+            <span class="text-[10px] text-coral font-semibold">Perlu Follow-up</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2 Columns Main Data Sections -->
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- ================= LEFT: RECENT FEEDING LOGS (7 cols) ================= -->
+        <div class="lg:col-span-7 bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-line pb-4">
+            <div>
+              <h3 class="font-display font-bold text-lg text-ink">Catatan Feeding Hari Ini</h3>
+              <p class="text-xs text-ink-muted">Jadwal street feeding sore relawan Jaga Satwa UNESA</p>
+            </div>
+            <a href="feeding.html" class="text-xs font-bold text-magenta hover:underline flex items-center gap-1">
+              <span>Buka Log Lengkap</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+
+          <!-- Quick Feeding Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-line text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+                  <th class="py-2.5 px-3">Kucing</th>
+                  <th class="py-2.5 px-3">Lokasi Zonasi</th>
+                  <th class="py-2.5 px-3">Waktu</th>
+                  <th class="py-2.5 px-3">Menu Pakan</th>
+                  <th class="py-2.5 px-3 text-right">Kondisi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line/60">
+                <tr class="hover:bg-cream/40 transition">
+                  <td class="py-3 px-3 font-bold text-ink flex items-center gap-2">
+                    <img src="../../images/cat-images/cat1.jpg" alt="Mochi" class="w-6 h-6 rounded-md object-cover">
+                    <span>Mochi</span>
+                  </td>
+                  <td class="py-3 px-3 text-ink-muted">Gedung K10 Vokasi</td>
+                  <td class="py-3 px-3 font-mono text-[11px]">17:15 WIB</td>
+                  <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-sun/20 text-ink font-semibold">Dry Food (100g)</span></td>
+                  <td class="py-3 px-3 text-right"><span class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">Lahap</span></td>
+                </tr>
+
+                <tr class="hover:bg-cream/40 transition">
+                  <td class="py-3 px-3 font-bold text-ink flex items-center gap-2">
+                    <img src="../../images/cat-images/cat2-p1.jpg" alt="Milo" class="w-6 h-6 rounded-md object-cover">
+                    <span>Milo</span>
+                  </td>
+                  <td class="py-3 px-3 text-ink-muted">Dermaga Danau UNESA</td>
+                  <td class="py-3 px-3 font-mono text-[11px]">17:30 WIB</td>
+                  <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-magenta-50 text-magenta font-semibold">Wet + Dry (120g)</span></td>
+                  <td class="py-3 px-3 text-right"><span class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">Normal</span></td>
+                </tr>
+
+                <tr class="hover:bg-cream/40 transition">
+                  <td class="py-3 px-3 font-bold text-ink flex items-center gap-2">
+                    <img src="../../images/cat-images/catoyen-p1.jpg" alt="Oyen" class="w-6 h-6 rounded-md object-cover">
+                    <span>Oyen Barbar</span>
+                  </td>
+                  <td class="py-3 px-3 text-ink-muted">Kantin Pusat FT</td>
+                  <td class="py-3 px-3 font-mono text-[11px]">17:40 WIB</td>
+                  <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-sun/20 text-ink font-semibold">Dry Food (100g)</span></td>
+                  <td class="py-3 px-3 text-right"><span class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">Sangat Lahap</span></td>
+                </tr>
+
+                <tr class="hover:bg-cream/40 transition">
+                  <td class="py-3 px-3 font-bold text-ink flex items-center gap-2">
+                    <img src="../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg" alt="Kismis" class="w-6 h-6 rounded-md object-cover">
+                    <span>Kismis</span>
+                  </td>
+                  <td class="py-3 px-3 text-ink-muted">FBS Sawunggaling</td>
+                  <td class="py-3 px-3 font-mono text-[11px]">17:55 WIB</td>
+                  <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-magenta-50 text-magenta font-semibold">Wet Food (85g)</span></td>
+                  <td class="py-3 px-3 text-right"><span class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">Normal</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= RIGHT: ADOPTION QUEUE & LOCATION DISTRIBUTION (5 cols) ================= -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          
+          <!-- Recent Adoption Submissions List -->
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-line pb-3">
+              <h3 class="font-display font-bold text-base text-ink">Pengajuan Adopsi Terbaru</h3>
+              <a href="adoptions.html" class="text-xs font-bold text-magenta hover:underline">Semua (3) →</a>
+            </div>
+
+            <div class="space-y-3">
+              <!-- Item 1 -->
+              <div class="p-3.5 rounded-2xl bg-cream/60 border border-line flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <img src="../../images/cat-images/cat1.jpg" alt="Mochi" class="w-10 h-10 rounded-xl object-cover border border-line flex-shrink-0">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <strong class="text-xs text-ink truncate font-bold">Reissa Nathania</strong>
+                      <span class="text-[9px] font-bold bg-sun text-ink px-1.5 py-0.2 rounded font-mono">ADP-00125</span>
+                    </div>
+                    <span class="text-[11px] text-ink-muted block truncate">Kucing: Mochi • Gayungan, Sby</span>
+                  </div>
+                </div>
+                <a href="adoptions.html" class="px-3 py-1.5 rounded-xl bg-magenta text-white text-[11px] font-bold hover:bg-magenta-dark transition shadow-xs flex-shrink-0">
+                  Review
+                </a>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="p-3.5 rounded-2xl bg-cream/60 border border-line flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <img src="../../images/cat-images/cat2-p1.jpg" alt="Milo" class="w-10 h-10 rounded-xl object-cover border border-line flex-shrink-0">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <strong class="text-xs text-ink truncate font-bold">Lionel Jevon</strong>
+                      <span class="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono">ADP-00098</span>
+                    </div>
+                    <span class="text-[11px] text-ink-muted block truncate">Kucing: Milo • Disetujui</span>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 flex-shrink-0">
+                  Siap Antar
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cat Campus Location Breakdown Bar -->
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-3">
+            <h3 class="font-display font-bold text-base text-ink">Persebaran Wilayah Kampus</h3>
+            <p class="text-xs text-ink-muted">Distribusi kucing binaan resmi Jaga Satwa UNESA</p>
+
+            <div class="space-y-2 pt-1">
+              <div>
+                <div class="flex items-center justify-between text-xs font-semibold mb-1">
+                  <span>Kampus Ketintang</span>
+                  <span class="text-magenta font-bold">4 Kucing (67%)</span>
+                </div>
+                <div class="w-full h-2.5 rounded-full bg-cream overflow-hidden border border-line">
+                  <div class="h-full bg-magenta rounded-full" style="width: 67%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between text-xs font-semibold mb-1">
+                  <span>Kampus Lidah Wetan</span>
+                  <span class="text-sun-dark font-bold">2 Kucing (33%)</span>
+                </div>
+                <div class="w-full h-2.5 rounded-full bg-cream overflow-hidden border border-line">
+                  <div class="h-full bg-sun rounded-full" style="width: 33%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Admin Footer -->
+    <footer class="p-6 text-center text-xs text-ink-muted border-t border-line mt-auto bg-white/50">
+      <p>© 2026 MeowNesa Admin Shell — Sistem Informasi Pengelolaan Kucing Jaga Satwa UNESA.</p>
+    </footer>
+
+  </div>
+
+  <!-- MeowNesa Shared Admin Layout Script -->
+  <script src="../../components/admin-layout.js"></script>
+</body>
+</html>
