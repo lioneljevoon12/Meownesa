@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Feeding Log Harian — MeowNesa Admin | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="feeding" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Feeding Log Harian" data-breadcrumb="Pencatatan Pakan &amp; Patroli Lapangan"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary & Fast Action Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-line rounded-3xl p-6 shadow-card">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2 border border-magenta/20">
+            <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
+            <span>Log Feeding Real-Time Komunitas</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Pencatatan Pakan Pagi &amp; Sore
+          </h1>
+          <p class="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            Pencatatan jadwal pemberian pakan, kondisi nafsu makan anabul, dan pemantauan stok dry/wet food di seluruh titik spot UNESA Ketintang &amp; Lidah Wetan.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="exportFeedingCSV()" class="px-4 py-2.5 rounded-xl border border-line hover:border-magenta bg-cream/40 text-ink text-xs font-bold transition flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-magenta"></i>
+            <span>Export Log</span>
+          </button>
+          <button onclick="openAddFeedingModal()" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Catat Feeding Hari Ini</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Stats Metrics -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-sun/20 text-sun-dark flex items-center justify-center flex-shrink-0">
+            <i data-lucide="sun" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Shift Pagi Hari Ini</span>
+            <span class="font-display font-extrabold text-2xl text-ink" id="statShiftMorning">100% Selesai</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center flex-shrink-0">
+            <i data-lucide="sunset" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Shift Sore Hari Ini</span>
+            <span class="font-display font-extrabold text-2xl text-magenta" id="statShiftEvening">Sedang Berjalan</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="map-pin" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Spot Makan Aktif</span>
+            <span class="font-display font-extrabold text-2xl text-emerald-600" id="statActiveSpots">12 Titik</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="package" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Sisa Stok Dry Food</span>
+            <span class="font-display font-extrabold text-2xl text-blue-700">18.5 Kg</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Filter Toolbar -->
+      <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+          <div class="relative flex-1 sm:w-60">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-magenta">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="feedingSearch" oninput="applyFeedingFilters()" placeholder="Cari relawan, spot, kucing..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta transition">
+          </div>
+
+          <select id="filterFeedingCampus" onchange="applyFeedingFilters()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs font-semibold text-ink focus:outline-none focus:border-magenta">
+            <option value="ALL">Semua Kampus</option>
+            <option value="Kampus Ketintang">Kampus Ketintang</option>
+            <option value="Kampus Lidah Wetan">Kampus Lidah Wetan</option>
+          </select>
+
+          <select id="filterFeedingShift" onchange="applyFeedingFilters()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs font-semibold text-ink focus:outline-none focus:border-magenta">
+            <option value="ALL">Semua Shift</option>
+            <option value="Pagi">Shift Pagi (06:30 - 08:30)</option>
+            <option value="Sore">Shift Sore (16:00 - 18:00)</option>
+          </select>
+        </div>
+
+        <button onclick="resetFeedingFilters()" class="text-xs text-magenta font-bold hover:underline self-end sm:self-auto">
+          Reset Filter
+        </button>
+      </div>
+
+      <!-- Feeding Logs Table -->
+      <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                <th class="py-3.5 px-4">Tanggal &amp; Shift</th>
+                <th class="py-3.5 px-4">Kampus &amp; Spot Makan</th>
+                <th class="py-3.5 px-4">Kucing yang Makan</th>
+                <th class="py-3.5 px-4">Jenis &amp; Porsi Pakan</th>
+                <th class="py-3.5 px-4">Kondisi Lapangan</th>
+                <th class="py-3.5 px-4">Relawan PIC</th>
+                <th class="py-3.5 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="feedingTableBody" class="divide-y divide-line/60 text-xs">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODAL: CATAT FEEDING BARU ================= -->
+  <div id="feedingModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+      
+      <div class="px-6 py-4 border-b border-line flex items-center justify-between sticky top-0 bg-white z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg text-ink">Catat Log Feeding Baru</h3>
+            <p class="text-[11px] text-ink-muted">Dokumentasikan patroli pemberian pakan satwa</p>
+          </div>
+        </div>
+        <button onclick="closeFeedingModal()" class="w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="feedingForm" onsubmit="handleSaveFeeding(event)" class="p-6 flex flex-col gap-4">
+        
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Tanggal Feeding <span class="text-coral">*</span></label>
+            <input type="date" id="feedingDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Shift Pemberian <span class="text-coral">*</span></label>
+            <select id="feedingShift" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Pagi (07:00)">Pagi Hari (06:30 - 08:30 WIB)</option>
+              <option value="Sore (16:30)">Sore Hari (16:00 - 18:00 WIB)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kampus UNESA <span class="text-coral">*</span></label>
+            <select id="feedingCampus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Kampus Ketintang">Kampus Ketintang</option>
+              <option value="Kampus Lidah Wetan">Kampus Lidah Wetan</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Titik / Spot Area <span class="text-coral">*</span></label>
+            <input type="text" id="feedingSpot" required placeholder="Contoh: Gedung K10 Vokasi / Gazebo Danau" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Kucing yang Hadir &amp; Makan <span class="text-coral">*</span></label>
+            <input type="text" id="feedingCats" required placeholder="Contoh: Mochi (KTT-01), Oyen (KTT-03)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Jenis Pakan <span class="text-coral">*</span></label>
+            <select id="feedingFoodType" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Dry Food + Wet Food Selingan">Dry Food + Wet Food Selingan</option>
+              <option value="Dry Food Standar">Dry Food Standar</option>
+              <option value="Wet Food + Vitamin">Wet Food + Vitamin / Obat</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kondisi Pakan <span class="text-coral">*</span></label>
+            <select id="feedingPortionStatus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Habis Bersih">Habis Bersih (Nafsu Makan Baik)</option>
+              <option value="Tersisa Sedikit">Tersisa Sedikit</option>
+              <option value="Belum Habis">Belum Habis / Nafsu Makan Kurang</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Nama Relawan PIC <span class="text-coral">*</span></label>
+            <input type="text" id="feedingVolunteer" required placeholder="Contoh: Sarah (Vokasi '23) & Dimas (FT '22)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Catatan Observasi Lapangan</label>
+            <textarea id="feedingNotes" rows="2.5" placeholder="Contoh: Kucing tampak aktif dan sehat, air minum mangkok sudah diganti bersih..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta"></textarea>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-line flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeFeedingModal()" class="px-4 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Log Feeding</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for Feeding Management -->
+  <script>
+    const defaultFeedingLogs = [
+      {
+        id: 'feed-1',
+        date: '04 Okt 2026',
+        shift: 'Sore (16:30)',
+        campus: 'Kampus Ketintang',
+        spot: 'Gedung K10 Vokasi & Kantin FT',
+        cats: 'Mochi (KTT-01), Oyen Barbar (KTT-03)',
+        foodType: 'Dry Food + Wet Food',
+        portionStatus: 'Habis Bersih',
+        volunteer: 'Sarah (Vokasi)',
+        notes: 'Mochi makan lahap, luka kecil di telinga sudah mengering.'
+      },
+      {
+        id: 'feed-2',
+        date: '04 Okt 2026',
+        shift: 'Sore (16:30)',
+        campus: 'Kampus Lidah Wetan',
+        spot: 'Dermaga & Gazebo Danau UNESA',
+        cats: 'Milo (LWT-01), Danau (LWT-02)',
+        foodType: 'Dry Food Standar',
+        portionStatus: 'Habis Bersih',
+        volunteer: 'Rian (FIO)',
+        notes: 'Kondisi anabul aktif berjemur di rumput dekat perahu kano.'
+      },
+      {
+        id: 'feed-3',
+        date: '04 Okt 2026',
+        shift: 'Pagi (07:00)',
+        campus: 'Kampus Lidah Wetan',
+        spot: 'Gedung Sawunggaling & FBS',
+        cats: 'Kismis (LWT-06), Nada (LWT-07)',
+        foodType: 'Dry Food Standar',
+        portionStatus: 'Habis Bersih',
+        volunteer: 'Nadia (FBS)',
+        notes: 'Pakan dan air minum baru sudah diisi.'
+      },
+      {
+        id: 'feed-4',
+        date: '04 Okt 2026',
+        shift: 'Pagi (07:00)',
+        campus: 'Kampus Ketintang',
+        spot: 'Masjid Kampus Barat FMIPA',
+        cats: 'Barokah (KTT-12)',
+        foodType: 'Dry Food + Vitamin',
+        portionStatus: 'Habis Bersih',
+        volunteer: 'Farhan (FMIPA)',
+        notes: 'Diberikan vitamin penambah imun rutin.'
+      },
+      {
+        id: 'feed-5',
+        date: '03 Okt 2026',
+        shift: 'Sore (16:30)',
+        campus: 'Kampus Lidah Wetan',
+        spot: 'Lobi Rektorat Pusat',
+        cats: 'Pak Rektor (LWT-04)',
+        foodType: 'Dry Food Standar',
+        portionStatus: 'Habis Bersih',
+        volunteer: 'Bima (FEB)',
+        notes: 'Patroli lobi aman.'
+      }
+    ];
+
+    let feedingLogs = [];
+
+    function loadFeedingData() {
+      try {
+        const stored = localStorage.getItem('meownesa_admin_feeding');
+        if (stored) {
+          feedingLogs = JSON.parse(stored);
+        } else {
+          feedingLogs = [...defaultFeedingLogs];
+          saveFeedingData();
+        }
+      } catch (err) {
+        feedingLogs = [...defaultFeedingLogs];
+      }
+    }
+
+    function saveFeedingData() {
+      try {
+        localStorage.setItem('meownesa_admin_feeding', JSON.stringify(feedingLogs));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderFeedingTable(logs) {
+      const tbody = document.getElementById('feedingTableBody');
+      if (!tbody) return;
+
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center text-ink-muted">
+              <i data-lucide="inbox" class="w-8 h-8 mx-auto text-ink-muted/50 mb-2"></i>
+              Tidak ada log feeding yang sesuai filter.
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = logs.map(log => {
+        const isPagi = log.shift.includes('Pagi');
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4">
+              <strong class="font-bold text-ink block">${log.date}</strong>
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md ${isPagi ? 'bg-sun/30 text-ink' : 'bg-magenta-50 text-magenta border border-magenta/20'} mt-1">
+                ${log.shift}
+              </span>
+            </td>
+            <td class="py-3.5 px-4">
+              <strong class="font-bold text-xs text-ink block">${log.campus}</strong>
+              <span class="text-[11px] text-ink-muted">📍 ${log.spot}</span>
+            </td>
+            <td class="py-3.5 px-4 font-medium text-ink">
+              ${log.cats}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-xs font-semibold text-ink block">${log.foodType}</span>
+              <span class="inline-block text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded mt-0.5 border border-emerald-200">${log.portionStatus}</span>
+            </td>
+            <td class="py-3.5 px-4 max-w-xs">
+              <p class="text-[11px] text-ink-muted line-clamp-2">${log.notes || '-'}</p>
+            </td>
+            <td class="py-3.5 px-4 font-semibold text-xs text-magenta">
+              👤 ${log.volunteer}
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <button onclick="handleDeleteFeeding('${log.id}')" title="Hapus Log" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral hover:bg-coral-light transition bg-white">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function applyFeedingFilters() {
+      const q = document.getElementById('feedingSearch').value.toLowerCase().trim();
+      const campus = document.getElementById('filterFeedingCampus').value;
+      const shift = document.getElementById('filterFeedingShift').value;
+
+      const filtered = feedingLogs.filter(log => {
+        const matchesQuery = !q ||
+          log.volunteer.toLowerCase().includes(q) ||
+          log.spot.toLowerCase().includes(q) ||
+          log.cats.toLowerCase().includes(q) ||
+          log.notes.toLowerCase().includes(q);
+
+        const matchesCampus = campus === 'ALL' || log.campus === campus;
+        const matchesShift = shift === 'ALL' || log.shift.includes(shift);
+
+        return matchesQuery && matchesCampus && matchesShift;
+      });
+
+      renderFeedingTable(filtered);
+    }
+
+    function resetFeedingFilters() {
+      document.getElementById('feedingSearch').value = '';
+      document.getElementById('filterFeedingCampus').value = 'ALL';
+      document.getElementById('filterFeedingShift').value = 'ALL';
+      renderFeedingTable(feedingLogs);
+    }
+
+    function openAddFeedingModal() {
+      document.getElementById('feedingForm').reset();
+      document.getElementById('feedingDate').value = new Date().toISOString().slice(0, 10);
+      const modal = document.getElementById('feedingModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeFeedingModal() {
+      const modal = document.getElementById('feedingModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleSaveFeeding(e) {
+      e.preventDefault();
+      const dateVal = document.getElementById('feedingDate').value;
+      const dateObj = new Date(dateVal);
+      const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      const newLog = {
+        id: 'feed-' + Date.now(),
+        date: dateFormatted,
+        shift: document.getElementById('feedingShift').value,
+        campus: document.getElementById('feedingCampus').value,
+        spot: document.getElementById('feedingSpot').value.trim(),
+        cats: document.getElementById('feedingCats').value.trim(),
+        foodType: document.getElementById('feedingFoodType').value,
+        portionStatus: document.getElementById('feedingPortionStatus').value,
+        volunteer: document.getElementById('feedingVolunteer').value.trim(),
+        notes: document.getElementById('feedingNotes').value.trim()
+      };
+
+      feedingLogs.unshift(newLog);
+      saveFeedingData();
+      applyFeedingFilters();
+      closeFeedingModal();
+    }
+
+    function handleDeleteFeeding(id) {
+      if (confirm('Hapus log feeding ini?')) {
+        feedingLogs = feedingLogs.filter(l => l.id !== id);
+        saveFeedingData();
+        applyFeedingFilters();
+      }
+    }
+
+    function exportFeedingCSV() {
+      let csv = 'ID,Tanggal,Shift,Kampus,Spot,Kucing,Pakan,Status,Relawan,Catatan\n';
+      feedingLogs.forEach(l => {
+        csv += `"${l.id}","${l.date}","${l.shift}","${l.campus}","${l.spot}","${l.cats}","${l.foodType}","${l.portionStatus}","${l.volunteer}","${l.notes || ''}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `MeowNesa_Feeding_Log_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFeedingData();
+      applyFeedingFilters();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

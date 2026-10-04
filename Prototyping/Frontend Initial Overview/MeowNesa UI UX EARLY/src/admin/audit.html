@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Audit Log Aktivitas — MeowNesa Admin | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="audit" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Audit Log Aktivitas" data-breadcrumb="Riwayat Perubahan Data &amp; Aktivitas Relawan"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary -->
+      <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2 border border-magenta/20">
+            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+            <span>Log Keamanan &amp; Akuntabilitas Internal</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Audit Trail &amp; Catatan Aktivitas
+          </h1>
+          <p class="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            Merekam setiap tindakan penambahan, pengubahan data populasi, pencatatan feeding, approval screening adopsi, dan publikasi artikel oleh tim Jaga Satwa UNESA.
+          </p>
+        </div>
+
+        <button onclick="clearAuditLog()" class="px-4 py-2 rounded-xl border border-line hover:border-coral text-ink-muted hover:text-coral text-xs font-semibold transition self-start md:self-auto">
+          Bersihkan Log Lama
+        </button>
+      </div>
+
+      <!-- Audit Table -->
+      <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                <th class="py-3.5 px-4">Waktu &amp; Tanggal</th>
+                <th class="py-3.5 px-4">Pengguna / Relawan</th>
+                <th class="py-3.5 px-4">Modul</th>
+                <th class="py-3.5 px-4">Aksi Dilakukan</th>
+                <th class="py-3.5 px-4">Rincian Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody" class="divide-y divide-line/60 text-xs">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for Audit Log -->
+  <script>
+    const defaultAuditLogs = [
+      {
+        timestamp: '04 Okt 2026, 21:45 WIB',
+        user: 'Admin Utama (Jaga Satwa)',
+        module: 'Screening Adopsi',
+        action: 'Verifikasi Berkas',
+        desc: 'Membuka dan mereview berkas calon adopter Budi Santoso (ADP-2026-00125) untuk anabul Mochi.'
+      },
+      {
+        timestamp: '04 Okt 2026, 17:00 WIB',
+        user: 'Sarah (Relawan Vokasi)',
+        module: 'Feeding Log',
+        action: 'Entri Data',
+        desc: 'Menambahkan log feeding shift sore di Gedung K10 Vokasi Ketintang.'
+      },
+      {
+        timestamp: '04 Okt 2026, 16:30 WIB',
+        user: 'Rian (Relawan FIO)',
+        module: 'Feeding Log',
+        action: 'Entri Data',
+        desc: 'Menambahkan log feeding shift sore di Dermaga Danau Lidah Wetan.'
+      },
+      {
+        timestamp: '02 Okt 2026, 14:15 WIB',
+        user: 'Humas Jaga Satwa',
+        module: 'Screening Adopsi',
+        action: 'Approval Pengajuan',
+        desc: 'Menyetujui pengajuan adopsi Citra Kirana (ADP-2026-00118) untuk Milo.'
+      },
+      {
+        timestamp: '30 Sep 2026, 09:30 WIB',
+        user: 'Media Team',
+        module: 'CMS Edukasi',
+        action: 'Publikasi Artikel',
+        desc: 'Menerbitkan artikel "Stop Lepas Kalung Kucing UNESA: Ini Alasan Medis & Keselamatannya".'
+      }
+    ];
+
+    function renderAuditTable() {
+      const tbody = document.getElementById('auditTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = defaultAuditLogs.map(log => {
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4 font-mono font-bold text-ink whitespace-nowrap">
+              ${log.timestamp}
+            </td>
+            <td class="py-3.5 px-4 font-semibold text-magenta">
+              👤 ${log.user}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-[10px] font-bold bg-cream text-ink px-2 py-0.5 rounded border border-line">${log.module}</span>
+            </td>
+            <td class="py-3.5 px-4 font-bold text-ink">
+              ${log.action}
+            </td>
+            <td class="py-3.5 px-4 text-ink-muted">
+              ${log.desc}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function clearAuditLog() {
+      if (confirm('Bersihkan log riwayat audit lama?')) {
+        alert('Audit log telah diarsipkan.');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAuditTable();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

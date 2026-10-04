@@ -155,14 +155,14 @@
         <div class="grid sm:grid-cols-2 lg:grid-cols-12 gap-8 pb-12 border-b border-white/10">
           
           <!-- Col 1: Brand & Organization Info (5 cols) -->
-          <div class="lg:col-span-5 flex flex-col gap-3">
-            <div class="flex items-center gap-2.5">
+          <div class="lg:col-span-5 flex flex-col gap-3.5">
+            <div class="flex items-center gap-3 sm:gap-4">
               <a href="${BASE_PATH}index.html" class="inline-flex items-center">
-                <img src="${BASE_PATH}images/meownesa-logo.png" alt="MeowNesa" class="h-5 sm:h-6 w-auto object-contain brightness-0 invert">
+                <img src="${BASE_PATH}images/meownesa-logo.png" alt="MeowNesa" class="h-8 sm:h-9 w-auto object-contain brightness-0 invert">
               </a>
-              <span class="text-white/30 font-bold text-xs select-none">✕</span>
+              <span class="text-white/40 font-bold text-sm sm:text-base select-none">✕</span>
               <a href="${BASE_PATH}index.html" class="inline-flex items-center">
-                <img src="${BASE_PATH}images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="h-4.5 sm:h-5 w-auto object-contain brightness-0 invert">
+                <img src="${BASE_PATH}images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="h-7 sm:h-8 w-auto object-contain brightness-0 invert">
               </a>
             </div>
 

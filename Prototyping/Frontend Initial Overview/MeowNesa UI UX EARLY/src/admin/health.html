@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rekam Medis &amp; Klinik — MeowNesa Admin | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="health" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Rekam Medis &amp; Klinik" data-breadcrumb="Sterilisasi, Vaksinasi, &amp; Penanganan Dokter"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary & Fast Action Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-line rounded-3xl p-6 shadow-card">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2 border border-magenta/20">
+            <i data-lucide="stethoscope" class="w-3.5 h-3.5"></i>
+            <span>Mitra Resmi: Klinik Nusantara Vet Surabaya</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Rekam Medis, Steril &amp; Vaksinasi
+          </h1>
+          <p class="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            Pencatatan riwayat sterilisasi operatif, jadwal vaksin tahunan, pemberian vitamin/obat kutu, dan penanganan luka darurat kucing kampus.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="exportHealthCSV()" class="px-4 py-2.5 rounded-xl border border-line hover:border-magenta bg-cream/40 text-ink text-xs font-bold transition flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-magenta"></i>
+            <span>Export Rekam Medis</span>
+          </button>
+          <button onclick="openAddHealthModal()" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Catat Rekam Medis Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Health Metrics Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Tuntas Steril</span>
+            <span class="font-display font-extrabold text-2xl text-emerald-600">8 Ekor</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="syringe" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Vaksinasi Lengkap</span>
+            <span class="font-display font-extrabold text-2xl text-blue-700">7 Ekor</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-sun/30 text-ink flex items-center justify-center flex-shrink-0">
+            <i data-lucide="calendar" class="w-6 h-6 text-magenta"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Jadwal Kontrol Terdekat</span>
+            <span class="font-display font-extrabold text-xl text-ink">10 Okt 2026</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center flex-shrink-0">
+            <i data-lucide="activity" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Dalam Perawatan</span>
+            <span class="font-display font-extrabold text-2xl text-magenta">0 Ekor</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+          <div class="relative flex-1 sm:w-60">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-magenta">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="healthSearch" oninput="applyHealthFilters()" placeholder="Cari nama kucing, tindakan, klinik..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta transition">
+          </div>
+
+          <select id="filterHealthType" onchange="applyHealthFilters()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs font-semibold text-ink focus:outline-none focus:border-magenta">
+            <option value="ALL">Semua Tindakan Medis</option>
+            <option value="Sterilisasi">Sterilisasi (OH / Kastrasi)</option>
+            <option value="Vaksinasi">Vaksinasi Rutin</option>
+            <option value="Pengobatan">Pengobatan / Luka</option>
+            <option value="Vitamin">Vitamin &amp; Obat Cacing</option>
+          </select>
+        </div>
+
+        <button onclick="resetHealthFilters()" class="text-xs text-magenta font-bold hover:underline self-end sm:self-auto">
+          Reset Filter
+        </button>
+      </div>
+
+      <!-- Medical Records Table -->
+      <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                <th class="py-3.5 px-4">Tanggal</th>
+                <th class="py-3.5 px-4">Kucing &amp; Tag</th>
+                <th class="py-3.5 px-4">Tindakan Medis</th>
+                <th class="py-3.5 px-4">Klinik &amp; Dokter</th>
+                <th class="py-3.5 px-4">Diagnosa / Catatan Medis</th>
+                <th class="py-3.5 px-4">Status Pemulihan</th>
+                <th class="py-3.5 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="healthTableBody" class="divide-y divide-line/60 text-xs">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODAL: CATAT REKAM MEDIS ================= -->
+  <div id="healthModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+      
+      <div class="px-6 py-4 border-b border-line flex items-center justify-between sticky top-0 bg-white z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center">
+            <i data-lucide="stethoscope" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg text-ink">Catat Rekam Medis Baru</h3>
+            <p class="text-[11px] text-ink-muted">Entri tindakan sterilisasi, vaksin, atau pengobatan</p>
+          </div>
+        </div>
+        <button onclick="closeHealthModal()" class="w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="healthForm" onsubmit="handleSaveHealth(event)" class="p-6 flex flex-col gap-4">
+        
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Tanggal Tindakan <span class="text-coral">*</span></label>
+            <input type="date" id="healthDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kucing Terdaftar <span class="text-coral">*</span></label>
+            <input type="text" id="healthCat" required placeholder="Contoh: Mochi (KTT-01)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Jenis Tindakan Medis <span class="text-coral">*</span></label>
+            <select id="healthActionType" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Sterilisasi Betina (OH)">Sterilisasi Betina (Ovariohisterektomi)</option>
+              <option value="Sterilisasi Jantan (Kastrasi)">Sterilisasi Jantan (Kastrasi)</option>
+              <option value="Vaksinasi Rabies &amp; Feline">Vaksinasi Rabies &amp; Feline Panleukopenia</option>
+              <option value="Pengobatan Luka &amp; Infeksi">Pengobatan Luka &amp; Infeksi</option>
+              <option value="Pemberian Vitamin &amp; Obat Cacing">Pemberian Vitamin &amp; Obat Cacing</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Klinik / Dokter Mitra <span class="text-coral">*</span></label>
+            <input type="text" id="healthClinic" required value="Klinik Nusantara Vet" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Diagnosa / Rincian Tindakan <span class="text-coral">*</span></label>
+            <textarea id="healthNotes" required rows="2.5" placeholder="Contoh: Operasi sterilisasi berjalan lancar, jahitan rapi, diberikan antibiotik injeksi..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Status Pemulihan <span class="text-coral">*</span></label>
+            <select id="healthRecoveryStatus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Sembuh Total / Sehat">Sembuh Total / Sehat Aktif</option>
+              <option value="Masa Pemulihan (Recovery)">Masa Pemulihan (Recovery)</option>
+              <option value="Perlu Kontrol Ulang">Perlu Kontrol Ulang</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Jadwal Kontrol Berikutnya</label>
+            <input type="date" id="healthNextControl" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-line flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeHealthModal()" class="px-4 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Rekam Medis</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for Health Management -->
+  <script>
+    const defaultHealthRecords = [
+      {
+        id: 'med-1',
+        date: '15 Sep 2026',
+        cat: 'Mochi (KTT-01)',
+        actionType: 'Sterilisasi Betina (OH)',
+        clinic: 'Klinik Nusantara Vet',
+        notes: 'Operasi steril berhasil tuntas, pemulihan pasca operasi 5 hari lancar, luka kering sempurna.',
+        recoveryStatus: 'Sembuh Total / Sehat',
+        nextControl: '-'
+      },
+      {
+        id: 'med-2',
+        date: '18 Sep 2026',
+        cat: 'Milo (LWT-01)',
+        actionType: 'Sterilisasi Jantan (Kastrasi)',
+        clinic: 'Klinik Nusantara Vet',
+        notes: 'Kastrasi jantan tuntas, kondisi fisik stabil dan nafsu makan normal.',
+        recoveryStatus: 'Sembuh Total / Sehat',
+        nextControl: '-'
+      },
+      {
+        id: 'med-3',
+        date: '20 Sep 2026',
+        cat: 'Oyen Barbar (KTT-03)',
+        actionType: 'Vaksinasi Rabies & Feline',
+        clinic: 'Klinik Nusantara Vet',
+        notes: 'Diberikan vaksin Feline 4-in-1 dan obat cacing rutin.',
+        recoveryStatus: 'Sembuh Total / Sehat',
+        nextControl: '20 Sep 2027'
+      },
+      {
+        id: 'med-4',
+        date: '22 Sep 2026',
+        cat: 'Kismis (LWT-06)',
+        actionType: 'Sterilisasi Betina (OH)',
+        clinic: 'Klinik Nusantara Vet',
+        notes: 'Steril tuntas, dipasangkan kalung kuning reflektif baru.',
+        recoveryStatus: 'Sembuh Total / Sehat',
+        nextControl: '-'
+      },
+      {
+        id: 'med-5',
+        date: '25 Sep 2026',
+        cat: 'Barokah (KTT-12)',
+        actionType: 'Pemberian Vitamin & Obat Cacing',
+        clinic: 'Relawan Medik Jaga Satwa',
+        notes: 'Pemberian vitamin penambah imun dan anti-parasit tetes tengkuk.',
+        recoveryStatus: 'Sembuh Total / Sehat',
+        nextControl: '25 Des 2026'
+      }
+    ];
+
+    let healthRecords = [];
+
+    function loadHealthData() {
+      try {
+        const stored = localStorage.getItem('meownesa_admin_health');
+        if (stored) {
+          healthRecords = JSON.parse(stored);
+        } else {
+          healthRecords = [...defaultHealthRecords];
+          saveHealthData();
+        }
+      } catch (err) {
+        healthRecords = [...defaultHealthRecords];
+      }
+    }
+
+    function saveHealthData() {
+      try {
+        localStorage.setItem('meownesa_admin_health', JSON.stringify(healthRecords));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderHealthTable(records) {
+      const tbody = document.getElementById('healthTableBody');
+      if (!tbody) return;
+
+      if (!records || records.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center text-ink-muted">
+              <i data-lucide="inbox" class="w-8 h-8 mx-auto text-ink-muted/50 mb-2"></i>
+              Tidak ada rekam medis yang sesuai filter.
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = records.map(rec => {
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4 font-bold text-ink whitespace-nowrap">
+              ${rec.date}
+            </td>
+            <td class="py-3.5 px-4">
+              <strong class="font-bold text-xs text-ink block">${rec.cat}</strong>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded border border-magenta/20">
+                <i data-lucide="shield-check" class="w-3 h-3"></i> ${rec.actionType}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-xs font-semibold text-ink-light">
+              🏥 ${rec.clinic}
+            </td>
+            <td class="py-3.5 px-4 max-w-xs">
+              <p class="text-[11px] text-ink-muted line-clamp-2">${rec.notes}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                ✓ ${rec.recoveryStatus}
+              </span>
+              ${rec.nextControl && rec.nextControl !== '-' ? `<span class="text-[10px] text-ink-muted block mt-1">Kontrol: ${rec.nextControl}</span>` : ''}
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <button onclick="handleDeleteHealth('${rec.id}')" title="Hapus Rekam Medis" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral hover:bg-coral-light transition bg-white">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function applyHealthFilters() {
+      const q = document.getElementById('healthSearch').value.toLowerCase().trim();
+      const type = document.getElementById('filterHealthType').value;
+
+      const filtered = healthRecords.filter(rec => {
+        const matchesQuery = !q ||
+          rec.cat.toLowerCase().includes(q) ||
+          rec.clinic.toLowerCase().includes(q) ||
+          rec.actionType.toLowerCase().includes(q) ||
+          rec.notes.toLowerCase().includes(q);
+
+        const matchesType = type === 'ALL' || rec.actionType.includes(type);
+
+        return matchesQuery && matchesType;
+      });
+
+      renderHealthTable(filtered);
+    }
+
+    function resetHealthFilters() {
+      document.getElementById('healthSearch').value = '';
+      document.getElementById('filterHealthType').value = 'ALL';
+      renderHealthTable(healthRecords);
+    }
+
+    function openAddHealthModal() {
+      document.getElementById('healthForm').reset();
+      document.getElementById('healthDate').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('healthClinic').value = 'Klinik Nusantara Vet';
+      const modal = document.getElementById('healthModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeHealthModal() {
+      const modal = document.getElementById('healthModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleSaveHealth(e) {
+      e.preventDefault();
+      const dateVal = document.getElementById('healthDate').value;
+      const dateObj = new Date(dateVal);
+      const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+      const nextControlVal = document.getElementById('healthNextControl').value;
+      let nextControlFormatted = '-';
+      if (nextControlVal) {
+        const nDate = new Date(nextControlVal);
+        nextControlFormatted = nDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      const newRec = {
+        id: 'med-' + Date.now(),
+        date: dateFormatted,
+        cat: document.getElementById('healthCat').value.trim(),
+        actionType: document.getElementById('healthActionType').value,
+        clinic: document.getElementById('healthClinic').value.trim(),
+        notes: document.getElementById('healthNotes').value.trim(),
+        recoveryStatus: document.getElementById('healthRecoveryStatus').value,
+        nextControl: nextControlFormatted
+      };
+
+      healthRecords.unshift(newRec);
+      saveHealthData();
+      applyHealthFilters();
+      closeHealthModal();
+    }
+
+    function handleDeleteHealth(id) {
+      if (confirm('Hapus rekam medis ini?')) {
+        healthRecords = healthRecords.filter(r => r.id !== id);
+        saveHealthData();
+        applyHealthFilters();
+      }
+    }
+
+    function exportHealthCSV() {
+      let csv = 'ID,Tanggal,Kucing,Tindakan,Klinik,Diagnosa,Status Pemulihan,Jadwal Kontrol\n';
+      healthRecords.forEach(r => {
+        csv += `"${r.id}","${r.date}","${r.cat}","${r.actionType}","${r.clinic}","${r.notes}","${r.recoveryStatus}","${r.nextControl}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `MeowNesa_Rekam_Medis_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadHealthData();
+      applyHealthFilters();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CMS Artikel &amp; Edukasi — MeowNesa Admin | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="cms" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="CMS Artikel &amp; Edukasi" data-breadcrumb="Kelola Konten Informasi &amp; Publikasi Komunitas"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary & Fast Action Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-line rounded-3xl p-6 shadow-card">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2 border border-magenta/20">
+            <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+            <span>Pusat Publikasi &amp; Kampanye Edukasi</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Manajemen Artikel &amp; Berita Kampus
+          </h1>
+          <p class="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            Kelola artikel edukasi kesejahteraan satwa, panduan kampanye kalung reflektif, karya pawtogenics mahasiswa, dan pengumuman resmi Jaga Satwa.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="openAddArticleModal()" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+            <span>Tulis Artikel Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Articles Table -->
+      <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                <th class="py-3.5 px-4">Artikel</th>
+                <th class="py-3.5 px-4">Kategori</th>
+                <th class="py-3.5 px-4">Tanggal Publikasi</th>
+                <th class="py-3.5 px-4">Penulis</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="cmsTableBody" class="divide-y divide-line/60 text-xs">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODAL: TULIS / EDIT ARTIKEL ================= -->
+  <div id="articleModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+      
+      <div class="px-6 py-4 border-b border-line flex items-center justify-between sticky top-0 bg-white z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg text-ink" id="articleModalTitle">Tulis Artikel Baru</h3>
+            <p class="text-[11px] text-ink-muted">Publikasikan artikel edukasi untuk sivitas akademika</p>
+          </div>
+        </div>
+        <button onclick="closeArticleModal()" class="w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="articleForm" onsubmit="handleSaveArticle(event)" class="p-6 flex flex-col gap-4">
+        <input type="hidden" id="formArticleId">
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Judul Artikel <span class="text-coral">*</span></label>
+          <input type="text" id="formArticleTitle" required placeholder="Contoh: Stop Lepas Kalung Kucing UNESA: Ini Alasan Medisnya" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kategori <span class="text-coral">*</span></label>
+            <select id="formArticleCategory" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Kampanye Edukasi">Kampanye Edukasi</option>
+              <option value="Komunitas">Komunitas &amp; Sejarah</option>
+              <option value="Karya Mahasiswa">Kreativitas / Pawtogenics</option>
+              <option value="Pengumuman">Pengumuman &amp; Info Hilang</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Status Publikasi <span class="text-coral">*</span></label>
+            <select id="formArticleStatus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="PUBLISHED">Published (Tayang di Web)</option>
+              <option value="DRAFT">Draft (Simpan Internal)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Penulis / Kontributor <span class="text-coral">*</span></label>
+            <input type="text" id="formArticleAuthor" required value="Tim Media Jaga Satwa" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Path Gambar Cover</label>
+            <input type="text" id="formArticleImg" value="../../images/images-blogs/stop-kalungcover.jpeg" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Ringkasan Artikel (Excerpt) <span class="text-coral">*</span></label>
+          <textarea id="formArticleExcerpt" required rows="2" placeholder="Ringkasan singkat untuk tampilan kartu blog..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Isi Konten Artikel <span class="text-coral">*</span></label>
+          <textarea id="formArticleContent" required rows="6" placeholder="Tulis isi artikel lengkap di sini..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta"></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-line flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeArticleModal()" class="px-4 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Artikel</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for CMS Management -->
+  <script>
+    const defaultArticles = [
+      {
+        id: 'stop-lepas-kalung',
+        title: 'Stop Lepas Kalung Kucing UNESA: Ini Alasan Medis & Keselamatannya',
+        category: 'Kampanye Edukasi',
+        date: '30 Sep 2026',
+        author: 'Divisi Edukasi Jaga Satwa',
+        status: 'PUBLISHED',
+        img: '../../images/images-blogs/stop-kalungcover.jpeg',
+        excerpt: 'Kalung kucing UNESA bukan sekadar hiasan. Di dalamnya terdapat material reflektif untuk keselamatan malam hari dan tanda resmi sterilisasi.'
+      },
+      {
+        id: 'sejarah-jaga-satwa',
+        title: 'Perjalanan Jaga Satwa UNESA Menjaga Kesejahteraan Satwa Kampus',
+        category: 'Komunitas',
+        date: '28 Sep 2026',
+        author: 'Humas Jaga Satwa',
+        status: 'PUBLISHED',
+        img: '../../images/images-blogs/blog-hari jadi.jpeg',
+        excerpt: 'Bagaimana mahasiswa UNESA bertransformasi dari street feeding sederhana menuju sistem informasi terstruktur yang terintegrasi.'
+      },
+      {
+        id: 'pawtogenics-karya-mahasiswa',
+        title: 'Pawtogenics: Kolaborasi Seni & Fotografi Mahasiswa untuk Satwa Kampus',
+        category: 'Karya Mahasiswa',
+        date: '25 Sep 2026',
+        author: 'FBS Creative Team',
+        status: 'PUBLISHED',
+        img: '../../images/images-blogs/pawtogenics-karya-cover.jpeg',
+        excerpt: 'Pameran karya visual mahasiswa Fakultas Bahasa dan Seni (FBS) yang mengabadikan keseharian kucing-kucing kampus UNESA.'
+      }
+    ];
+
+    let articlesList = [];
+
+    function loadArticlesData() {
+      try {
+        const stored = localStorage.getItem('meownesa_admin_articles');
+        if (stored) {
+          articlesList = JSON.parse(stored);
+        } else {
+          articlesList = [...defaultArticles];
+          saveArticlesData();
+        }
+      } catch (err) {
+        articlesList = [...defaultArticles];
+      }
+    }
+
+    function saveArticlesData() {
+      try {
+        localStorage.setItem('meownesa_admin_articles', JSON.stringify(articlesList));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderArticlesTable() {
+      const tbody = document.getElementById('cmsTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = articlesList.map(art => {
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <img src="${art.img}" alt="${art.title}" class="w-12 h-10 rounded-lg object-cover border border-line flex-shrink-0">
+                <div class="min-w-0">
+                  <strong class="font-bold text-xs text-ink block truncate max-w-sm">${art.title}</strong>
+                  <span class="text-[11px] text-ink-muted line-clamp-1">${art.excerpt}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-[10px] font-bold bg-magenta-50 text-magenta px-2 py-0.5 rounded border border-magenta/20">${art.category}</span>
+            </td>
+            <td class="py-3.5 px-4 font-semibold text-ink text-xs">
+              ${art.date}
+            </td>
+            <td class="py-3.5 px-4 text-ink-muted text-xs">
+              ${art.author}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${art.status}</span>
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <a href="../cms-blog-awarness/article-detail.html?id=${art.id}" target="_blank" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white" title="Lihat Artikel">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+                <button onclick="handleDeleteArticle('${art.id}')" title="Hapus" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral hover:bg-coral-light transition bg-white">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function openAddArticleModal() {
+      document.getElementById('articleForm').reset();
+      document.getElementById('formArticleId').value = '';
+      const modal = document.getElementById('articleModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeArticleModal() {
+      const modal = document.getElementById('articleModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleSaveArticle(e) {
+      e.preventDefault();
+      const title = document.getElementById('formArticleTitle').value.trim();
+      const category = document.getElementById('formArticleCategory').value;
+      const status = document.getElementById('formArticleStatus').value;
+      const author = document.getElementById('formArticleAuthor').value.trim();
+      const img = document.getElementById('formArticleImg').value.trim() || '../../images/images-blogs/stop-kalungcover.jpeg';
+      const excerpt = document.getElementById('formArticleExcerpt').value.trim();
+
+      const newArticle = {
+        id: title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) + '-' + Date.now().toString().slice(-4),
+        title,
+        category,
+        date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+        author,
+        status,
+        img,
+        excerpt
+      };
+
+      articlesList.unshift(newArticle);
+      saveArticlesData();
+      renderArticlesTable();
+      closeArticleModal();
+    }
+
+    function handleDeleteArticle(id) {
+      if (confirm('Hapus artikel ini?')) {
+        articlesList = articlesList.filter(a => a.id !== id);
+        saveArticlesData();
+        renderArticlesTable();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadArticlesData();
+      renderArticlesTable();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Monitoring Pasca-Adopsi — MeowNesa Admin | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="monitoring" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Monitoring Pasca-Adopsi" data-breadcrumb="Follow-Up Mingguan &amp; Adaptasi Rumah Baru"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary & Fast Action Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-line rounded-3xl p-6 shadow-card">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2 border border-magenta/20">
+            <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
+            <span>SOP Humas: Follow-Up Rutin Pasca Serah Terima</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Pemantauan Kondisi Anabul Teradopsi
+          </h1>
+          <p class="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            Menjaga keselamatan dan kenyamanan anabul di lingkungan rumah baru. Tim Humas Jaga Satwa UNESA memeriksa update berkala, kesehatan, dan nafsu makan secara mingguan.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="openAddMonitoringModal()" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Catat Follow-Up Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="smile" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Adaptasi Sempurna</span>
+            <span class="font-display font-extrabold text-2xl text-emerald-600">3 Ekor</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-sun/30 text-ink flex items-center justify-center flex-shrink-0">
+            <i data-lucide="clock" class="w-6 h-6 text-magenta"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Jadwal Cek Minggu Ini</span>
+            <span class="font-display font-extrabold text-2xl text-magenta">2 Anabul</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-coral/10 text-coral flex items-center justify-center flex-shrink-0">
+            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Perlu Perhatian Khusus</span>
+            <span class="font-display font-extrabold text-2xl text-coral">1 Anabul</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="phone-call" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Respon WhatsApp</span>
+            <span class="font-display font-extrabold text-2xl text-blue-700">100% Aktif</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Monitoring Table -->
+      <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                <th class="py-3.5 px-4">Kucing &amp; Adopter</th>
+                <th class="py-3.5 px-4">Tahapan Monitoring</th>
+                <th class="py-3.5 px-4">Tanggal Update Terakhir</th>
+                <th class="py-3.5 px-4">Kondisi &amp; Catatan Adaptasi</th>
+                <th class="py-3.5 px-4">Status Adaptasi</th>
+                <th class="py-3.5 px-4 text-center">Aksi / Hubungi</th>
+              </tr>
+            </thead>
+            <tbody id="monitoringTableBody" class="divide-y divide-line/60 text-xs">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODAL: CATAT LOG MONITORING ================= -->
+  <div id="monitoringModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+      
+      <div class="px-6 py-4 border-b border-line flex items-center justify-between sticky top-0 bg-white z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center">
+            <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg text-ink">Catat Follow-Up Mingguan</h3>
+            <p class="text-[11px] text-ink-muted">Entri kabar update kondisi anabul dari adopter</p>
+          </div>
+        </div>
+        <button onclick="closeMonitoringModal()" class="w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="monitoringForm" onsubmit="handleSaveMonitoring(event)" class="p-6 flex flex-col gap-4">
+        
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Pilih Anabul &amp; Adopter <span class="text-coral">*</span></label>
+          <input type="text" id="monCatAdopter" required placeholder="Contoh: Milo (Adopter: Citra Kirana)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Tahapan Monitoring <span class="text-coral">*</span></label>
+            <select id="monStage" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Minggu ke-1">Minggu ke-1 (Masa Adaptasi)</option>
+              <option value="Minggu ke-2">Minggu ke-2 (Nafsu Makan &amp; Ruang)</option>
+              <option value="Minggu ke-4">Minggu ke-4 (Adaptasi Penuh)</option>
+              <option value="Bulan ke-3">Bulan ke-3 (Evaluasi Permanen)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Tanggal Update <span class="text-coral">*</span></label>
+            <input type="date" id="monDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Status Adaptasi <span class="text-coral">*</span></label>
+          <select id="monStatus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+            <option value="Sangat Baik">Sangat Baik (Aktif, Lahap, Bonding Kuat)</option>
+            <option value="Normal / Butuh Waktu">Normal (Masih agak pemalu namun makan lancar)</option>
+            <option value="Butuh Perhatian">Butuh Perhatian Khusus / Pendampingan Humas</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Catatan Hasil Follow-Up <span class="text-coral">*</span></label>
+          <textarea id="monNotes" required rows="3" placeholder="Contoh: Adopter mengirimkan foto anabul tidur pulas di sofa ruang tamu, nafsu makan dry food sangat baik..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta"></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-line flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeMonitoringModal()" class="px-4 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Update</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for Monitoring Management -->
+  <script>
+    const defaultMonitoringLogs = [
+      {
+        id: 'mon-1',
+        catName: 'Kismis',
+        adopterName: 'Dewi Lestari',
+        phone: '081987654321',
+        stage: 'Minggu ke-1',
+        date: '03 Okt 2026',
+        notes: 'Adopter membagikan foto Kismis bermain dengan bola wol di ruang tengah. Makan wet food lahap, sudah mulai mengenali suara panggilan adopter.',
+        status: 'Sangat Baik'
+      },
+      {
+        id: 'mon-2',
+        catName: 'Milo',
+        adopterName: 'Citra Kirana',
+        phone: '085712345678',
+        stage: 'Persiapan Antar',
+        date: '02 Okt 2026',
+        notes: 'Koordinasi jadwal antar ke CitraLand hari Sabtu sore. Adopter sudah menyiapkan litter box dan area kamar khusus adaptasi awal.',
+        status: 'Normal / Butuh Waktu'
+      }
+    ];
+
+    let monitoringLogs = [];
+
+    function loadMonitoringData() {
+      try {
+        const stored = localStorage.getItem('meownesa_admin_monitoring');
+        if (stored) {
+          monitoringLogs = JSON.parse(stored);
+        } else {
+          monitoringLogs = [...defaultMonitoringLogs];
+          saveMonitoringData();
+        }
+      } catch (err) {
+        monitoringLogs = [...defaultMonitoringLogs];
+      }
+    }
+
+    function saveMonitoringData() {
+      try {
+        localStorage.setItem('meownesa_admin_monitoring', JSON.stringify(monitoringLogs));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderMonitoringTable() {
+      const tbody = document.getElementById('monitoringTableBody');
+      if (!tbody) return;
+
+      if (!monitoringLogs || monitoringLogs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-12 text-center text-ink-muted">
+              <i data-lucide="inbox" class="w-8 h-8 mx-auto text-ink-muted/50 mb-2"></i>
+              Belum ada log monitoring pasca-adopsi.
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = monitoringLogs.map(item => {
+        const isGood = item.status === 'Sangat Baik';
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4">
+              <strong class="font-bold text-xs text-ink block">Kucing: ${item.catName}</strong>
+              <span class="text-[11px] text-ink-muted">Adopter: ${item.adopterName}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="font-mono font-bold text-xs bg-cream px-2 py-0.5 rounded border border-line text-magenta">${item.stage}</span>
+            </td>
+            <td class="py-3.5 px-4 font-semibold text-ink">
+              ${item.date}
+            </td>
+            <td class="py-3.5 px-4 max-w-sm">
+              <p class="text-[11px] text-ink-muted leading-relaxed">${item.notes}</p>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${isGood ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-sun/30 text-ink border-sun/40'}">
+                ${item.status}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <a href="https://wa.me/${item.phone.replace(/[^0-9]/g, '')}" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition inline-flex items-center gap-1">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                <span>WA Adopter</span>
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function openAddMonitoringModal() {
+      document.getElementById('monitoringForm').reset();
+      document.getElementById('monDate').value = new Date().toISOString().slice(0, 10);
+      const modal = document.getElementById('monitoringModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeMonitoringModal() {
+      const modal = document.getElementById('monitoringModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleSaveMonitoring(e) {
+      e.preventDefault();
+      const dateVal = document.getElementById('monDate').value;
+      const dateObj = new Date(dateVal);
+      const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      const catAdopter = document.getElementById('monCatAdopter').value.trim();
+      const newLog = {
+        id: 'mon-' + Date.now(),
+        catName: catAdopter,
+        adopterName: 'Adopter Terdaftar',
+        phone: '081234567890',
+        stage: document.getElementById('monStage').value,
+        date: dateFormatted,
+        notes: document.getElementById('monNotes').value.trim(),
+        status: document.getElementById('monStatus').value
+      };
+
+      monitoringLogs.unshift(newLog);
+      saveMonitoringData();
+      renderMonitoringTable();
+      closeMonitoringModal();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadMonitoringData();
+      renderMonitoringTable();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

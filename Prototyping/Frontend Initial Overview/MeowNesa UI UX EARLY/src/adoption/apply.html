@@ -129,14 +129,29 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold text-ink mb-1.5">Ganti Pilihan Kucing Lain:</label>
-              <select id="catSelectInput" onchange="onCatSelectionChange(this.value)" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs text-ink font-semibold focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
-                <option value="Mochi">Mochi — Betina, ± 2 Tahun (Kampus Ketintang)</option>
-                <option value="Milo">Milo — Jantan, ± 3 Tahun (Kampus Lidah Wetan)</option>
-                <option value="Oyen">Oyen Barbar — Jantan, ± 1.5 Tahun (Kampus Ketintang)</option>
-                <option value="Kismis">Kismis — Betina, ± 4 Tahun (Kampus Lidah Wetan)</option>
-              </select>
+            <!-- Searchable Cat Picker Input & Dropdown -->
+            <div class="relative" id="catComboboxWrapper">
+              <label class="block text-xs font-bold text-ink mb-1.5 flex items-center justify-between">
+                <span>Cari &amp; Pilih Kucing Lain:</span>
+                <span class="text-[11px] font-normal text-magenta">Ketik nama, kampus, atau jenis kelamin</span>
+              </label>
+
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+                  <i data-lucide="search" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="catSearchInput" placeholder="Ketik nama kucing, lokasi, atau jenis kelamin..." 
+                  onfocus="openCatDropdown()" oninput="handleCatSearch(this.value)" autocomplete="off"
+                  class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-line bg-cream/30 text-xs text-ink font-semibold focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition cursor-pointer">
+                <button type="button" onclick="toggleCatDropdown()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-ink-muted hover:text-magenta transition">
+                  <i data-lucide="chevron-down" id="catDropdownChevron" class="w-4 h-4 transition-transform duration-200"></i>
+                </button>
+              </div>
+
+              <!-- Floating Searchable Cat Results List -->
+              <div id="catDropdownList" class="hidden absolute left-0 right-0 mt-1.5 bg-white border border-line rounded-2xl shadow-xl z-30 max-h-64 overflow-y-auto p-2 flex-col gap-1.5 divide-y divide-line/40">
+                <!-- Populated via JS -->
+              </div>
             </div>
           </div>
 
@@ -167,6 +182,41 @@
               <div class="sm:col-span-2">
                 <label class="block text-xs font-bold text-ink mb-1.5">Alamat Lengkap Tempat Tinggal (Domisili) <span class="text-coral">*</span></label>
                 <textarea id="adopterAddress" required rows="2.5" placeholder="Contoh: Jl. Ketintang Madya No. 45, Gayungan, Surabaya" class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition leading-relaxed"></textarea>
+              </div>
+
+              <!-- Upload KTP / KTM Field -->
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-ink mb-1.5 flex items-center justify-between">
+                  <span>Upload Foto KTP / KTM Mahasiswa <span class="text-coral">*</span></span>
+                  <span class="text-[11px] font-normal text-ink-muted">Format: JPG, PNG, atau PDF (Maks. 5MB)</span>
+                </label>
+                <div class="relative border-2 border-dashed border-line hover:border-magenta bg-cream/30 rounded-2xl p-4 transition text-center group cursor-pointer" onclick="document.getElementById('idCardFileInput').click()">
+                  <input type="file" id="idCardFileInput" accept="image/*,application/pdf" onchange="handleIdCardUpload(event)" class="hidden">
+                  
+                  <div id="idCardPlaceholder" class="flex flex-col items-center justify-center gap-1.5 py-2">
+                    <div class="w-10 h-10 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center group-hover:scale-110 transition">
+                      <i data-lucide="file-badge" class="w-5 h-5"></i>
+                    </div>
+                    <p class="text-xs font-bold text-ink group-hover:text-magenta transition">Pilih file KTP / KTM atau Drag &amp; Drop di sini</p>
+                    <span class="text-[10px] text-ink-muted">Digunakan untuk verifikasi keaslian identitas calon adopter</span>
+                  </div>
+
+                  <!-- Uploaded File Info Preview -->
+                  <div id="idCardPreview" class="hidden items-center justify-between bg-white border border-line rounded-xl p-3 shadow-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-magenta/10 text-magenta flex items-center justify-center flex-shrink-0" id="idCardTypeIcon">
+                        <i data-lucide="file-check" class="w-4 h-4"></i>
+                      </div>
+                      <div class="text-left min-w-0">
+                        <span class="font-bold text-xs text-ink block truncate" id="idCardFileName">ktp_adopter.pdf</span>
+                        <span class="text-[10px] text-ink-muted" id="idCardFileSize">1.2 MB</span>
+                      </div>
+                    </div>
+                    <button type="button" onclick="removeIdCard(event)" class="p-1.5 rounded-lg text-ink-muted hover:text-coral hover:bg-coral-light transition" title="Hapus File">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -214,7 +264,33 @@
                   <option value="INDOOR_SEMI_OUTDOOR">Indoor dengan akses halaman tertutup berpagar aman</option>
                 </select>
               </div>
-            </div>
+
+              <!-- Upload Multi-Photo Galeri Rumah (Min 2, Max 6) -->
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-ink mb-1.5 flex items-center justify-between">
+                  <span>Upload Foto Kondisi Asli Rumah (Galeri Hunian) <span class="text-coral">*</span></span>
+                  <span class="text-[11px] font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded-md border border-magenta/20" id="housePhotoBadge">Min. 2 Foto, Maks. 6 Foto</span>
+                </label>
+                <p class="text-[11px] text-ink-muted mb-2.5 leading-relaxed">
+                  Upload foto ruang keluarga/santai, area makan/litter box, dan halaman agar tim reviewer Jaga Satwa UNESA dapat mengetahui kondisi asli tempat tinggal.
+                </p>
+
+                <div class="border-2 border-dashed border-line hover:border-magenta bg-cream/30 rounded-2xl p-4 transition text-center group cursor-pointer" onclick="document.getElementById('housePhotosInput').click()">
+                  <input type="file" id="housePhotosInput" accept="image/*" multiple onchange="handleHousePhotosUpload(event)" class="hidden">
+                  <div class="flex flex-col items-center justify-center gap-1.5 py-1">
+                    <div class="w-10 h-10 rounded-xl bg-sun/20 text-sun-dark flex items-center justify-center group-hover:scale-110 transition">
+                      <i data-lucide="camera" class="w-5 h-5"></i>
+                    </div>
+                    <p class="text-xs font-bold text-ink group-hover:text-magenta transition">Klik untuk Pilih / Tambah Foto Rumah</p>
+                    <span class="text-[10px] text-ink-muted" id="housePhotosCountText">0 / 6 Foto Terpilih (Wajib minimal 2 foto)</span>
+                  </div>
+                </div>
+
+                <!-- Preview Grid for House Photos -->
+                <div id="housePhotosGallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 mt-3 hidden">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
           </div>
 
           <!-- STEP 4: PEMAHAMAN PERAWATAN & KOMITMEN ADOPSI -->
@@ -392,7 +468,8 @@
         campus: 'Kampus Ketintang',
         location: 'Gedung K10 Vokasi',
         collar: 'Kalung Merah Reflektif (KTT-01)',
-        img: '../../images/cat-images/cat1.jpg'
+        img: '../../images/cat-images/cat1.jpg',
+        status: 'Siap Diadopsi'
       },
       'Milo': {
         name: 'Milo',
@@ -401,7 +478,8 @@
         campus: 'Kampus Lidah Wetan',
         location: 'Dermaga Danau UNESA',
         collar: 'Kalung Biru Reflektif (LWT-01)',
-        img: '../../images/cat-images/cat2-p1.jpg'
+        img: '../../images/cat-images/cat2-p1.jpg',
+        status: 'Siap Diadopsi'
       },
       'Oyen': {
         name: 'Oyen Barbar',
@@ -410,7 +488,8 @@
         campus: 'Kampus Ketintang',
         location: 'Kantin Pusat FT Ketintang',
         collar: 'Kalung Oranye Reflektif (KTT-03)',
-        img: '../../images/cat-images/catoyen-p1.jpg'
+        img: '../../images/cat-images/catoyen-p1.jpg',
+        status: 'Siap Diadopsi'
       },
       'Kismis': {
         name: 'Kismis',
@@ -419,31 +498,281 @@
         campus: 'Kampus Lidah Wetan',
         location: 'Gedung Sawunggaling & FBS',
         collar: 'Kalung Kuning Reflektif (LWT-06)',
-        img: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg'
+        img: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg',
+        status: 'Siap Diadopsi'
+      },
+      'Barokah': {
+        name: 'Barokah',
+        gender: 'Betina',
+        age: '± 2.5 Tahun',
+        campus: 'Kampus Ketintang',
+        location: 'Masjid Kampus Barat FMIPA',
+        collar: 'Kalung Hijau Toska (KTT-12)',
+        img: '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg',
+        status: 'Siap Diadopsi'
+      },
+      'Ranu': {
+        name: 'Ranu',
+        gender: 'Jantan',
+        age: '± 3 Tahun',
+        campus: 'Kampus Ketintang',
+        location: 'Danau Ranunesa Ketintang',
+        collar: 'Kalung Biru Toska (KTT-13)',
+        img: '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg',
+        status: 'Siap Diadopsi'
+      },
+      'Danau': {
+        name: 'Danau',
+        gender: 'Betina',
+        age: '± 2 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Gazebo Dermaga Danau UNESA',
+        collar: 'Kalung Toska Reflektif (LWT-02)',
+        img: '../../images/cat-images/cat2-p2.jpg',
+        status: 'Siap Diadopsi'
+      },
+      'Nada': {
+        name: 'Nada',
+        gender: 'Betina',
+        age: '± 1.5 Tahun',
+        campus: 'Kampus Lidah Wetan',
+        location: 'FBS Gedung T Sawunggaling',
+        collar: 'Kalung Merah Reflektif (LWT-07)',
+        img: '../../images/cat-images/imgi_32_cute-ginger-cat.jpg',
+        status: 'Siap Diadopsi'
       }
     };
 
     let selectedCatKey = 'Mochi';
     let currentAppNumber = '';
     let currentTrackingCode = '';
+    let uploadedIdCard = null;
+    let uploadedHousePhotos = [];
 
-    function initCatSelection() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const catParam = urlParams.get('cat');
+    // ================= UPLOAD HANDLERS =================
+    function handleIdCardUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-      if (catParam) {
-        const foundKey = Object.keys(availableCats).find(k => k.toLowerCase() === catParam.toLowerCase() || availableCats[k].name.toLowerCase().includes(catParam.toLowerCase()));
-        if (foundKey) {
-          selectedCatKey = foundKey;
-          document.getElementById('catSelectInput').value = foundKey;
-        }
-      }
-      updateCatPreview(selectedCatKey);
+      const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+      const reader = new FileReader();
+
+      reader.onload = function(evt) {
+        uploadedIdCard = {
+          name: file.name,
+          size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+          type: isPdf ? 'pdf' : 'image',
+          dataUrl: evt.target.result
+        };
+
+        document.getElementById('idCardPlaceholder').classList.add('hidden');
+        const preview = document.getElementById('idCardPreview');
+        preview.classList.remove('hidden');
+        preview.classList.add('flex');
+
+        document.getElementById('idCardFileName').innerText = uploadedIdCard.name;
+        document.getElementById('idCardFileSize').innerText = `${uploadedIdCard.size} • ${isPdf ? 'Dokumen PDF' : 'Gambar KTP/KTM'}`;
+        
+        const typeIcon = document.getElementById('idCardTypeIcon');
+        typeIcon.innerHTML = isPdf 
+          ? '<i data-lucide="file-text" class="w-4 h-4 text-magenta"></i>' 
+          : '<i data-lucide="image" class="w-4 h-4 text-magenta"></i>';
+
+        if (window.lucide) lucide.createIcons();
+      };
+
+      reader.readAsDataURL(file);
     }
 
-    function onCatSelectionChange(key) {
+    function removeIdCard(e) {
+      e.stopPropagation();
+      uploadedIdCard = null;
+      document.getElementById('idCardFileInput').value = '';
+      document.getElementById('idCardPlaceholder').classList.remove('hidden');
+      const preview = document.getElementById('idCardPreview');
+      preview.classList.add('hidden');
+      preview.classList.remove('flex');
+    }
+
+    function handleHousePhotosUpload(e) {
+      const files = Array.from(e.target.files);
+      if (!files || files.length === 0) return;
+
+      const remainingSlots = 6 - uploadedHousePhotos.length;
+      if (remainingSlots <= 0) {
+        alert('Maksimal 6 foto rumah yang dapat diunggah.');
+        return;
+      }
+
+      const allowedFiles = files.slice(0, remainingSlots);
+
+      allowedFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedHousePhotos.push({
+            name: file.name,
+            dataUrl: evt.target.result
+          });
+          renderHousePhotosGallery();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // reset input to allow adding more
+      e.target.value = '';
+    }
+
+    function removeHousePhoto(index) {
+      uploadedHousePhotos.splice(index, 1);
+      renderHousePhotosGallery();
+    }
+
+    function renderHousePhotosGallery() {
+      const gallery = document.getElementById('housePhotosGallery');
+      const countText = document.getElementById('housePhotosCountText');
+      const badge = document.getElementById('housePhotoBadge');
+
+      const count = uploadedHousePhotos.length;
+      countText.innerText = `${count} / 6 Foto Terpilih ${count < 2 ? '(Wajib minimal 2 foto)' : '(✓ Memenuhi syarat)'}`;
+
+      if (count >= 2) {
+        badge.className = 'text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200';
+        badge.innerText = `✓ ${count} Foto Terlampir (Lengkap)`;
+      } else {
+        badge.className = 'text-[11px] font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded-md border border-magenta/20';
+        badge.innerText = `Min. 2 Foto, Maks. 6 Foto (${count}/2)`;
+      }
+
+      if (count === 0) {
+        gallery.classList.add('hidden');
+        gallery.innerHTML = '';
+        return;
+      }
+
+      gallery.classList.remove('hidden');
+      gallery.innerHTML = uploadedHousePhotos.map((photo, idx) => {
+        return `
+          <div class="relative group rounded-xl overflow-hidden border border-line bg-cream h-24 shadow-xs">
+            <img src="${photo.dataUrl}" alt="Foto Rumah ${idx + 1}" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-ink/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+              <button type="button" onclick="removeHousePhoto(${idx})" class="p-1 rounded-full bg-coral text-white hover:bg-coral-light transition" title="Hapus Foto">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            <span class="absolute bottom-1 left-1 bg-ink/75 text-white text-[9px] font-bold px-1.5 py-0.2 rounded backdrop-blur-xs">
+              Foto ${idx + 1}
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function renderCatDropdown(filterText = '') {
+      const dropdown = document.getElementById('catDropdownList');
+      if (!dropdown) return;
+
+      const query = filterText.toLowerCase().trim();
+      const catKeys = Object.keys(availableCats);
+      const filtered = catKeys.filter(k => {
+        const cat = availableCats[k];
+        return cat.name.toLowerCase().includes(query) ||
+               cat.campus.toLowerCase().includes(query) ||
+               cat.location.toLowerCase().includes(query) ||
+               cat.gender.toLowerCase().includes(query) ||
+               cat.collar.toLowerCase().includes(query);
+      });
+
+      if (filtered.length === 0) {
+        dropdown.innerHTML = `
+          <div class="py-4 px-3 text-center text-ink-muted text-xs">
+            <i data-lucide="help-circle" class="w-5 h-5 mx-auto text-ink-muted/60 mb-1"></i>
+            Tidak ada kucing yang sesuai pencarian "<strong>${filterText}</strong>".
+          </div>
+        `;
+      } else {
+        dropdown.innerHTML = filtered.map(key => {
+          const cat = availableCats[key];
+          const isSelected = (key === selectedCatKey);
+          return `
+            <button type="button" onclick="selectCat('${key}')" class="w-full text-left p-2 rounded-xl flex items-center gap-3 transition ${isSelected ? 'bg-magenta/10 border border-magenta/30' : 'hover:bg-cream/60'}">
+              <img src="${cat.img}" alt="${cat.name}" class="w-11 h-11 rounded-lg object-cover border border-line flex-shrink-0">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="font-display font-bold text-xs text-ink truncate">${cat.name}</span>
+                  <span class="text-[10px] font-bold ${cat.gender === 'Jantan' ? 'text-blue-700 bg-blue-50' : 'text-magenta bg-magenta-50'} px-1.5 py-0.2 rounded">${cat.gender}</span>
+                  <span class="text-[10px] text-ink-muted hidden sm:inline">• ${cat.age}</span>
+                </div>
+                <div class="text-[11px] text-ink-muted truncate mt-0.5">
+                  📍 ${cat.campus} — ${cat.location}
+                </div>
+              </div>
+              ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-magenta flex-shrink-0"></i>' : ''}
+            </button>
+          `;
+        }).join('');
+      }
+
+      if (window.lucide) {
+        lucide.createIcons({ root: dropdown });
+      }
+    }
+
+    function openCatDropdown() {
+      const dropdown = document.getElementById('catDropdownList');
+      const chevron = document.getElementById('catDropdownChevron');
+      if (dropdown) {
+        dropdown.classList.remove('hidden');
+        dropdown.classList.add('flex');
+      }
+      if (chevron) {
+        chevron.classList.add('rotate-180');
+      }
+      const searchInput = document.getElementById('catSearchInput');
+      renderCatDropdown(searchInput ? searchInput.value : '');
+    }
+
+    function closeCatDropdown() {
+      const dropdown = document.getElementById('catDropdownList');
+      const chevron = document.getElementById('catDropdownChevron');
+      if (dropdown) {
+        dropdown.classList.add('hidden');
+        dropdown.classList.remove('flex');
+      }
+      if (chevron) {
+        chevron.classList.remove('rotate-180');
+      }
+    }
+
+    function toggleCatDropdown() {
+      const dropdown = document.getElementById('catDropdownList');
+      if (dropdown && dropdown.classList.contains('hidden')) {
+        openCatDropdown();
+      } else {
+        closeCatDropdown();
+      }
+    }
+
+    function handleCatSearch(val) {
+      openCatDropdown();
+      renderCatDropdown(val);
+    }
+
+    function selectCat(key) {
+      if (!availableCats[key]) return;
       selectedCatKey = key;
+      const cat = availableCats[key];
+
+      const searchInput = document.getElementById('catSearchInput');
+      if (searchInput) {
+        searchInput.value = `${cat.name} (${cat.campus} - ${cat.location})`;
+      }
+
       updateCatPreview(key);
+      closeCatDropdown();
     }
 
     function updateCatPreview(key) {
@@ -454,6 +783,35 @@
       document.getElementById('catPreviewDetails').innerText = `${cat.age} • ${cat.campus} (${cat.location})`;
       document.getElementById('catPreviewCollar').innerText = `🏷️ Kalung: ${cat.collar} • Sudah Steril & Vaksin`;
     }
+
+    function initCatSelection() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('cat');
+
+      if (catParam) {
+        const foundKey = Object.keys(availableCats).find(k => k.toLowerCase() === catParam.toLowerCase() || availableCats[k].name.toLowerCase().includes(catParam.toLowerCase()));
+        if (foundKey) {
+          selectedCatKey = foundKey;
+        }
+      }
+      
+      const cat = availableCats[selectedCatKey] || availableCats['Mochi'];
+      const searchInput = document.getElementById('catSearchInput');
+      if (searchInput) {
+        searchInput.value = `${cat.name} (${cat.campus} - ${cat.location})`;
+      }
+
+      updateCatPreview(selectedCatKey);
+      renderCatDropdown('');
+    }
+
+    // Dismiss dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const wrapper = document.getElementById('catComboboxWrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        closeCatDropdown();
+      }
+    });
 
     function generateRandomCode(length = 6) {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -471,6 +829,20 @@
 
     function handleApplySubmit(e) {
       e.preventDefault();
+
+      // 1. Validation for KTP/KTM
+      if (!uploadedIdCard) {
+        alert('Wajib mengunggah foto KTP atau KTM Mahasiswa untuk keperluan verifikasi identitas adopter.');
+        document.getElementById('idCardFileInput').focus();
+        return;
+      }
+
+      // 2. Validation for House Photos (Min 2, Max 6)
+      if (uploadedHousePhotos.length < 2) {
+        alert(`Wajib mengunggah minimal 2 foto kondisi asli tempat tinggal/rumah (Saat ini: ${uploadedHousePhotos.length} foto).`);
+        document.getElementById('housePhotosInput').focus();
+        return;
+      }
 
       const cat = availableCats[selectedCatKey];
       const adopterName = document.getElementById('adopterName').value.trim();
@@ -496,6 +868,8 @@
         adopterAddress: adopterAddress,
         adopterHousing: adopterHousing,
         adopterIncome: adopterIncome,
+        idCardDoc: uploadedIdCard,
+        housePhotos: uploadedHousePhotos,
         status: 'UNDER_REVIEW',
         statusLabel: 'SEDANG DITINJAU (SCREENING)',
         date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),

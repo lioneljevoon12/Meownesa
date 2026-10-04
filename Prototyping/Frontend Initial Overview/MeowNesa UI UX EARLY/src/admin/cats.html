@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Data Populasi Kucing — MeowNesa Admin | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="cats" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Data Populasi Kucing" data-breadcrumb="Database Satwa UNESA &amp; Kalung Identitas"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary & Fast Action Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-line rounded-3xl p-6 shadow-card">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs mb-2 border border-magenta/20">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span>Manajemen Kucing Asli UNESA Terdaftar</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+            Database Populasi &amp; Tagging Kalung
+          </h1>
+          <p class="text-xs text-ink-muted mt-1 max-w-xl leading-relaxed">
+            Data kucing resmi kampus UNESA sejak 2021. Setiap anabul dilengkapi kalung reflektif anti-tabrak, rekam medis steril &amp; vaksin, serta riwayat lokasi teritorial.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="exportDataCSV()" class="px-4 py-2.5 rounded-xl border border-line hover:border-magenta bg-cream/40 text-ink text-xs font-bold transition flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-magenta"></i>
+            <span>Export CSV</span>
+          </button>
+          <button onclick="openAddCatModal()" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Tambah Kucing Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Stats Metrics -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-magenta-50 text-magenta flex items-center justify-center flex-shrink-0">
+            <i data-lucide="cat" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Total Kucing Terdata</span>
+            <span class="font-display font-extrabold text-2xl text-ink" id="statTotalCats">8</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-sun/30 text-ink flex items-center justify-center flex-shrink-0">
+            <i data-lucide="heart" class="w-6 h-6 text-magenta"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Siap Diadopsi</span>
+            <span class="font-display font-extrabold text-2xl text-magenta" id="statReadyAdopt">4</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Status Tersteril</span>
+            <span class="font-display font-extrabold text-2xl text-emerald-600" id="statSterilized">100%</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="map-pin" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-ink-muted block">Sebaran Kampus</span>
+            <span class="font-display font-extrabold text-2xl text-blue-700">2 Kampus</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Filter, Search & View Switcher Bar -->
+      <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col md:flex-row items-center justify-between gap-3">
+        
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+          <!-- Search Input -->
+          <div class="relative flex-1 md:w-64">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-magenta">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="catTableSearch" oninput="applyFilters()" placeholder="Cari nama, ID kalung, lokasi..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta transition">
+          </div>
+
+          <!-- Campus Filter -->
+          <select id="filterCampus" onchange="applyFilters()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs font-semibold text-ink focus:outline-none focus:border-magenta">
+            <option value="ALL">Semua Kampus</option>
+            <option value="Kampus Ketintang">Kampus Ketintang</option>
+            <option value="Kampus Lidah Wetan">Kampus Lidah Wetan</option>
+          </select>
+
+          <!-- Status Filter -->
+          <select id="filterStatus" onchange="applyFilters()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs font-semibold text-ink focus:outline-none focus:border-magenta">
+            <option value="ALL">Semua Status</option>
+            <option value="AVAILABLE">Siap Diadopsi</option>
+            <option value="ACTIVE">Terdata Aktif (Kampus)</option>
+            <option value="TREATMENT">Dalam Perawatan Medis</option>
+            <option value="ADOPTED">Telah Diadopsi</option>
+          </select>
+
+          <!-- Gender Filter -->
+          <select id="filterGender" onchange="applyFilters()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs font-semibold text-ink focus:outline-none focus:border-magenta">
+            <option value="ALL">Semua Gender</option>
+            <option value="Jantan">Jantan</option>
+            <option value="Betina">Betina</option>
+          </select>
+        </div>
+
+        <!-- View Mode Switcher: Table vs Cards -->
+        <div class="flex items-center gap-1.5 bg-cream p-1 rounded-xl border border-line self-end md:self-auto">
+          <button onclick="setViewMode('table')" id="btnViewTable" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-magenta text-white shadow-xs transition flex items-center gap-1.5">
+            <i data-lucide="table" class="w-3.5 h-3.5"></i>
+            <span>Tabel</span>
+          </button>
+          <button onclick="setViewMode('grid')" id="btnViewGrid" class="px-3 py-1.5 rounded-lg text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center gap-1.5">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            <span>Grid Kartu</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- View Container: Table View -->
+      <div id="tableViewContainer" class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                <th class="py-3.5 px-4">Kucing</th>
+                <th class="py-3.5 px-4">ID &amp; Kalung Reflektif</th>
+                <th class="py-3.5 px-4">Lokasi &amp; Teritorial</th>
+                <th class="py-3.5 px-4">Gender &amp; Usia</th>
+                <th class="py-3.5 px-4">Status Medis</th>
+                <th class="py-3.5 px-4">Status Adopsi</th>
+                <th class="py-3.5 px-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="catsTableBody" class="divide-y divide-line/60 text-xs">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- View Container: Grid Cards View (Hidden by default) -->
+      <div id="gridViewContainer" class="hidden grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <!-- Populated via JavaScript -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="catsEmptyState" class="hidden bg-white border border-line rounded-3xl p-12 text-center shadow-card">
+        <div class="w-16 h-16 rounded-full bg-magenta/10 text-magenta mx-auto flex items-center justify-center mb-3">
+          <i data-lucide="search-x" class="w-8 h-8"></i>
+        </div>
+        <h3 class="font-display font-bold text-base text-ink">Kucing Tidak Ditemukan</h3>
+        <p class="text-xs text-ink-muted mt-1">Coba sesuaikan kata kunci pencarian atau filter kampus &amp; status.</p>
+        <button onclick="resetFilters()" class="mt-4 px-4 py-2 rounded-xl bg-magenta text-white font-bold text-xs">
+          Reset Filter
+        </button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODAL: TAMBAH / EDIT KUCING ================= -->
+  <div id="catFormModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-line flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center">
+            <i data-lucide="cat" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg text-ink" id="catModalTitle">Tambah Kucing Baru</h3>
+            <p class="text-[11px] text-ink-muted">Lengkapi data profil kucing binaan resmi UNESA</p>
+          </div>
+        </div>
+        <button onclick="closeCatModal()" class="w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Form Body -->
+      <form id="catForm" onsubmit="handleSaveCat(event)" class="p-6 flex flex-col gap-5">
+        <input type="hidden" id="formCatId">
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Nama Kucing <span class="text-coral">*</span></label>
+            <input type="text" id="formCatName" required placeholder="Contoh: Mochi" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kode Tag Kalung <span class="text-coral">*</span></label>
+            <input type="text" id="formCatTagCode" required placeholder="Contoh: KTT-01 atau LWT-05" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta font-mono uppercase">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Warna Kalung Reflektif <span class="text-coral">*</span></label>
+            <input type="text" id="formCatCollarColor" required placeholder="Contoh: Kalung Merah Reflektif" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kampus UNESA <span class="text-coral">*</span></label>
+            <select id="formCatCampus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Kampus Ketintang">Kampus Ketintang</option>
+              <option value="Kampus Lidah Wetan">Kampus Lidah Wetan</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Lokasi / Gedung Spesifik <span class="text-coral">*</span></label>
+            <input type="text" id="formCatLocation" required placeholder="Contoh: Gedung K10 Vokasi / Kantin FT" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Jenis Kelamin <span class="text-coral">*</span></label>
+            <select id="formCatGender" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Betina">Betina (♀)</option>
+              <option value="Jantan">Jantan (♂)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Estimasi Usia <span class="text-coral">*</span></label>
+            <input type="text" id="formCatAge" required placeholder="Contoh: ± 2 Tahun" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Status Kucing <span class="text-coral">*</span></label>
+            <select id="formCatStatus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="AVAILABLE">Siap Diadopsi</option>
+              <option value="ACTIVE">Terdata Aktif (Di Kampus)</option>
+              <option value="TREATMENT">Dalam Perawatan Medis</option>
+              <option value="ADOPTED">Telah Diadopsi</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Status Sterilisasi <span class="text-coral">*</span></label>
+            <select id="formCatSteril" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+              <option value="Sudah Steril">Sudah Steril (Nusantara Vet)</option>
+              <option value="Belum Steril">Belum Steril (Antrean)</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Status &amp; Riwayat Vaksin</label>
+            <input type="text" id="formCatVaccine" placeholder="Contoh: Vaksin Lengkap (Rabies &amp; Feline Panleukopenia)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">URL / Path Foto Kucing</label>
+            <input type="text" id="formCatImg" placeholder="../../images/cat-images/cat1.jpg" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-ink mb-1">Deskripsi &amp; Ciri Khusus</label>
+            <textarea id="formCatDesc" rows="3" placeholder="Contoh: Calico ramah, suka dielus di area dagu, sering bermain di selasar..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta"></textarea>
+          </div>
+
+        </div>
+
+        <div class="pt-4 border-t border-line flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeCatModal()" class="px-4 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Data Kucing</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DETAIL & QR TAG KUCING ================= -->
+  <div id="catDetailModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-lg w-full shadow-2xl p-6 flex flex-col gap-5 text-left relative">
+      <button onclick="closeCatDetailModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="flex items-start gap-4">
+        <img id="detailModalImg" src="../../images/cat-images/cat1.jpg" alt="Foto Kucing" class="w-24 h-24 rounded-2xl object-cover border border-line shadow-sm">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 class="font-display font-extrabold text-xl text-ink truncate" id="detailModalName">Mochi</h3>
+            <span id="detailModalGender" class="text-xs font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded-md border border-magenta/20">Betina</span>
+          </div>
+          <span class="text-xs font-mono font-bold text-ink bg-sun/40 px-2 py-0.5 rounded-md inline-block mt-1" id="detailModalTagCode">TAG: KTT-01</span>
+          <p class="text-xs text-ink-muted mt-1" id="detailModalCampus">Kampus Ketintang • Gedung K10 Vokasi</p>
+        </div>
+      </div>
+
+      <!-- Information List -->
+      <div class="bg-cream/60 rounded-2xl p-4 border border-line space-y-2.5 text-xs">
+        <div class="flex justify-between border-b border-line/60 pb-1.5">
+          <span class="text-ink-muted">Warna Kalung:</span>
+          <strong class="text-ink" id="detailModalCollar">Kalung Merah Reflektif</strong>
+        </div>
+        <div class="flex justify-between border-b border-line/60 pb-1.5">
+          <span class="text-ink-muted">Status Sterilisasi:</span>
+          <strong class="text-emerald-700 font-semibold" id="detailModalSteril">Sudah Steril (Nusantara Vet)</strong>
+        </div>
+        <div class="flex justify-between border-b border-line/60 pb-1.5">
+          <span class="text-ink-muted">Vaksinasi:</span>
+          <strong class="text-ink" id="detailModalVaccine">Vaksin Lengkap</strong>
+        </div>
+        <div class="flex justify-between border-b border-line/60 pb-1.5">
+          <span class="text-ink-muted">Status Adopsi:</span>
+          <span class="px-2 py-0.5 rounded-md font-bold text-[11px]" id="detailModalStatusBadge">Siap Diadopsi</span>
+        </div>
+        <div>
+          <span class="text-ink-muted block mb-1">Catatan &amp; Ciri Khas:</span>
+          <p class="text-ink-light leading-relaxed text-[11px]" id="detailModalDesc">-</p>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeCatDetailModal()" class="w-full py-2.5 rounded-xl bg-magenta text-white font-bold text-xs transition">
+          Tutup
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for Cats Management -->
+  <script>
+    // Initial Dataset based on UNESA Cats
+    const defaultCats = [
+      {
+        id: 'mochi',
+        name: 'Mochi',
+        tagCode: 'KTT-01',
+        collarColor: 'Kalung Merah Reflektif',
+        campus: 'Kampus Ketintang',
+        location: 'Gedung K10 Fakultas Vokasi',
+        gender: 'Betina',
+        age: '± 2 Tahun',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap (Nusantara Vet)',
+        img: '../../images/cat-images/cat1.jpg',
+        desc: 'Kucing belang tiga (calico) sangat jinak dan ramah pada mahasiswa di area Vokasi.'
+      },
+      {
+        id: 'milo',
+        name: 'Milo',
+        tagCode: 'LWT-01',
+        collarColor: 'Kalung Biru Reflektif',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Dermaga & Gazebo Danau UNESA',
+        gender: 'Jantan',
+        age: '± 3 Tahun',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap (Nusantara Vet)',
+        img: '../../images/cat-images/cat2-p1.jpg',
+        desc: 'Kucing abu-abu bertubuh tegap yang ramah menyapa pengunjung danau Liwet.'
+      },
+      {
+        id: 'danau',
+        name: 'Danau',
+        tagCode: 'LWT-02',
+        collarColor: 'Kalung Toska Reflektif',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Gazebo Dermaga Danau UNESA',
+        gender: 'Betina',
+        age: '± 2 Tahun',
+        status: 'ACTIVE',
+        statusLabel: 'Terdata Aktif',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: '../../images/cat-images/cat2-p2.jpg',
+        desc: 'Kucing putih abu-abu yang suka berjemur di rumput tepi dermaga.'
+      },
+      {
+        id: 'oyen',
+        name: 'Oyen Barbar',
+        tagCode: 'KTT-03',
+        collarColor: 'Kalung Oranye Reflektif',
+        campus: 'Kampus Ketintang',
+        location: 'Kantin Pusat FT Ketintang',
+        gender: 'Jantan',
+        age: '± 1.5 Tahun',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Rutin',
+        img: '../../images/cat-images/catoyen-p1.jpg',
+        desc: 'Kucing oranye aktif dan ceria, nafsu makan sangat baik saat feeding pagi/sore.'
+      },
+      {
+        id: 'pak-rektor',
+        name: 'Pak Rektor',
+        tagCode: 'LWT-04',
+        collarColor: 'Kalung Emas Reflektif',
+        campus: 'Kampus Lidah Wetan',
+        location: 'Lobi Rektorat Pusat UNESA',
+        gender: 'Jantan',
+        age: '± 3.5 Tahun',
+        status: 'ACTIVE',
+        statusLabel: 'Terdata Aktif',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: '../../images/cat-images/imgi_33_happy-panting-golden-retriever-dog-and-blue-maine-coon-cat-looking-at-camera-isolated-on-grey.jpg',
+        desc: 'Kucing besar berwibawa yang sering patroli di lobi rektorat pusat.'
+      },
+      {
+        id: 'kismis',
+        name: 'Kismis',
+        tagCode: 'LWT-06',
+        collarColor: 'Kalung Kuning Reflektif',
+        campus: 'Kampus Lidah Wetan',
+        location: 'FBS & Gedung Sawunggaling',
+        gender: 'Betina',
+        age: '± 4 Tahun',
+        status: 'AVAILABLE',
+        statusLabel: 'Siap Diadopsi',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg',
+        desc: 'Maskot seni FBS yang suka mendengarkan latihan gamelan dan musik teater.'
+      },
+      {
+        id: 'barokah',
+        name: 'Barokah',
+        tagCode: 'KTT-12',
+        collarColor: 'Kalung Hijau Toska',
+        campus: 'Kampus Ketintang',
+        location: 'Masjid Kampus Barat FMIPA',
+        gender: 'Betina',
+        age: '± 2.5 Tahun',
+        status: 'ACTIVE',
+        statusLabel: 'Terdata Aktif',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg',
+        desc: 'Kucing putih anggun yang sangat jinak, sering disayangi jamaah usai sholat.'
+      },
+      {
+        id: 'ranu',
+        name: 'Ranu',
+        tagCode: 'KTT-13',
+        collarColor: 'Kalung Biru Toska',
+        campus: 'Kampus Ketintang',
+        location: 'Danau Ranunesa Ketintang',
+        gender: 'Jantan',
+        age: '± 3 Tahun',
+        status: 'ACTIVE',
+        statusLabel: 'Terdata Aktif',
+        steril: 'Sudah Steril',
+        vaccine: 'Vaksin Lengkap',
+        img: '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg',
+        desc: 'Kucing calico lembut yang suka bermain di rerumputan sekitar danau buatan.'
+      }
+    ];
+
+    let catsData = [];
+    let currentViewMode = 'table';
+
+    function loadCatsData() {
+      try {
+        const stored = localStorage.getItem('meownesa_admin_cats');
+        if (stored) {
+          catsData = JSON.parse(stored);
+        } else {
+          catsData = [...defaultCats];
+          saveCatsData();
+        }
+      } catch (err) {
+        catsData = [...defaultCats];
+      }
+    }
+
+    function saveCatsData() {
+      try {
+        localStorage.setItem('meownesa_admin_cats', JSON.stringify(catsData));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function updateStats() {
+      const total = catsData.length;
+      const ready = catsData.filter(c => c.status === 'AVAILABLE').length;
+      const sterilCount = catsData.filter(c => c.steril.includes('Sudah')).length;
+      const sterilPct = total > 0 ? Math.round((sterilCount / total) * 100) : 0;
+
+      document.getElementById('statTotalCats').innerText = total;
+      document.getElementById('statReadyAdopt').innerText = ready;
+      document.getElementById('statSterilized').innerText = `${sterilPct}%`;
+    }
+
+    function getStatusBadge(status) {
+      switch (status) {
+        case 'AVAILABLE':
+          return '<span class="px-2.5 py-1 rounded-full bg-sun text-ink font-extrabold text-[10px] uppercase shadow-xs">Siap Diadopsi</span>';
+        case 'ACTIVE':
+          return '<span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-extrabold text-[10px] uppercase border border-emerald-200">Terdata Aktif</span>';
+        case 'TREATMENT':
+          return '<span class="px-2.5 py-1 rounded-full bg-coral/10 text-coral font-extrabold text-[10px] uppercase border border-coral/20">Perawatan Medis</span>';
+        case 'ADOPTED':
+          return '<span class="px-2.5 py-1 rounded-full bg-ink/10 text-ink font-extrabold text-[10px] uppercase">Telah Diadopsi</span>';
+        default:
+          return '<span class="px-2.5 py-1 rounded-full bg-cream text-ink font-bold text-[10px]">Terdaftar</span>';
+      }
+    }
+
+    function renderCats(cats) {
+      const tbody = document.getElementById('catsTableBody');
+      const gridContainer = document.getElementById('gridViewContainer');
+      const emptyState = document.getElementById('catsEmptyState');
+
+      if (!cats || cats.length === 0) {
+        tbody.innerHTML = '';
+        gridContainer.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      // 1. Render Table Rows
+      tbody.innerHTML = cats.map(cat => {
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <img src="${cat.img}" alt="${cat.name}" class="w-11 h-11 rounded-xl object-cover border border-line shadow-xs flex-shrink-0">
+                <div>
+                  <strong class="font-display font-bold text-sm text-ink block">${cat.name}</strong>
+                  <span class="text-[11px] text-ink-muted truncate max-w-[140px] block">${cat.desc ? cat.desc.substring(0, 35) + '...' : '-'}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="font-mono font-bold text-xs bg-cream px-2 py-0.5 rounded border border-line text-ink">${cat.tagCode}</span>
+              <span class="text-[11px] text-ink-muted block mt-1">🏷️ ${cat.collarColor}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="font-bold text-xs text-ink block">${cat.campus}</span>
+              <span class="text-[11px] text-ink-muted">${cat.location}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-xs font-semibold ${cat.gender === 'Jantan' ? 'text-blue-600' : 'text-magenta'}">${cat.gender}</span>
+              <span class="text-[11px] text-ink-muted block">${cat.age}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                <i data-lucide="check" class="w-3 h-3"></i> ${cat.steril}
+              </span>
+              <span class="text-[10px] text-ink-muted block mt-1">${cat.vaccine || 'Vaksin Terjadwal'}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              ${getStatusBadge(cat.status)}
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="openCatDetailModal('${cat.id}')" title="Lihat Detail" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="openEditCatModal('${cat.id}')" title="Edit Data" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="handleDeleteCat('${cat.id}')" title="Hapus" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral hover:bg-coral-light transition bg-white">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 2. Render Grid Cards
+      gridContainer.innerHTML = cats.map(cat => {
+        return `
+          <div class="bg-white border border-line rounded-3xl p-4 shadow-card hover:shadow-lg transition flex flex-col justify-between gap-3 group">
+            <div>
+              <div class="relative h-44 rounded-2xl overflow-hidden bg-cream mb-3">
+                <img src="${cat.img}" alt="${cat.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                <div class="absolute top-2.5 left-2.5 font-mono text-[10px] font-extrabold bg-ink/80 text-white px-2 py-0.5 rounded-md backdrop-blur-xs">
+                  ${cat.tagCode}
+                </div>
+                <div class="absolute top-2.5 right-2.5">
+                  ${getStatusBadge(cat.status)}
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <h4 class="font-display font-extrabold text-base text-ink">${cat.name}</h4>
+                <span class="text-xs font-bold ${cat.gender === 'Jantan' ? 'text-blue-600' : 'text-magenta'}">${cat.gender}</span>
+              </div>
+              <p class="text-[11px] text-ink-muted mt-0.5">📍 ${cat.campus} (${cat.location})</p>
+              <p class="text-[11px] text-ink-light mt-1.5 font-medium line-clamp-2">${cat.desc || '-'}</p>
+            </div>
+
+            <div class="pt-3 border-t border-line flex items-center justify-between gap-2">
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                ✓ ${cat.steril}
+              </span>
+              <div class="flex items-center gap-1">
+                <button onclick="openCatDetailModal('${cat.id}')" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="openEditCatModal('${cat.id}')" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="handleDeleteCat('${cat.id}')" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral transition">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('catTableSearch').value.toLowerCase().trim();
+      const campus = document.getElementById('filterCampus').value;
+      const status = document.getElementById('filterStatus').value;
+      const gender = document.getElementById('filterGender').value;
+
+      const filtered = catsData.filter(cat => {
+        const matchesQuery = !q || 
+          cat.name.toLowerCase().includes(q) ||
+          cat.tagCode.toLowerCase().includes(q) ||
+          cat.location.toLowerCase().includes(q) ||
+          cat.collarColor.toLowerCase().includes(q);
+
+        const matchesCampus = campus === 'ALL' || cat.campus === campus;
+        const matchesStatus = status === 'ALL' || cat.status === status;
+        const matchesGender = gender === 'ALL' || cat.gender === gender;
+
+        return matchesQuery && matchesCampus && matchesStatus && matchesGender;
+      });
+
+      renderCats(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById('catTableSearch').value = '';
+      document.getElementById('filterCampus').value = 'ALL';
+      document.getElementById('filterStatus').value = 'ALL';
+      document.getElementById('filterGender').value = 'ALL';
+      renderCats(catsData);
+    }
+
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      const tblBtn = document.getElementById('btnViewTable');
+      const gridBtn = document.getElementById('btnViewGrid');
+      const tblContainer = document.getElementById('tableViewContainer');
+      const gridContainer = document.getElementById('gridViewContainer');
+
+      if (mode === 'table') {
+        tblBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-magenta text-white shadow-xs transition flex items-center gap-1.5';
+        gridBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center gap-1.5';
+        tblContainer.classList.remove('hidden');
+        gridContainer.classList.add('hidden');
+      } else {
+        gridBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-magenta text-white shadow-xs transition flex items-center gap-1.5';
+        tblBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center gap-1.5';
+        tblContainer.classList.add('hidden');
+        gridContainer.classList.remove('hidden');
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Modal Operations
+    function openAddCatModal() {
+      document.getElementById('catModalTitle').innerText = 'Tambah Kucing Baru';
+      document.getElementById('formCatId').value = '';
+      document.getElementById('catForm').reset();
+      document.getElementById('formCatImg').value = '../../images/cat-images/cat1.jpg';
+      
+      const modal = document.getElementById('catFormModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function openEditCatModal(id) {
+      const cat = catsData.find(c => c.id === id);
+      if (!cat) return;
+
+      document.getElementById('catModalTitle').innerText = `Edit Data Kucing: ${cat.name}`;
+      document.getElementById('formCatId').value = cat.id;
+      document.getElementById('formCatName').value = cat.name;
+      document.getElementById('formCatTagCode').value = cat.tagCode;
+      document.getElementById('formCatCollarColor').value = cat.collarColor;
+      document.getElementById('formCatCampus').value = cat.campus;
+      document.getElementById('formCatLocation').value = cat.location;
+      document.getElementById('formCatGender').value = cat.gender;
+      document.getElementById('formCatAge').value = cat.age;
+      document.getElementById('formCatStatus').value = cat.status;
+      document.getElementById('formCatSteril').value = cat.steril;
+      document.getElementById('formCatVaccine').value = cat.vaccine || '';
+      document.getElementById('formCatImg').value = cat.img || '';
+      document.getElementById('formCatDesc').value = cat.desc || '';
+
+      const modal = document.getElementById('catFormModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCatModal() {
+      const modal = document.getElementById('catFormModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleSaveCat(e) {
+      e.preventDefault();
+      const id = document.getElementById('formCatId').value;
+      const name = document.getElementById('formCatName').value.trim();
+      const tagCode = document.getElementById('formCatTagCode').value.trim().toUpperCase();
+      const collarColor = document.getElementById('formCatCollarColor').value.trim();
+      const campus = document.getElementById('formCatCampus').value;
+      const location = document.getElementById('formCatLocation').value.trim();
+      const gender = document.getElementById('formCatGender').value;
+      const age = document.getElementById('formCatAge').value.trim();
+      const status = document.getElementById('formCatStatus').value;
+      const steril = document.getElementById('formCatSteril').value;
+      const vaccine = document.getElementById('formCatVaccine').value.trim();
+      const img = document.getElementById('formCatImg').value.trim() || '../../images/cat-images/cat1.jpg';
+      const desc = document.getElementById('formCatDesc').value.trim();
+
+      if (id) {
+        // Edit existing
+        const idx = catsData.findIndex(c => c.id === id);
+        if (idx !== -1) {
+          catsData[idx] = { ...catsData[idx], name, tagCode, collarColor, campus, location, gender, age, status, steril, vaccine, img, desc };
+        }
+      } else {
+        // Add new
+        const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.floor(100 + Math.random() * 900);
+        catsData.unshift({
+          id: newId,
+          name,
+          tagCode,
+          collarColor,
+          campus,
+          location,
+          gender,
+          age,
+          status,
+          statusLabel: status === 'AVAILABLE' ? 'Siap Diadopsi' : 'Terdata Aktif',
+          steril,
+          vaccine: vaccine || 'Vaksin Rutin',
+          img,
+          desc
+        });
+      }
+
+      saveCatsData();
+      updateStats();
+      applyFilters();
+      closeCatModal();
+    }
+
+    function handleDeleteCat(id) {
+      const cat = catsData.find(c => c.id === id);
+      if (!cat) return;
+
+      if (confirm(`Apakah Anda yakin ingin menghapus data kucing "${cat.name}" (${cat.tagCode}) dari database?`)) {
+        catsData = catsData.filter(c => c.id !== id);
+        saveCatsData();
+        updateStats();
+        applyFilters();
+      }
+    }
+
+    function openCatDetailModal(id) {
+      const cat = catsData.find(c => c.id === id);
+      if (!cat) return;
+
+      document.getElementById('detailModalImg').src = cat.img;
+      document.getElementById('detailModalName').innerText = cat.name;
+      document.getElementById('detailModalGender').innerText = cat.gender;
+      document.getElementById('detailModalTagCode').innerText = `TAG: ${cat.tagCode}`;
+      document.getElementById('detailModalCampus').innerText = `${cat.campus} • ${cat.location}`;
+      document.getElementById('detailModalCollar').innerText = cat.collarColor;
+      document.getElementById('detailModalSteril').innerText = cat.steril;
+      document.getElementById('detailModalVaccine').innerText = cat.vaccine || 'Vaksin Rutin';
+      document.getElementById('detailModalDesc').innerText = cat.desc || 'Tidak ada catatan khusus.';
+
+      const badge = document.getElementById('detailModalStatusBadge');
+      badge.innerHTML = getStatusBadge(cat.status);
+
+      const modal = document.getElementById('catDetailModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCatDetailModal() {
+      const modal = document.getElementById('catDetailModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function exportDataCSV() {
+      let csv = 'ID,Nama Kucing,Kode Tag,Warna Kalung,Kampus,Lokasi,Gender,Usia,Status,Steril,Vaksin\n';
+      catsData.forEach(c => {
+        csv += `"${c.id}","${c.name}","${c.tagCode}","${c.collarColor}","${c.campus}","${c.location}","${c.gender}","${c.age}","${c.status}","${c.steril}","${c.vaccine || ''}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `MeowNesa_Populasi_Kucing_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCatsData();
+      updateStats();
+      applyFilters();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
