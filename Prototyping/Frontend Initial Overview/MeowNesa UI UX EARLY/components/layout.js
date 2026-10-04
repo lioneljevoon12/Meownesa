@@ -183,9 +183,12 @@
 
           <!-- Col 3: Layanan & Pelaporan (2 cols) -->
           <div class="lg:col-span-2 flex flex-col gap-2.5 text-xs text-white/80">
-            <span class="font-display font-bold text-sm text-white mb-1">Layanan</span>
+            <span class="font-display font-bold text-sm text-white mb-1">Layanan &amp; Akses</span>
             <a href="${BASE_PATH}src/adoption/apply.html" class="hover:text-sun transition">Formulir Adopsi</a>
             <a href="${BASE_PATH}src/adoption/tracking.html" class="hover:text-sun transition">Lacak Pengajuan</a>
+            <a href="${BASE_PATH}src/admin/index.html" class="text-sun font-bold hover:underline transition flex items-center gap-1">
+              <i data-lucide="lock" class="w-3 h-3"></i> Portal Admin
+            </a>
             <a href="https://forms.gle/unesa-jagasatwa-rescue" target="_blank" class="hover:text-sun transition">Lapor Kucing (G-Form)</a>
             <a href="https://instagram.com/jagasatwa.unesa" target="_blank" class="hover:text-sun transition">Instagram Resmi</a>
           </div>
