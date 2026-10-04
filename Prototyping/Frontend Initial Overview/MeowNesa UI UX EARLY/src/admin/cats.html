@@ -338,9 +338,45 @@
             <input type="text" id="formCatVaccine" placeholder="Contoh: Vaksin Lengkap (Rabies &amp; Feline Panleukopenia)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
           </div>
 
+          <!-- Multi-Photo Gallery Manager -->
           <div class="sm:col-span-2">
-            <label class="block text-xs font-bold text-ink mb-1">URL / Path Foto Kucing</label>
-            <input type="text" id="formCatImg" placeholder="../../images/cat-images/cat1.jpg" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-ink">
+                Galeri Foto Kucing <span class="text-coral">*</span>
+              </label>
+              <span class="text-[11px] text-ink-muted">Bisa upload beberapa foto &amp; pilih cover utama</span>
+            </div>
+
+            <!-- Upload & URL Adder Box -->
+            <div class="p-3.5 border-2 border-dashed border-magenta/30 hover:border-magenta bg-magenta-50/20 rounded-2xl transition space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="cursor-pointer inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-magenta text-white text-xs font-bold shadow-xs hover:bg-magenta-dark transition">
+                  <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                  <span>Upload Foto dari Perangkat</span>
+                  <input type="file" id="catPhotoFileInput" multiple accept="image/*" class="hidden" onchange="handleCatPhotoUpload(event)">
+                </label>
+                <span class="text-[11px] text-ink-muted">JPG, PNG, WebP (Bisa pilih banyak sekaligus)</span>
+              </div>
+
+              <div class="flex items-center gap-2 pt-2.5 border-t border-line/60">
+                <input type="text" id="catPhotoUrlInput" placeholder="Atau tempel URL / path lokal (contoh: ../../images/cat-images/cat1.jpg)..." class="flex-1 px-3 py-2 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta">
+                <button type="button" onclick="addCatPhotoFromUrl()" class="px-3.5 py-2 bg-cream hover:bg-line text-ink text-xs font-bold rounded-xl border border-line transition flex items-center gap-1.5">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>Tambah</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Gallery Thumbnails Preview Container -->
+            <div class="mt-3">
+              <div class="flex items-center justify-between text-[11px] text-ink-muted mb-2">
+                <span>Foto Terunggah (<span id="catFormPhotoCount" class="font-bold text-ink">0</span> foto):</span>
+                <span class="text-magenta font-semibold">★ Foto dengan lencana "Cover Utama" tampil di katalog</span>
+              </div>
+              <div id="catFormGalleryGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 min-h-[85px] p-2.5 bg-cream/40 rounded-2xl border border-line">
+                <!-- Dynamic Photo Thumbnails with Cover selector & Delete -->
+              </div>
+            </div>
           </div>
 
           <div class="sm:col-span-2">
@@ -367,13 +403,16 @@
 
   <!-- ================= MODAL: DETAIL & QR TAG KUCING ================= -->
   <div id="catDetailModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white border border-line rounded-3xl max-w-lg w-full shadow-2xl p-6 flex flex-col gap-5 text-left relative">
+    <div class="bg-white border border-line rounded-3xl max-w-lg w-full shadow-2xl p-6 flex flex-col gap-5 text-left relative max-h-[90vh] overflow-y-auto">
       <button onclick="closeCatDetailModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
+      <!-- Main Photo & Basic Info -->
       <div class="flex items-start gap-4">
-        <img id="detailModalImg" src="../../images/cat-images/cat1.jpg" alt="Foto Kucing" class="w-24 h-24 rounded-2xl object-cover border border-line shadow-sm">
+        <div class="relative w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden border border-line shadow-sm bg-cream">
+          <img id="detailModalImg" src="../../images/cat-images/cat1.jpg" alt="Foto Kucing" class="w-full h-full object-cover transition duration-300">
+        </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
             <h3 class="font-display font-extrabold text-xl text-ink truncate" id="detailModalName">Mochi</h3>
@@ -381,6 +420,19 @@
           </div>
           <span class="text-xs font-mono font-bold text-ink bg-sun/40 px-2 py-0.5 rounded-md inline-block mt-1" id="detailModalTagCode">TAG: KTT-01</span>
           <p class="text-xs text-ink-muted mt-1" id="detailModalCampus">Kampus Ketintang • Gedung K10 Vokasi</p>
+        </div>
+      </div>
+
+      <!-- Mini Photo Gallery Strip in Detail Modal -->
+      <div id="detailModalGallerySection" class="space-y-1.5">
+        <div class="flex items-center justify-between text-[11px] text-ink-muted">
+          <span class="font-bold text-ink flex items-center gap-1.5">
+            <i data-lucide="images" class="w-3.5 h-3.5 text-magenta"></i> Galeri Foto Kucing (<span id="detailModalGalleryCount">1</span>)
+          </span>
+          <span>Klik foto untuk melihat tampilan penuh</span>
+        </div>
+        <div id="detailModalGalleryGrid" class="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-thin">
+          <!-- Dynamic thumbnails -->
         </div>
       </div>
 
@@ -409,8 +461,8 @@
       </div>
 
       <!-- Action Button -->
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeCatDetailModal()" class="w-full py-2.5 rounded-xl bg-magenta text-white font-bold text-xs transition">
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button onclick="closeCatDetailModal()" class="w-full py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white font-bold text-xs transition shadow-md">
           Tutup
         </button>
       </div>
@@ -423,7 +475,7 @@
 
   <!-- Client-side Logic Script for Cats Management -->
   <script>
-    // Initial Dataset based on UNESA Cats
+    // Initial Dataset based on UNESA Cats with Multi-photo Gallery
     const defaultCats = [
       {
         id: 'mochi',
@@ -439,6 +491,11 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap (Nusantara Vet)',
         img: '../../images/cat-images/cat1.jpg',
+        gallery: [
+          '../../images/cat-images/cat1.jpg',
+          '../../images/cat-images/cat1-p2.jpg',
+          '../../images/cat-images/cat1-p3.jpg'
+        ],
         desc: 'Kucing belang tiga (calico) sangat jinak dan ramah pada mahasiswa di area Vokasi.'
       },
       {
@@ -455,6 +512,11 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap (Nusantara Vet)',
         img: '../../images/cat-images/cat2-p1.jpg',
+        gallery: [
+          '../../images/cat-images/cat2-p1.jpg',
+          '../../images/cat-images/cat2-p2.jpg',
+          '../../images/cat-images/cat2-p3.jpg'
+        ],
         desc: 'Kucing abu-abu bertubuh tegap yang ramah menyapa pengunjung danau Liwet.'
       },
       {
@@ -471,6 +533,10 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap',
         img: '../../images/cat-images/cat2-p2.jpg',
+        gallery: [
+          '../../images/cat-images/cat2-p2.jpg',
+          '../../images/cat-images/cat2-p1.jpg'
+        ],
         desc: 'Kucing putih abu-abu yang suka berjemur di rumput tepi dermaga.'
       },
       {
@@ -487,6 +553,10 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Rutin',
         img: '../../images/cat-images/catoyen-p1.jpg',
+        gallery: [
+          '../../images/cat-images/catoyen-p1.jpg',
+          '../../images/cat-images/catoyen-p2.jpg'
+        ],
         desc: 'Kucing oranye aktif dan ceria, nafsu makan sangat baik saat feeding pagi/sore.'
       },
       {
@@ -503,6 +573,10 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap',
         img: '../../images/cat-images/imgi_33_happy-panting-golden-retriever-dog-and-blue-maine-coon-cat-looking-at-camera-isolated-on-grey.jpg',
+        gallery: [
+          '../../images/cat-images/imgi_33_happy-panting-golden-retriever-dog-and-blue-maine-coon-cat-looking-at-camera-isolated-on-grey.jpg',
+          '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg'
+        ],
         desc: 'Kucing besar berwibawa yang sering patroli di lobi rektorat pusat.'
       },
       {
@@ -519,6 +593,10 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap',
         img: '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg',
+        gallery: [
+          '../../images/cat-images/imgi_31_bengal-cat-lying-on-sofa-and-smiling.jpg',
+          '../../images/cat-images/imgi_33_happy-panting-golden-retriever-dog-and-blue-maine-coon-cat-looking-at-camera-isolated-on-grey.jpg'
+        ],
         desc: 'Maskot seni FBS yang suka mendengarkan latihan gamelan dan musik teater.'
       },
       {
@@ -535,6 +613,10 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap',
         img: '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg',
+        gallery: [
+          '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg',
+          '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg'
+        ],
         desc: 'Kucing putih anggun yang sangat jinak, sering disayangi jamaah usai sholat.'
       },
       {
@@ -551,18 +633,30 @@
         steril: 'Sudah Steril',
         vaccine: 'Vaksin Lengkap',
         img: '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg',
+        gallery: [
+          '../../images/cat-images/imgi_508_pexels-photo-37787972.jpg',
+          '../../images/cat-images/imgi_503_pexels-photo-8727895.jpg'
+        ],
         desc: 'Kucing calico lembut yang suka bermain di rerumputan sekitar danau buatan.'
       }
     ];
 
     let catsData = [];
     let currentViewMode = 'table';
+    let formCatGallery = [];
+    let formCatCoverIndex = 0;
 
     function loadCatsData() {
       try {
         const stored = localStorage.getItem('meownesa_admin_cats');
         if (stored) {
           catsData = JSON.parse(stored);
+          // Ensure all items have gallery array
+          catsData.forEach(c => {
+            if (!c.gallery || !Array.isArray(c.gallery) || c.gallery.length === 0) {
+              c.gallery = c.img ? [c.img] : ['../../images/cat-images/cat1.jpg'];
+            }
+          });
         } else {
           catsData = [...defaultCats];
           saveCatsData();
@@ -622,11 +716,19 @@
 
       // 1. Render Table Rows
       tbody.innerHTML = cats.map(cat => {
+        const photoCount = (cat.gallery && Array.isArray(cat.gallery)) ? cat.gallery.length : 1;
         return `
           <tr class="hover:bg-cream/40 transition">
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
-                <img src="${cat.img}" alt="${cat.name}" class="w-11 h-11 rounded-xl object-cover border border-line shadow-xs flex-shrink-0">
+                <div class="relative flex-shrink-0">
+                  <img src="${cat.img}" alt="${cat.name}" class="w-11 h-11 rounded-xl object-cover border border-line shadow-xs">
+                  ${photoCount > 1 ? `
+                    <span class="absolute -bottom-1 -right-1 bg-ink/80 text-white text-[9px] font-mono font-bold px-1 rounded shadow-xs" title="${photoCount} Foto Galeri">
+                      +${photoCount}
+                    </span>
+                  ` : ''}
+                </div>
                 <div>
                   <strong class="font-display font-bold text-sm text-ink block">${cat.name}</strong>
                   <span class="text-[11px] text-ink-muted truncate max-w-[140px] block">${cat.desc ? cat.desc.substring(0, 35) + '...' : '-'}</span>
@@ -656,10 +758,10 @@
             </td>
             <td class="py-3.5 px-4 text-center">
               <div class="flex items-center justify-center gap-1.5">
-                <button onclick="openCatDetailModal('${cat.id}')" title="Lihat Detail" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
+                <button onclick="openCatDetailModal('${cat.id}')" title="Lihat Detail & Galeri" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="openEditCatModal('${cat.id}')" title="Edit Data" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
+                <button onclick="openEditCatModal('${cat.id}')" title="Edit Data & Galeri" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                 </button>
                 <button onclick="handleDeleteCat('${cat.id}')" title="Hapus" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral hover:bg-coral-light transition bg-white">
@@ -673,6 +775,7 @@
 
       // 2. Render Grid Cards
       gridContainer.innerHTML = cats.map(cat => {
+        const photoCount = (cat.gallery && Array.isArray(cat.gallery)) ? cat.gallery.length : 1;
         return `
           <div class="bg-white border border-line rounded-3xl p-4 shadow-card hover:shadow-lg transition flex flex-col justify-between gap-3 group">
             <div>
@@ -681,6 +784,11 @@
                 <div class="absolute top-2.5 left-2.5 font-mono text-[10px] font-extrabold bg-ink/80 text-white px-2 py-0.5 rounded-md backdrop-blur-xs">
                   ${cat.tagCode}
                 </div>
+                ${photoCount > 1 ? `
+                  <div class="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-ink/70 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                    <i data-lucide="images" class="w-3 h-3"></i> ${photoCount} Foto
+                  </div>
+                ` : ''}
                 <div class="absolute top-2.5 right-2.5">
                   ${getStatusBadge(cat.status)}
                 </div>
@@ -699,13 +807,13 @@
                 ✓ ${cat.steril}
               </span>
               <div class="flex items-center gap-1">
-                <button onclick="openCatDetailModal('${cat.id}')" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition">
+                <button onclick="openCatDetailModal('${cat.id}')" title="Lihat Detail & Galeri" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="openEditCatModal('${cat.id}')" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition">
+                <button onclick="openEditCatModal('${cat.id}')" title="Edit Data & Galeri" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="handleDeleteCat('${cat.id}')" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral transition">
+                <button onclick="handleDeleteCat('${cat.id}')" title="Hapus" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral transition">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
@@ -774,12 +882,108 @@
       }
     }
 
+    // ================= MULTI-PHOTO GALLERY MANAGEMENT IN FORM =================
+    function renderCatFormGallery() {
+      const grid = document.getElementById('catFormGalleryGrid');
+      const countEl = document.getElementById('catFormPhotoCount');
+      if (!grid) return;
+
+      countEl.innerText = formCatGallery.length;
+
+      if (formCatGallery.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-4 text-center text-xs text-ink-muted flex flex-col items-center justify-center gap-1">
+            <i data-lucide="image" class="w-5 h-5 text-ink-muted/50"></i>
+            <span>Belum ada foto. Upload atau tambahkan URL gambar di atas.</span>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      grid.innerHTML = formCatGallery.map((photoUrl, idx) => {
+        const isCover = idx === formCatCoverIndex;
+        return `
+          <div class="relative group rounded-xl overflow-hidden border ${isCover ? 'border-magenta ring-2 ring-magenta/40' : 'border-line'} bg-white shadow-xs flex flex-col justify-between">
+            <div class="relative h-20 bg-cream">
+              <img src="${photoUrl}" alt="Cat Photo ${idx + 1}" class="w-full h-full object-cover">
+              ${isCover ? `
+                <span class="absolute top-1 left-1 bg-magenta text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow-xs">
+                  ★ Cover Utama
+                </span>
+              ` : ''}
+              <button type="button" onclick="removeCatPhoto(${idx})" title="Hapus Foto" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-ink/80 hover:bg-coral text-white flex items-center justify-center transition">
+                <i data-lucide="trash-2" class="w-2.5 h-2.5"></i>
+              </button>
+            </div>
+            <div class="p-1 bg-cream/40 flex items-center justify-center border-t border-line/60">
+              ${isCover ? `
+                <span class="text-[9px] font-bold text-magenta py-0.5">Cover Aktif</span>
+              ` : `
+                <button type="button" onclick="setCatCoverPhoto(${idx})" class="w-full py-0.5 text-[9px] font-bold text-ink-muted hover:text-magenta hover:bg-white rounded transition">
+                  Jadikan Cover
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function handleCatPhotoUpload(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          formCatGallery.push(e.target.result);
+          renderCatFormGallery();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      event.target.value = '';
+    }
+
+    function addCatPhotoFromUrl() {
+      const input = document.getElementById('catPhotoUrlInput');
+      const url = input.value.trim();
+      if (!url) return;
+
+      formCatGallery.push(url);
+      input.value = '';
+      renderCatFormGallery();
+    }
+
+    function removeCatPhoto(idx) {
+      formCatGallery.splice(idx, 1);
+      if (formCatCoverIndex >= formCatGallery.length) {
+        formCatCoverIndex = Math.max(0, formCatGallery.length - 1);
+      }
+      renderCatFormGallery();
+    }
+
+    function setCatCoverPhoto(idx) {
+      if (idx >= 0 && idx < formCatGallery.length) {
+        formCatCoverIndex = idx;
+        renderCatFormGallery();
+      }
+    }
+
     // Modal Operations
     function openAddCatModal() {
       document.getElementById('catModalTitle').innerText = 'Tambah Kucing Baru';
       document.getElementById('formCatId').value = '';
       document.getElementById('catForm').reset();
-      document.getElementById('formCatImg').value = '../../images/cat-images/cat1.jpg';
+      
+      formCatGallery = ['../../images/cat-images/cat1.jpg'];
+      formCatCoverIndex = 0;
+      renderCatFormGallery();
       
       const modal = document.getElementById('catFormModal');
       modal.classList.remove('hidden');
@@ -802,8 +1006,16 @@
       document.getElementById('formCatStatus').value = cat.status;
       document.getElementById('formCatSteril').value = cat.steril;
       document.getElementById('formCatVaccine').value = cat.vaccine || '';
-      document.getElementById('formCatImg').value = cat.img || '';
       document.getElementById('formCatDesc').value = cat.desc || '';
+
+      // Initialize gallery for edit
+      formCatGallery = (cat.gallery && Array.isArray(cat.gallery) && cat.gallery.length > 0)
+        ? [...cat.gallery]
+        : (cat.img ? [cat.img] : ['../../images/cat-images/cat1.jpg']);
+      
+      const coverIdx = formCatGallery.findIndex(g => g === cat.img);
+      formCatCoverIndex = coverIdx >= 0 ? coverIdx : 0;
+      renderCatFormGallery();
 
       const modal = document.getElementById('catFormModal');
       modal.classList.remove('hidden');
@@ -829,14 +1041,37 @@
       const status = document.getElementById('formCatStatus').value;
       const steril = document.getElementById('formCatSteril').value;
       const vaccine = document.getElementById('formCatVaccine').value.trim();
-      const img = document.getElementById('formCatImg').value.trim() || '../../images/cat-images/cat1.jpg';
       const desc = document.getElementById('formCatDesc').value.trim();
+
+      // Ensure gallery and primary cover image
+      if (formCatGallery.length === 0) {
+        formCatGallery = ['../../images/cat-images/cat1.jpg'];
+        formCatCoverIndex = 0;
+      }
+      const primaryImg = formCatGallery[formCatCoverIndex] || formCatGallery[0];
+      const gallery = [...formCatGallery];
 
       if (id) {
         // Edit existing
         const idx = catsData.findIndex(c => c.id === id);
         if (idx !== -1) {
-          catsData[idx] = { ...catsData[idx], name, tagCode, collarColor, campus, location, gender, age, status, steril, vaccine, img, desc };
+          catsData[idx] = { 
+            ...catsData[idx], 
+            name, 
+            tagCode, 
+            collarColor, 
+            campus, 
+            location, 
+            gender, 
+            age, 
+            status, 
+            statusLabel: status === 'AVAILABLE' ? 'Siap Diadopsi' : (status === 'ACTIVE' ? 'Terdata Aktif' : (status === 'TREATMENT' ? 'Perawatan Medis' : 'Telah Diadopsi')),
+            steril, 
+            vaccine, 
+            img: primaryImg, 
+            gallery, 
+            desc 
+          };
         }
       } else {
         // Add new
@@ -851,10 +1086,11 @@
           gender,
           age,
           status,
-          statusLabel: status === 'AVAILABLE' ? 'Siap Diadopsi' : 'Terdata Aktif',
+          statusLabel: status === 'AVAILABLE' ? 'Siap Diadopsi' : (status === 'ACTIVE' ? 'Terdata Aktif' : (status === 'TREATMENT' ? 'Perawatan Medis' : 'Telah Diadopsi')),
           steril,
           vaccine: vaccine || 'Vaksin Rutin',
-          img,
+          img: primaryImg,
+          gallery,
           desc
         });
       }
@@ -877,11 +1113,31 @@
       }
     }
 
+    function selectDetailModalPhoto(src, btnEl) {
+      const mainImg = document.getElementById('detailModalImg');
+      mainImg.src = src;
+
+      // Update active thumbnail border
+      const grid = document.getElementById('detailModalGalleryGrid');
+      if (grid) {
+        Array.from(grid.querySelectorAll('button')).forEach(b => {
+          b.className = 'relative flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 border-line hover:border-magenta transition';
+        });
+      }
+      if (btnEl) {
+        btnEl.className = 'relative flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 border-magenta ring-2 ring-magenta/40 transition';
+      }
+    }
+
     function openCatDetailModal(id) {
       const cat = catsData.find(c => c.id === id);
       if (!cat) return;
 
-      document.getElementById('detailModalImg').src = cat.img;
+      const gallery = (cat.gallery && Array.isArray(cat.gallery) && cat.gallery.length > 0)
+        ? cat.gallery
+        : [cat.img || '../../images/cat-images/cat1.jpg'];
+
+      document.getElementById('detailModalImg').src = cat.img || gallery[0];
       document.getElementById('detailModalName').innerText = cat.name;
       document.getElementById('detailModalGender').innerText = cat.gender;
       document.getElementById('detailModalTagCode').innerText = `TAG: ${cat.tagCode}`;
@@ -891,12 +1147,27 @@
       document.getElementById('detailModalVaccine').innerText = cat.vaccine || 'Vaksin Rutin';
       document.getElementById('detailModalDesc').innerText = cat.desc || 'Tidak ada catatan khusus.';
 
+      document.getElementById('detailModalGalleryCount').innerText = gallery.length;
+      const galleryGrid = document.getElementById('detailModalGalleryGrid');
+      galleryGrid.innerHTML = gallery.map((gImg, idx) => {
+        const isSelected = gImg === cat.img;
+        return `
+          <button type="button" onclick="selectDetailModalPhoto('${gImg}', this)" class="relative flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 ${isSelected ? 'border-magenta ring-2 ring-magenta/40' : 'border-line'} hover:border-magenta transition">
+            <img src="${gImg}" alt="${cat.name} ${idx + 1}" class="w-full h-full object-cover">
+          </button>
+        `;
+      }).join('');
+
       const badge = document.getElementById('detailModalStatusBadge');
       badge.innerHTML = getStatusBadge(cat.status);
 
       const modal = document.getElementById('catDetailModal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     function closeCatDetailModal() {
@@ -906,9 +1177,10 @@
     }
 
     function exportDataCSV() {
-      let csv = 'ID,Nama Kucing,Kode Tag,Warna Kalung,Kampus,Lokasi,Gender,Usia,Status,Steril,Vaksin\n';
+      let csv = 'ID,Nama Kucing,Kode Tag,Warna Kalung,Kampus,Lokasi,Gender,Usia,Status,Steril,Vaksin,FotoUtama,JumlahFoto\n';
       catsData.forEach(c => {
-        csv += `"${c.id}","${c.name}","${c.tagCode}","${c.collarColor}","${c.campus}","${c.location}","${c.gender}","${c.age}","${c.status}","${c.steril}","${c.vaccine || ''}"\n`;
+        const photoCount = (c.gallery && Array.isArray(c.gallery)) ? c.gallery.length : 1;
+        csv += `"${c.id}","${c.name}","${c.tagCode}","${c.collarColor}","${c.campus}","${c.location}","${c.gender}","${c.age}","${c.status}","${c.steril}","${c.vaccine || ''}","${c.img || ''}",${photoCount}\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
