@@ -395,7 +395,39 @@
       const urlParams = new URLSearchParams(window.location.search);
       const articleId = urlParams.get('id') || 'stop-lepas-kalung';
 
-      const article = articlesMaster.find(a => a.id === articleId) || articlesMaster[0];
+      let allArticles = [...articlesMaster];
+      try {
+        const stored = localStorage.getItem('meownesa_admin_articles');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+            parsed.forEach(p => {
+              const existingIdx = allArticles.findIndex(a => a.id === p.id);
+              const mapped = {
+                id: p.id,
+                title: p.title,
+                category: p.category ? p.category.toUpperCase().slice(0, 8) : 'EDUKASI',
+                categoryLabel: p.categoryLabel || p.category || 'Edukasi & Kampanye',
+                categoryColor: p.categoryColor || (p.category === 'Komunitas' ? 'bg-sun text-ink' : (p.category === 'Karya Mahasiswa' ? 'bg-emerald-600 text-white' : (p.category === 'Pengumuman' ? 'bg-coral text-white' : 'bg-magenta text-white'))),
+                readTime: p.readTime || '3 menit',
+                date: p.date,
+                author: p.author,
+                coverImg: p.img || p.coverImg || '../../images/images-blogs/stop-kalungcover.jpeg',
+                coverCaption: p.title,
+                gallery: (p.gallery && Array.isArray(p.gallery) && p.gallery.length > 0) ? p.gallery : [{ src: p.img || '../../images/images-blogs/stop-kalungcover.jpeg', caption: p.title }],
+                body: p.content || `<p class="text-base leading-relaxed">${p.excerpt || ''}</p>`
+              };
+              if (existingIdx >= 0) {
+                allArticles[existingIdx] = mapped;
+              } else {
+                allArticles.unshift(mapped);
+              }
+            });
+          }
+        }
+      } catch (err) {}
+
+      const article = allArticles.find(a => a.id === articleId) || allArticles[0];
       currentArticleData = article;
 
       // Set Page Title & Breadcrumb

@@ -99,7 +99,7 @@
     </div>
 
     <!-- Featured Headline Story (Sleek & Compact Horizontal Card) -->
-    <section class="mb-8">
+    <section id="featuredHeadlineSection" class="mb-8">
       <div class="bg-white border-2 border-magenta/20 rounded-3xl overflow-hidden shadow-card hover:shadow-highlight transition-all duration-300 flex flex-col md:flex-row group">
         
         <!-- Left Thumbnail (Compact Aspect Ratio with Zoom) -->
@@ -242,7 +242,7 @@
 
   <!-- ================= CLIENT JAVASCRIPT ================= -->
   <script>
-    const articlesData = [
+    const defaultArticlesData = [
       {
         id: 'stop-lepas-kalung',
         title: 'Kenapa Kucing UNESA Pakai Kalung? Jangan Sembarangan Dilepas!',
@@ -253,6 +253,7 @@
         readTime: '3 menit',
         date: '30 September 2026',
         author: 'Divisi Edukasi Jaga Satwa',
+        isFeatured: true,
         coverImg: '../../images/images-blogs/stop-kalungcover.jpeg'
       },
       {
@@ -265,6 +266,7 @@
         readTime: '4 menit',
         date: '28 September 2026',
         author: 'Pengurus Jaga Satwa',
+        isFeatured: false,
         coverImg: '../../images/images-blogs/blog-hari jadi.jpeg'
       },
       {
@@ -277,6 +279,7 @@
         readTime: '3 menit',
         date: '25 September 2026',
         author: 'Tim Media & Kreatif',
+        isFeatured: false,
         coverImg: '../../images/images-blogs/pawtogenics-karya-cover.jpeg'
       },
       {
@@ -289,6 +292,7 @@
         readTime: '2 menit',
         date: '24 September 2026',
         author: 'Rescue Coordinator',
+        isFeatured: false,
         coverImg: '../../images/images-blogs/announcement-kucing-hilang.jpeg'
       },
       {
@@ -301,9 +305,38 @@
         readTime: '3 menit',
         date: '20 September 2026',
         author: 'Divisi Kesehatan Satwa',
+        isFeatured: false,
         coverImg: '../../images/images-blogs/stop-kalung1.jpeg'
       }
     ];
+
+    let articlesData = [];
+
+    function loadPublicArticles() {
+      try {
+        const stored = localStorage.getItem('meownesa_admin_articles');
+        if (stored) {
+          const parsed = JSON.parse(stored).filter(a => a.status === 'PUBLISHED');
+          if (parsed && parsed.length > 0) {
+            articlesData = parsed.map(a => ({
+              id: a.id,
+              title: a.title,
+              summary: a.excerpt || a.summary || '',
+              category: a.category ? a.category.toUpperCase().slice(0, 8) : 'EDUKASI',
+              categoryLabel: a.categoryLabel || a.category || 'Edukasi & Kampanye',
+              categoryColor: a.categoryColor || 'bg-magenta text-white',
+              readTime: a.readTime || '3 menit',
+              date: a.date,
+              author: a.author,
+              isFeatured: !!a.isFeatured,
+              coverImg: a.img || a.coverImg || '../../images/images-blogs/stop-kalungcover.jpeg'
+            }));
+            return;
+          }
+        }
+      } catch (err) {}
+      articlesData = [...defaultArticlesData];
+    }
 
     let currentCategory = 'ALL';
     let currentSearch = '';
@@ -414,8 +447,70 @@
       if (e.key === 'Escape') closeLightbox();
     });
 
+    // Render Featured Headline Story at Top
+    function renderHeadlineStory() {
+      const headlineArt = articlesData.find(a => a.isFeatured) || articlesData[0];
+      if (!headlineArt) return;
+
+      const headlineSection = document.getElementById('featuredHeadlineSection');
+      if (!headlineSection) return;
+
+      headlineSection.innerHTML = `
+        <div class="bg-white border-2 border-magenta/20 rounded-3xl overflow-hidden shadow-card hover:shadow-highlight transition-all duration-300 flex flex-col md:flex-row group">
+          <div class="md:w-72 lg:w-80 relative bg-cream flex-shrink-0 h-48 sm:h-56 md:h-auto overflow-hidden">
+            <img src="${headlineArt.coverImg}" alt="${headlineArt.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-zoom-in" onclick="openLightbox('${headlineArt.coverImg}', '${headlineArt.title}')">
+            <span class="absolute top-3 left-3 bg-coral text-white font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow flex items-center gap-1">
+              <i data-lucide="alert-circle" class="w-3 h-3"></i>
+              <span>KAMPANYE &amp; HEADLINE UTAMA</span>
+            </span>
+            <span class="absolute bottom-2.5 right-2.5 bg-ink/75 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded font-medium flex items-center gap-1 cursor-zoom-in" onclick="openLightbox('${headlineArt.coverImg}', '${headlineArt.title}')">
+              <i data-lucide="zoom-in" class="w-2.5 h-2.5 text-sun"></i> Zoom
+            </span>
+          </div>
+
+          <div class="p-5 sm:p-6 lg:p-7 flex-1 flex flex-col justify-between gap-4">
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2.5 text-xs text-ink-muted font-semibold">
+                <span class="text-magenta font-bold">${headlineArt.categoryLabel}</span>
+                <span>•</span>
+                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${headlineArt.readTime || '3 menit'} Baca</span>
+                <span>•</span>
+                <span>${headlineArt.date}</span>
+              </div>
+
+              <h2 class="font-display font-extrabold text-xl sm:text-2xl text-ink group-hover:text-magenta transition leading-snug">
+                <a href="article-detail.html?id=${headlineArt.id}">${headlineArt.title}</a>
+              </h2>
+
+              <p class="text-xs sm:text-sm text-ink-muted leading-relaxed line-clamp-2 sm:line-clamp-3">
+                ${headlineArt.summary}
+              </p>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-line">
+              <div class="flex items-center gap-2">
+                <img src="../../images/jagasatwa-logo.png" alt="Tim Jaga Satwa" class="w-7 h-7 rounded-full border border-line p-0.5 bg-cream brightness-0">
+                <div>
+                  <span class="text-xs font-bold text-ink block leading-none">${headlineArt.author}</span>
+                  <span class="text-[10px] text-ink-muted">Publikasi Resmi UNESA</span>
+                </div>
+              </div>
+
+              <a href="article-detail.html?id=${headlineArt.id}" class="px-4 py-2 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <span>Baca Artikel</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+    }
+
     // Initialize
     window.addEventListener('DOMContentLoaded', () => {
+      loadPublicArticles();
+      renderHeadlineStory();
       renderArticles();
     });
   </script>

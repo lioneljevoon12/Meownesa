@@ -531,80 +531,8 @@
       </div>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-      <!-- Article 1 -->
-      <a href="src/cms-blog-awarness/article-detail.html?id=stop-lepas-kalung" class="bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group">
-        <div class="relative h-48 bg-cream overflow-hidden">
-          <img src="images/images-blogs/stop-kalungcover.jpeg" alt="Edukasi Kalung Kucing" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <span class="absolute top-3 left-3 bg-magenta text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
-            Kampanye Edukasi
-          </span>
-        </div>
-        <div class="p-5 flex-1 flex flex-col justify-between">
-          <div>
-            <span class="text-[11px] text-ink-muted">30 September 2026 • 3 menit baca</span>
-            <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
-              Stop Lepas Kalung Kucing UNESA: Ini Alasan Medis &amp; Keselamatannya
-            </h3>
-            <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
-              Kalung kucing UNESA bukan hiasan biasa. Di dalamnya terdapat material reflektif dan identitas penanda sterilisasi resmi kampus...
-            </p>
-          </div>
-          <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
-            Baca Selengkapnya →
-          </span>
-        </div>
-      </a>
-
-      <!-- Article 2 -->
-      <a href="src/cms-blog-awarness/article-detail.html?id=sejarah-jaga-satwa" class="bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group">
-        <div class="relative h-48 bg-cream overflow-hidden">
-          <img src="images/images-blogs/blog-hari jadi.jpeg" alt="Sejarah Jaga Satwa" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <span class="absolute top-3 left-3 bg-sun text-ink font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
-            Komunitas
-          </span>
-        </div>
-        <div class="p-5 flex-1 flex flex-col justify-between">
-          <div>
-            <span class="text-[11px] text-ink-muted">28 September 2026 • 4 menit baca</span>
-            <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
-              Perjalanan Jaga Satwa UNESA Menjaga Kesejahteraan Satwa Kampus
-            </h3>
-            <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
-              Bagaimana mahasiswa UNESA bertransformasi dari street feeding sederhana menuju sistem informasi terstruktur yang terintegrasi...
-            </p>
-          </div>
-          <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
-            Baca Selengkapnya →
-          </span>
-        </div>
-      </a>
-
-      <!-- Article 3 -->
-      <a href="src/cms-blog-awarness/article-detail.html?id=pawtogenics-karya-mahasiswa" class="bg-white border border-line rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group">
-        <div class="relative h-48 bg-cream overflow-hidden">
-          <img src="images/images-blogs/pawtogenics-karya-cover.jpeg" alt="Pawtogenics UNESA" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <span class="absolute top-3 left-3 bg-emerald-600 text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
-            Kreativitas Mahasiswa
-          </span>
-        </div>
-        <div class="p-5 flex-1 flex flex-col justify-between">
-          <div>
-            <span class="text-[11px] text-ink-muted">25 September 2026 • 3 menit baca</span>
-            <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
-              Pawtogenics: Kolaborasi Seni &amp; Fotografi Mahasiswa untuk Satwa Kampus
-            </h3>
-            <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
-              Pameran karya visual mahasiswa Fakultas Bahasa dan Seni (FBS) yang mengabadikan keseharian kucing-kucing kampus UNESA...
-            </p>
-          </div>
-          <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
-            Baca Selengkapnya →
-          </span>
-        </div>
-      </a>
-
+    <div id="landingArticlesGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Dynamic Articles loaded via JavaScript from CMS / localStorage -->
     </div>
 
   </section>
@@ -1212,8 +1140,116 @@
       });
     }
 
-    // Initialize Catalog & Icons
+    // ==========================================
+    // 6. DYNAMIC CMS ARTICLES FOR LANDING PAGE
+    // ==========================================
+    function renderLandingArticles() {
+      const container = document.getElementById('landingArticlesGrid');
+      if (!container) return;
+
+      const defaultLandingArticles = [
+        {
+          id: 'stop-lepas-kalung',
+          title: 'Stop Lepas Kalung Kucing UNESA: Ini Alasan Medis & Keselamatannya',
+          category: 'Kampanye Edukasi',
+          categoryColor: 'bg-magenta text-white',
+          date: '30 September 2026',
+          readTime: '3 menit',
+          author: 'Divisi Edukasi Jaga Satwa',
+          status: 'PUBLISHED',
+          isFeatured: true,
+          img: 'images/images-blogs/stop-kalungcover.jpeg',
+          excerpt: 'Kalung kucing UNESA bukan sekadar hiasan. Di dalamnya terdapat material reflektif untuk keselamatan malam hari dan tanda resmi sterilisasi.'
+        },
+        {
+          id: 'sejarah-jaga-satwa',
+          title: 'Perjalanan Jaga Satwa UNESA Menjaga Kesejahteraan Satwa Kampus',
+          category: 'Komunitas',
+          categoryColor: 'bg-sun text-ink',
+          date: '28 September 2026',
+          readTime: '4 menit',
+          author: 'Humas Jaga Satwa',
+          status: 'PUBLISHED',
+          isFeatured: false,
+          img: 'images/images-blogs/blog-hari jadi.jpeg',
+          excerpt: 'Bagaimana mahasiswa UNESA bertransformasi dari street feeding sederhana menuju sistem informasi terstruktur yang terintegrasi.'
+        },
+        {
+          id: 'pawtogenics-karya-mahasiswa',
+          title: 'Pawtogenics: Kolaborasi Seni & Fotografi Mahasiswa untuk Satwa Kampus',
+          category: 'Karya Mahasiswa',
+          categoryColor: 'bg-emerald-600 text-white',
+          date: '25 September 2026',
+          readTime: '3 menit',
+          author: 'FBS Creative Team',
+          status: 'PUBLISHED',
+          isFeatured: false,
+          img: 'images/images-blogs/pawtogenics-karya-cover.jpeg',
+          excerpt: 'Pameran karya visual mahasiswa Fakultas Bahasa dan Seni (FBS) yang mengabadikan keseharian kucing-kucing kampus UNESA.'
+        }
+      ];
+
+      let articles = [];
+      try {
+        const stored = localStorage.getItem('meownesa_admin_articles');
+        if (stored) {
+          articles = JSON.parse(stored).filter(a => a.status === 'PUBLISHED');
+        }
+      } catch (err) {}
+
+      if (!articles || articles.length === 0) {
+        articles = defaultLandingArticles;
+      }
+
+      // Sort: Featured headline first, then by date/id
+      articles.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
+
+      // Display top 3 on landing page
+      const topArticles = articles.slice(0, 3);
+
+      container.innerHTML = topArticles.map(art => {
+        let cleanImg = art.img;
+        if (cleanImg.startsWith('../../')) {
+          cleanImg = cleanImg.replace('../../', '');
+        }
+
+        const isFeatured = !!art.isFeatured;
+
+        return `
+          <a href="src/cms-blog-awarness/article-detail.html?id=${art.id}" class="bg-white border ${isFeatured ? 'border-sun ring-2 ring-sun/30' : 'border-line'} rounded-3xl overflow-hidden shadow-card hover:shadow-lg transition flex flex-col group relative">
+            <div class="relative h-48 bg-cream overflow-hidden">
+              <img src="${cleanImg}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+              <span class="absolute top-3 left-3 bg-magenta text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                ${art.category}
+              </span>
+              ${isFeatured ? `
+                <span class="absolute top-3 right-3 bg-sun text-ink font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow flex items-center gap-1">
+                  ⭐ HEADLINE UTAMA
+                </span>
+              ` : ''}
+            </div>
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] text-ink-muted">${art.date} • ${art.readTime || '3 menit'} baca</span>
+                <h3 class="font-display font-bold text-lg text-ink group-hover:text-magenta transition mt-1.5 leading-snug">
+                  ${art.title}
+                </h3>
+                <p class="text-xs text-ink-muted mt-2 line-clamp-3 leading-relaxed">
+                  ${art.excerpt || ''}
+                </p>
+              </div>
+              <span class="text-xs font-bold text-magenta mt-4 inline-flex items-center gap-1">
+                Baca Selengkapnya →
+              </span>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    // Initialize Catalog, Landing Articles & Icons
     renderCatalogCards(unesaCats);
+    renderLandingArticles();
     if (window.lucide) {
       lucide.createIcons();
     }
