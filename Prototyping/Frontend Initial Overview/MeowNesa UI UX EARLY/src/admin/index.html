@@ -98,7 +98,7 @@
         </div>
 
         <span class="text-[10px] font-extrabold uppercase tracking-wider bg-magenta-50 text-magenta px-3 py-1 rounded-full border border-magenta/20 mb-2">
-          Admin &amp; Relawan Jaga Satwa
+          Admin Jaga Satwa
         </span>
         <h2 class="font-display font-extrabold text-2xl text-ink">Masuk ke Dashboard</h2>
         <p class="text-xs text-ink-muted mt-1">Gunakan akun pengurus resmi untuk mengelola data kucing &amp; screening adopsi.</p>
@@ -161,11 +161,18 @@
       </form>
 
       <!-- Demo Quick Auto-Fill / Fast Pass -->
-      <div class="pt-4 border-t border-line text-center">
-        <button onclick="quickDemoLogin()" class="text-xs font-bold text-magenta hover:underline flex items-center justify-center gap-1 mx-auto">
-          <i data-lucide="zap" class="w-3.5 h-3.5 text-sun fill-sun"></i>
-          <span>Akses Instan Demo Pengurus</span>
-        </button>
+      <div class="pt-4 border-t border-line flex flex-col gap-2 text-center">
+        <span class="text-[11px] font-bold text-ink-muted block">Pilihan Akses Cepat Demo:</span>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="quickDemoSuperAdmin()" class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs">
+            <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600 fill-amber-500"></i>
+            <span>Super Admin</span>
+          </button>
+          <button onclick="quickDemoLogin()" class="px-3 py-2 rounded-xl bg-magenta-50 hover:bg-magenta-100 border border-magenta/20 text-magenta text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-magenta"></i>
+            <span>Admin Divisi</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -196,7 +203,24 @@
       if (email && pass) {
         sessionStorage.setItem('meownesa_admin_auth', 'true');
         sessionStorage.setItem('meownesa_admin_user', email);
-        window.location.href = 'dashboard.html';
+        
+        if (email.includes('superadmin')) {
+          localStorage.setItem('meownesa_auth_user', JSON.stringify({
+            name: 'drh. Dimas Arya, M.Si',
+            email: email,
+            role: 'SUPER_ADMIN',
+            roleLabel: 'Super Admin Utama'
+          }));
+          window.location.href = 'superadmin.html';
+        } else {
+          localStorage.setItem('meownesa_auth_user', JSON.stringify({
+            name: 'Admin Jaga Satwa',
+            email: email,
+            role: 'ADMIN_DIVISI',
+            roleLabel: 'Pengurus UNESA'
+          }));
+          window.location.href = 'dashboard.html';
+        }
       } else {
         const errorBox = document.getElementById('loginErrorBox');
         errorBox.classList.remove('hidden');
@@ -204,9 +228,27 @@
       }
     }
 
+    function quickDemoSuperAdmin() {
+      sessionStorage.setItem('meownesa_admin_auth', 'true');
+      sessionStorage.setItem('meownesa_admin_user', 'superadmin@jagasatwa.unesa.ac.id');
+      localStorage.setItem('meownesa_auth_user', JSON.stringify({
+        name: 'drh. Dimas Arya, M.Si',
+        email: 'superadmin@jagasatwa.unesa.ac.id',
+        role: 'SUPER_ADMIN',
+        roleLabel: 'Super Admin Utama'
+      }));
+      window.location.href = 'superadmin.html';
+    }
+
     function quickDemoLogin() {
       sessionStorage.setItem('meownesa_admin_auth', 'true');
       sessionStorage.setItem('meownesa_admin_user', 'admin@jagasatwa.unesa.ac.id');
+      localStorage.setItem('meownesa_auth_user', JSON.stringify({
+        name: 'Admin Jaga Satwa',
+        email: 'admin@jagasatwa.unesa.ac.id',
+        role: 'ADMIN_DIVISI',
+        roleLabel: 'Pengurus UNESA'
+      }));
       window.location.href = 'dashboard.html';
     }
 

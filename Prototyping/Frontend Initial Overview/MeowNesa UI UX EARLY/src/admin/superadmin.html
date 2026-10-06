@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Super Admin &amp; Tata Kelola Sistem — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="../../images/jagasatwa-logo.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 8px 30px -4px rgba(43, 18, 32, 0.06)',
+            highlight: '0 12px 35px -4px rgba(179, 24, 79, 0.15)',
+            gold: '0 10px 25px -4px rgba(255, 197, 61, 0.3)'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="antialiased min-h-screen bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Admin Sidebar Component Container -->
+  <aside id="admin-sidebar" data-active-menu="superadmin" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"></aside>
+  
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="adminSidebarBackdrop" class="fixed inset-0 bg-ink/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+  <!-- Admin Main Layout Wrapper -->
+  <div class="lg:pl-64 flex flex-col min-h-screen">
+    
+    <!-- Admin Topbar Header Component Container -->
+    <header id="admin-topbar" data-page-title="Super Admin &amp; Tata Kelola Sistem" data-breadcrumb="Pusat Kendali &amp; Pengaturan Global"></header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
+      
+      <!-- Top Banner Summary & Super Admin Seal -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gradient-to-r from-ink via-ink-light to-magenta-900 border border-white/10 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+        
+        <!-- Decorative Watermark Pattern -->
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+          <img src="../../images/icon-head.png" alt="Seal" class="w-64 h-64 object-contain brightness-0 invert rotate-12">
+        </div>
+
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sun text-ink font-extrabold text-xs mb-3 shadow-gold">
+            <i data-lucide="crown" class="w-3.5 h-3.5 fill-ink"></i>
+            <span>SUPER ADMIN GOVERNANCE</span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white">
+            Pusat Kendali Sistem &amp; Manajemen Pengurus
+          </h1>
+          <p class="text-xs sm:text-sm text-white/80 mt-1.5 leading-relaxed">
+            Kelola hak akses pengguna (Role-Based Access Control), sinkronisasi spreadsheet live, master data zonasi feeding kampus, dan pusat backup database MeowNesa.
+          </p>
+        </div>
+
+        <div class="relative z-10 flex flex-wrap items-center gap-2.5">
+          <button onclick="downloadCompleteBackup()" class="px-4 py-2.5 rounded-xl bg-sun hover:bg-sun-dark text-ink text-xs font-extrabold shadow-md transition flex items-center gap-2">
+            <i data-lucide="download-cloud" class="w-4 h-4"></i>
+            <span>Backup Data Sistem (JSON)</span>
+          </button>
+          <button onclick="switchTab('tab-settings')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+            <span>Konfigurasi Global</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick System Overview Chips -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card">
+          <span class="text-[11px] font-bold text-ink-muted block">Akun Pengurus Aktif</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="font-display font-extrabold text-2xl text-ink" id="statTotalUsers">5</span>
+            <span class="text-[10px] text-emerald-600 font-bold">● Terverifikasi</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card">
+          <span class="text-[11px] font-bold text-ink-muted block">Status Sistem</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="font-display font-extrabold text-2xl text-emerald-600" id="statSystemMode">LIVE</span>
+            <span class="text-[10px] text-ink-muted">Web Publik Aktif</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card">
+          <span class="text-[11px] font-bold text-ink-muted block">Zona Feeding Kampus</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="font-display font-extrabold text-2xl text-magenta" id="statTotalZones">8</span>
+            <span class="text-[10px] text-ink-muted">Ketintang &amp; Liwet</span>
+          </div>
+        </div>
+
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card">
+          <span class="text-[11px] font-bold text-ink-muted block">Database Storage</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="font-display font-extrabold text-2xl text-ink">100%</span>
+            <span class="text-[10px] text-emerald-700 font-bold">Sinkron Lokal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Super Admin Tabs Navigation -->
+      <div class="bg-white border border-line rounded-2xl p-1.5 shadow-card flex flex-wrap items-center gap-1.5">
+        <button onclick="switchTab('tab-users')" id="btn-tab-users" class="super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold bg-magenta text-white shadow-xs transition flex items-center justify-center gap-2">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Pengurus &amp; RBAC</span>
+        </button>
+        <button onclick="switchTab('tab-settings')" id="btn-tab-settings" class="super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center justify-center gap-2">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Pengaturan Global</span>
+        </button>
+        <button onclick="switchTab('tab-master')" id="btn-tab-master" class="super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center justify-center gap-2">
+          <i data-lucide="map-pin" class="w-4 h-4"></i>
+          <span>Master Zonasi &amp; Tag</span>
+        </button>
+        <button onclick="switchTab('tab-backup')" id="btn-tab-backup" class="super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center justify-center gap-2">
+          <i data-lucide="database" class="w-4 h-4"></i>
+          <span>Backup &amp; Keamanan</span>
+        </button>
+        <button onclick="switchTab('tab-audit')" id="btn-tab-audit" class="super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center justify-center gap-2">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+          <span>Log Audit Sesi</span>
+        </button>
+      </div>
+
+      <!-- ================= TAB 1: USERS & RBAC MANAGEMENT ================= -->
+      <section id="tab-users" class="super-tab-content flex flex-col gap-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-line rounded-2xl p-4 shadow-card">
+          <div class="relative flex-1 max-w-sm">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-ink-muted">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="userSearchInput" oninput="renderUsersTable()" placeholder="Cari nama, email, role pengurus..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <select id="userRoleFilter" onchange="renderUsersTable()" class="px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+              <option value="ALL">Semua Peran (Role)</option>
+              <option value="SUPER_ADMIN">Super Admin</option>
+              <option value="ADMIN_MEDIS">Admin Tim Medis &amp; Vet</option>
+              <option value="ADMIN_FEEDING">Admin Feeding &amp; Lapangan</option>
+              <option value="ADMIN_ADOPSI">Admin Screening Adopsi</option>
+              <option value="RELAWAN">Relawan Kontributor</option>
+            </select>
+            <button onclick="openAddUserModal()" class="px-4 py-2 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5 flex-shrink-0">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>Tambah Pengurus</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Users Table Card -->
+        <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                  <th class="py-3.5 px-4">Pengguna</th>
+                  <th class="py-3.5 px-4">Peran (Role)</th>
+                  <th class="py-3.5 px-4">Wilayah Tugas</th>
+                  <th class="py-3.5 px-4">Hak Akses Modul</th>
+                  <th class="py-3.5 px-4">Status</th>
+                  <th class="py-3.5 px-4">Sesi Terakhir</th>
+                  <th class="py-3.5 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody" class="divide-y divide-line/60 text-xs">
+                <!-- Populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 2: GLOBAL CONFIGURATION ================= -->
+      <section id="tab-settings" class="super-tab-content hidden flex-col gap-6">
+        
+        <form onsubmit="handleSaveGlobalSettings(event)" class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card flex flex-col gap-6">
+          
+          <div class="border-b border-line pb-4 flex items-center justify-between">
+            <div>
+              <h3 class="font-display font-extrabold text-xl text-ink">Pengaturan Global &amp; Integrasi Eksternal</h3>
+              <p class="text-xs text-ink-muted mt-0.5">Konfigurasi operasional komunitas Jaga Satwa UNESA &amp; parameter sistem</p>
+            </div>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Simpan Pengaturan</span>
+            </button>
+          </div>
+
+          <!-- Setting 1: System Mode & Hotline -->
+          <div class="grid sm:grid-cols-2 gap-6">
+            <div class="p-4 rounded-2xl bg-cream/30 border border-line space-y-3">
+              <label class="block text-xs font-bold text-ink">Status Mode Website</label>
+              <select id="cfgSiteMode" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-white text-xs font-semibold focus:outline-none focus:border-magenta text-ink">
+                <option value="LIVE">Live — Normal (Dapat Diakses Seluruh Pengunjung)</option>
+                <option value="MAINTENANCE">Maintenance Mode (Hanya Pengurus Yang Dapat Masuk)</option>
+              </select>
+              <p class="text-[11px] text-ink-muted leading-relaxed">
+                Mode maintenance dapat diaktifkan saat ada update kurikulum atau pemeliharaan server database.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cream/30 border border-line space-y-3">
+              <label class="block text-xs font-bold text-ink">Nomor Hotline WhatsApp Resmi Jaga Satwa</label>
+              <input type="text" id="cfgWhatsapp" value="6281234567890" placeholder="6281234567890" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta text-ink">
+              <p class="text-[11px] text-ink-muted leading-relaxed">
+                Digunakan untuk tombol chat otomatis konfirmasi adopsi &amp; monitoring pasca adopsi.
+              </p>
+            </div>
+          </div>
+
+          <!-- Setting 2: Feeding Spreadsheet URL & Donation -->
+          <div class="grid sm:grid-cols-2 gap-6">
+            <div class="p-4 rounded-2xl bg-cream/30 border border-line space-y-3">
+              <label class="block text-xs font-bold text-ink">URL Google Spreadsheet Feeding Log Harian</label>
+              <input type="url" id="cfgSpreadsheetUrl" value="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta text-ink">
+              <p class="text-[11px] text-ink-muted leading-relaxed">
+                Tautan spreadsheet sinkronisasi matriks pakan kucing harian per zona UNESA.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cream/30 border border-line space-y-3">
+              <label class="block text-xs font-bold text-ink">Rekening Donasi Resmi (BCA &amp; QRIS)</label>
+              <input type="text" id="cfgDonationAccount" value="BCA 018-9988-771 a.n Jaga Satwa UNESA" placeholder="Contoh: BCA 12345678 a.n Komunitas Jaga Satwa" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta text-ink">
+              <p class="text-[11px] text-ink-muted leading-relaxed">
+                Tampil di halaman donasi publik dengan fitur 1-klik salin nomor rekening.
+              </p>
+            </div>
+          </div>
+
+          <!-- Setting 3: Adoption Rules -->
+          <div class="p-4 rounded-2xl bg-cream/30 border border-line space-y-3">
+            <label class="block text-xs font-bold text-ink">Aturan Screening Adopsi &amp; Verifikasi</label>
+            <div class="grid sm:grid-cols-3 gap-4">
+              <div>
+                <span class="text-[11px] text-ink-muted block mb-1">Maksimal Antrean Adopsi:</span>
+                <input type="number" id="cfgMaxAdoptions" value="25" min="5" max="100" class="w-full px-3.5 py-2 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta text-ink">
+              </div>
+              <div>
+                <span class="text-[11px] text-ink-muted block mb-1">Min. Foto Rumah Calon Adopter:</span>
+                <input type="number" id="cfgMinHousePhotos" value="2" min="1" max="5" class="w-full px-3.5 py-2 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta text-ink">
+              </div>
+              <div>
+                <span class="text-[11px] text-ink-muted block mb-1">Masa Monitoring Pasca-Adopsi:</span>
+                <input type="text" id="cfgMonitoringPeriod" value="4 Minggu (1 Bulan)" class="w-full px-3.5 py-2 rounded-xl border border-line bg-white text-xs focus:outline-none focus:border-magenta text-ink">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2.5 pt-2">
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-2">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Simpan Perubahan Pengaturan</span>
+            </button>
+          </div>
+
+        </form>
+
+      </section>
+
+      <!-- ================= TAB 3: MASTER DATA ZONASI & TAG ================= -->
+      <section id="tab-master" class="super-tab-content hidden flex-col gap-6">
+        
+        <div class="grid lg:grid-cols-2 gap-6">
+          
+          <!-- Master Zones: Ketintang -->
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col justify-between gap-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-display font-extrabold text-lg text-ink flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-magenta"></span>
+                  <span>Zona Feeding Kampus Ketintang (KTT)</span>
+                </h3>
+                <span class="text-[11px] font-mono font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded border border-magenta/20" id="ketintangZoneCount">4 Zona</span>
+              </div>
+              <p class="text-xs text-ink-muted mb-4">Daftar gedung dan posko feeding binaan relawan Ketintang</p>
+
+              <div id="ketintangZonesList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <!-- Dynamic Ketintang Zones -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-line flex items-center gap-2">
+              <input type="text" id="newKetintangZoneInput" placeholder="Tambah zona baru (contoh: Selasar Rektorat Lama)..." class="flex-1 px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+              <button onclick="handleAddZone('KETINTANG')" class="px-3.5 py-2 rounded-xl bg-magenta text-white text-xs font-bold hover:bg-magenta-dark transition flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Tambah</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Master Zones: Lidah Wetan -->
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col justify-between gap-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-display font-extrabold text-lg text-ink flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-sun"></span>
+                  <span>Zona Feeding Kampus Lidah Wetan (LWT)</span>
+                </h3>
+                <span class="text-[11px] font-mono font-bold text-amber-800 bg-sun/40 px-2 py-0.5 rounded border border-sun" id="lidahZoneCount">4 Zona</span>
+              </div>
+              <p class="text-xs text-ink-muted mb-4">Daftar gedung dan posko feeding binaan relawan Lidah Wetan</p>
+
+              <div id="lidahZonesList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <!-- Dynamic Lidah Wetan Zones -->
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-line flex items-center gap-2">
+              <input type="text" id="newLidahZoneInput" placeholder="Tambah zona baru (contoh: Gedung Rektorat Pusat)..." class="flex-1 px-3 py-2 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+              <button onclick="handleAddZone('LIDAH_WETAN')" class="px-3.5 py-2 rounded-xl bg-sun hover:bg-sun-dark text-ink text-xs font-extrabold transition flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Tambah</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Master Clinics & Collar Color Reference -->
+        <div class="grid lg:grid-cols-2 gap-6">
+          
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-3">
+            <h3 class="font-display font-extrabold text-base text-ink flex items-center gap-2">
+              <i data-lucide="stethoscope" class="w-4 h-4 text-magenta"></i>
+              <span>Mitra Klinik Dokter Hewan &amp; Medis</span>
+            </h3>
+            <p class="text-xs text-ink-muted">Daftar klinik partner resmi sterilisasi &amp; vaksinasi kucing kampus</p>
+            <div class="space-y-2 pt-1 text-xs">
+              <div class="p-3 rounded-xl bg-cream/40 border border-line flex items-center justify-between">
+                <div>
+                  <strong class="text-ink block font-bold">Klinik Nusantara Vet Surabaya</strong>
+                  <span class="text-[11px] text-ink-muted">Mitra Utama Sterilisasi &amp; Vaksinasi Tahunan</span>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">Mitra Aktif</span>
+              </div>
+              <div class="p-3 rounded-xl bg-cream/40 border border-line flex items-center justify-between">
+                <div>
+                  <strong class="text-ink block font-bold">Posko Satwa Darurat UNESA</strong>
+                  <span class="text-[11px] text-ink-muted">Tanggap Darurat Penyelamatan Kucing Sakit / Terluka</span>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">Internal</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-3">
+            <h3 class="font-display font-extrabold text-base text-ink flex items-center gap-2">
+              <i data-lucide="tag" class="w-4 h-4 text-sun-dark"></i>
+              <span>Panduan Kode Tag &amp; Warna Kalung Reflektif</span>
+            </h3>
+            <p class="text-xs text-ink-muted">Standarisasi identifikasi kucing kampus UNESA</p>
+            <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+              <div class="p-2.5 rounded-xl bg-red-50 border border-red-200 flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                <div>
+                  <strong class="text-red-900 block font-bold text-[11px]">Kalung Merah</strong>
+                  <span class="text-[10px] text-red-700">Zona Vokasi KTT</span>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-blue-500 flex-shrink-0"></span>
+                <div>
+                  <strong class="text-blue-900 block font-bold text-[11px]">Kalung Biru</strong>
+                  <span class="text-[10px] text-blue-700">Zona Danau Liwet</span>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                <div>
+                  <strong class="text-amber-900 block font-bold text-[11px]">Kalung Kuning</strong>
+                  <span class="text-[10px] text-amber-700">Zona FBS &amp; Seni</span>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-teal-50 border border-teal-200 flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-teal-500 flex-shrink-0"></span>
+                <div>
+                  <strong class="text-teal-900 block font-bold text-[11px]">Kalung Toska</strong>
+                  <span class="text-[10px] text-teal-700">Zona Ranunesa / FMIPA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 4: BACKUP & DATABASE MANAGEMENT ================= -->
+      <section id="tab-backup" class="super-tab-content hidden flex-col gap-6">
+        
+        <div class="grid md:grid-cols-3 gap-6">
+          
+          <!-- Card 1: Export Complete Database -->
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col justify-between gap-4">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-sun/30 text-amber-900 flex items-center justify-center font-bold">
+                <i data-lucide="download" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display font-extrabold text-lg text-ink">Export / Backup Database</h3>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                Unduh seluruh dataset MeowNesa (Populasi kucing, Feeding log, Adopsi, Rekam Medis, CMS Artikel, dan Pengaturan) dalam 1 file JSON aman.
+              </p>
+            </div>
+            <button onclick="downloadCompleteBackup()" class="w-full py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-2">
+              <i data-lucide="file-down" class="w-4 h-4"></i>
+              <span>Unduh File Backup JSON</span>
+            </button>
+          </div>
+
+          <!-- Card 2: Restore Database -->
+          <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col justify-between gap-4">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display font-extrabold text-lg text-ink">Restore Database</h3>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                Pulihkan data dari file backup JSON sebelumnya. Data di browser akan otomatis diperbarui dan disinkronkan.
+              </p>
+            </div>
+            <label class="cursor-pointer w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-2 text-center">
+              <i data-lucide="folder-open" class="w-4 h-4"></i>
+              <span>Pilih File Backup JSON</span>
+              <input type="file" id="restoreFileInput" accept=".json" class="hidden" onchange="handleRestoreDatabase(event)">
+            </label>
+          </div>
+
+          <!-- Card 3: Factory Reset -->
+          <div class="bg-white border border-coral/30 rounded-3xl p-6 shadow-card flex flex-col justify-between gap-4 bg-coral/5">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-coral/20 text-coral flex items-center justify-center font-bold">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display font-extrabold text-lg text-coral">Reset ke Data Default</h3>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                Mengembalikan seluruh data populasi kucing, log feeding, artikel, dan screening ke dataset resmi awal Jaga Satwa UNESA.
+              </p>
+            </div>
+            <button onclick="openFactoryResetModal()" class="w-full py-2.5 rounded-xl bg-coral hover:bg-coral/90 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              <span>Reset Database Pabrik</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Database Storage Inspector -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <h3 class="font-display font-bold text-base text-ink flex items-center gap-2">
+              <i data-lucide="hard-drive" class="w-4 h-4 text-magenta"></i>
+              <span>Inspeksi Penyimpanan Tabel LocalStorage</span>
+            </h3>
+            <span class="text-xs text-ink-muted font-mono font-semibold" id="totalStorageUsed">0 KB Digunakan</span>
+          </div>
+
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs" id="storageInspectorGrid">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 5: SECURITY & AUDIT TRAIL ================= -->
+      <section id="tab-audit" class="super-tab-content hidden flex-col gap-4">
+        
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <div>
+              <h3 class="font-display font-bold text-lg text-ink">Catatan Aktivitas Super Admin &amp; Sesi Keamanan</h3>
+              <p class="text-xs text-ink-muted mt-0.5">Jejak audit otomatis seluruh aksi sensitif dan otentikasi sistem</p>
+            </div>
+            <button onclick="clearSuperAuditLogs()" class="px-3.5 py-1.5 rounded-xl border border-line hover:border-coral text-coral text-xs font-bold transition flex items-center gap-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Bersihkan Log</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-cream/60 border-b border-line text-[11px] font-bold text-ink uppercase tracking-wider">
+                  <th class="py-3 px-4">Waktu</th>
+                  <th class="py-3 px-4">Aktor Pengurus</th>
+                  <th class="py-3 px-4">Aktivitas / Aksi</th>
+                  <th class="py-3 px-4">Detail Perubahan</th>
+                  <th class="py-3 px-4">Status</th>
+                </tr>
+              </thead>
+              <tbody id="superAuditTableBody" class="divide-y divide-line/60 text-xs">
+                <!-- Populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODAL: TAMBAH / EDIT PENGGUNA RBAC ================= -->
+  <div id="userModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-line rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+      
+      <div class="px-6 py-4 border-b border-line flex items-center justify-between sticky top-0 bg-white z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-magenta/10 text-magenta flex items-center justify-center">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-lg text-ink" id="userModalTitle">Tambah Akun Pengurus Baru</h3>
+            <p class="text-[11px] text-ink-muted">Atur hak akses modul dan penugasan kampus</p>
+          </div>
+        </div>
+        <button onclick="closeUserModal()" class="w-8 h-8 rounded-full hover:bg-cream flex items-center justify-center text-ink-muted hover:text-ink transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="userForm" onsubmit="handleSaveUser(event)" class="p-6 flex flex-col gap-4">
+        <input type="hidden" id="formUserId">
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Nama Lengkap Pengurus <span class="text-coral">*</span></label>
+          <input type="text" id="formUserName" required placeholder="Contoh: Sarah Aulia, S.Pd" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Email / Username Login <span class="text-coral">*</span></label>
+            <input type="email" id="formUserEmail" required placeholder="sarah@jagasatwa.unesa.ac.id" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Kata Sandi Akun</label>
+            <input type="text" id="formUserPassword" placeholder="•••••••• (Default: unesa2026)" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Peran Pengurus (Role) <span class="text-coral">*</span></label>
+            <select id="formUserRole" required onchange="handleRoleChangeAutoCheck()" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink font-semibold">
+              <option value="SUPER_ADMIN">👑 Super Admin (Full Governance)</option>
+              <option value="ADMIN_MEDIS">🩺 Admin Tim Medis &amp; Vet</option>
+              <option value="ADMIN_FEEDING">🍽️ Admin Feeding &amp; Lapangan</option>
+              <option value="ADMIN_ADOPSI">📋 Admin Screening Adopsi</option>
+              <option value="RELAWAN">🤝 Relawan Kontributor</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-ink mb-1">Wilayah Penugasan Kampus <span class="text-coral">*</span></label>
+            <select id="formUserCampus" required class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+              <option value="Semua Kampus">Semua Kampus (Ketintang &amp; Liwet)</option>
+              <option value="Kampus Ketintang">Kampus Ketintang Saja</option>
+              <option value="Kampus Lidah Wetan">Kampus Lidah Wetan Saja</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Permissions Matrix Checkboxes -->
+        <div class="p-4 rounded-2xl bg-cream/30 border border-line space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-ink">Hak Akses Modul (RBAC Permissions):</span>
+            <span class="text-[10px] text-ink-muted">Disesuaikan otomatis sesuai role</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="perm_cats" checked class="w-4 h-4 accent-magenta rounded">
+              <span>Populasi Kucing</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="perm_feeding" checked class="w-4 h-4 accent-magenta rounded">
+              <span>Feeding Log</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="perm_health" checked class="w-4 h-4 accent-magenta rounded">
+              <span>Rekam Medis</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="perm_adoptions" checked class="w-4 h-4 accent-magenta rounded">
+              <span>Screening Adopsi</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="perm_monitoring" checked class="w-4 h-4 accent-magenta rounded">
+              <span>Monitoring Pasca</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="perm_cms" checked class="w-4 h-4 accent-magenta rounded">
+              <span>CMS Artikel</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer col-span-2">
+              <input type="checkbox" id="perm_superadmin" class="w-4 h-4 accent-magenta rounded">
+              <span class="font-bold text-magenta">Akses Super Admin &amp; Sistem</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-ink mb-1">Status Akun</label>
+          <select id="formUserStatus" class="w-full px-3.5 py-2.5 rounded-xl border border-line bg-cream/30 text-xs focus:outline-none focus:border-magenta text-ink">
+            <option value="ACTIVE">Aktif (Dapat Login &amp; Mengelola Data)</option>
+            <option value="SUSPENDED">Dibekukan / Nonaktif Sementara</option>
+          </select>
+        </div>
+
+        <div class="pt-3 border-t border-line flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeUserModal()" class="px-4 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-magenta hover:bg-magenta-dark text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Simpan Data Pengurus</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: FACTORY RESET CONFIRMATION ================= -->
+  <div id="factoryResetModal" class="fixed inset-0 z-50 bg-ink/80 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border border-coral/30 rounded-3xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-coral/15 text-coral mx-auto flex items-center justify-center">
+        <i data-lucide="alert-octagon" class="w-7 h-7"></i>
+      </div>
+      <div>
+        <h3 class="font-display font-extrabold text-xl text-ink">Konfirmasi Reset Database Pabrik</h3>
+        <p class="text-xs text-ink-muted mt-1 leading-relaxed">
+          Tindakan ini akan mengembalikan seluruh dataset MeowNesa ke data bawaan awal. Seluruh data custom yang belum di-backup akan dihapus.
+        </p>
+      </div>
+
+      <div class="bg-coral/10 p-3 rounded-xl border border-coral/20 text-left">
+        <label class="block text-[11px] font-bold text-coral mb-1">Ketik kata <span class="font-mono font-black">RESET-MEOWNESA</span> di bawah untuk melanjutkan:</label>
+        <input type="text" id="factoryResetVerificationInput" placeholder="RESET-MEOWNESA" class="w-full px-3 py-2 rounded-lg border border-coral/40 bg-white text-xs font-mono font-bold uppercase focus:outline-none focus:border-coral text-ink">
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeFactoryResetModal()" class="flex-1 py-2.5 rounded-xl border border-line hover:bg-cream text-ink text-xs font-bold transition">
+          Batal
+        </button>
+        <button onclick="executeFactoryReset()" class="flex-1 py-2.5 rounded-xl bg-coral hover:bg-coral/90 text-white text-xs font-bold shadow-md transition">
+          Lanjutkan Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Admin Layout JavaScript Component -->
+  <script src="../../components/admin-layout.js"></script>
+
+  <!-- Client-side Logic Script for Super Admin Management -->
+  <script>
+    // ================= INITIAL SUPER ADMIN MASTER DATA =================
+    const defaultSuperUsers = [
+      {
+        id: 'usr-01',
+        name: 'drh. Dimas Arya, M.Si',
+        email: 'superadmin@jagasatwa.unesa.ac.id',
+        role: 'SUPER_ADMIN',
+        roleLabel: 'Super Admin',
+        campus: 'Semua Kampus',
+        status: 'ACTIVE',
+        lastLogin: 'Hari ini, 14:12',
+        perms: ['cats', 'feeding', 'health', 'adoptions', 'monitoring', 'cms', 'superadmin']
+      },
+      {
+        id: 'usr-02',
+        name: 'drh. Anita Putri (Nusantara Vet)',
+        email: 'vet.medis@jagasatwa.unesa.ac.id',
+        role: 'ADMIN_MEDIS',
+        roleLabel: 'Admin Tim Medis & Vet',
+        campus: 'Semua Kampus',
+        status: 'ACTIVE',
+        lastLogin: 'Kemarin, 16:40',
+        perms: ['cats', 'health', 'monitoring']
+      },
+      {
+        id: 'usr-03',
+        name: 'Rian Bagus (Koord. Feeding)',
+        email: 'feeding@jagasatwa.unesa.ac.id',
+        role: 'ADMIN_FEEDING',
+        roleLabel: 'Admin Feeding & Lapangan',
+        campus: 'Kampus Ketintang',
+        status: 'ACTIVE',
+        lastLogin: 'Hari ini, 09:30',
+        perms: ['cats', 'feeding']
+      },
+      {
+        id: 'usr-04',
+        name: 'Nabila Syahrani (Screening)',
+        email: 'adopsi@jagasatwa.unesa.ac.id',
+        role: 'ADMIN_ADOPSI',
+        roleLabel: 'Admin Screening Adopsi',
+        campus: 'Semua Kampus',
+        status: 'ACTIVE',
+        lastLogin: '04 Okt 2026',
+        perms: ['cats', 'adoptions', 'monitoring']
+      },
+      {
+        id: 'usr-05',
+        name: 'Tim Media & Pawtogenics FBS',
+        email: 'media@jagasatwa.unesa.ac.id',
+        role: 'RELAWAN',
+        roleLabel: 'Relawan Kontributor',
+        campus: 'Kampus Lidah Wetan',
+        status: 'ACTIVE',
+        lastLogin: '03 Okt 2026',
+        perms: ['cms']
+      }
+    ];
+
+    let superUsersList = [];
+    let ketintangZones = ['Gedung K10 Fakultas Vokasi', 'Kantin Pusat FT Ketintang', 'Masjid Kampus Barat FMIPA', 'Danau Ranunesa Ketintang'];
+    let lidahZones = ['Dermaga & Gazebo Danau UNESA', 'Gedung Sawunggaling FBS', 'Lobi Rektorat Pusat UNESA', 'Gedung O1 Fakultas Ilmu Pendidikan'];
+    let superAuditLogs = [];
+
+    // ================= DATA PERSISTENCE =================
+    function loadSuperData() {
+      try {
+        const storedUsers = localStorage.getItem('meownesa_super_users');
+        superUsersList = storedUsers ? JSON.parse(storedUsers) : [...defaultSuperUsers];
+
+        const storedKtt = localStorage.getItem('meownesa_zones_ktt');
+        if (storedKtt) ketintangZones = JSON.parse(storedKtt);
+
+        const storedLwt = localStorage.getItem('meownesa_zones_lwt');
+        if (storedLwt) lidahZones = JSON.parse(storedLwt);
+
+        const storedAudit = localStorage.getItem('meownesa_super_audit');
+        if (storedAudit) superAuditLogs = JSON.parse(storedAudit);
+        else {
+          superAuditLogs = [
+            { time: '06 Okt 2026, 14:15', actor: 'Super Admin JS', action: 'Inisialisasi Tata Kelola', detail: 'Sinkronisasi master data dan modul Super Admin aktif', status: 'SUCCESS' },
+            { time: '05 Okt 2026, 19:40', actor: 'Super Admin JS', action: 'Update Konfigurasi', detail: 'Memperbarui konfigurasi routing Vercel & hotline WhatsApp', status: 'SUCCESS' },
+            { time: '04 Okt 2026, 23:50', actor: 'Super Admin JS', action: 'CMS Headline Update', detail: 'Menandai artikel Stop Lepas Kalung sebagai Headline Beranda', status: 'SUCCESS' }
+          ];
+        }
+      } catch (e) {
+        superUsersList = [...defaultSuperUsers];
+      }
+    }
+
+    function saveSuperData() {
+      try {
+        localStorage.setItem('meownesa_super_users', JSON.stringify(superUsersList));
+        localStorage.setItem('meownesa_zones_ktt', JSON.stringify(ketintangZones));
+        localStorage.setItem('meownesa_zones_lwt', JSON.stringify(lidahZones));
+        localStorage.setItem('meownesa_super_audit', JSON.stringify(superAuditLogs));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function recordAuditAction(action, detail) {
+      const newLog = {
+        time: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        actor: 'Super Admin JS',
+        action,
+        detail,
+        status: 'SUCCESS'
+      };
+      superAuditLogs.unshift(newLog);
+      saveSuperData();
+      renderSuperAuditTable();
+    }
+
+    // ================= TAB SWITCHING =================
+    function switchTab(tabId) {
+      document.querySelectorAll('.super-tab-content').forEach(tab => tab.classList.add('hidden'));
+      document.querySelectorAll('.super-tab-btn').forEach(btn => {
+        btn.className = 'super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold text-ink-muted hover:text-magenta transition flex items-center justify-center gap-2';
+      });
+
+      const activeContent = document.getElementById(tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'super-tab-btn flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs font-bold bg-magenta text-white shadow-xs transition flex items-center justify-center gap-2';
+
+      if (tabId === 'tab-backup') updateStorageInspector();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ================= TAB 1: USERS & RBAC TABLE =================
+    function getRoleBadge(role) {
+      switch (role) {
+        case 'SUPER_ADMIN':
+          return '<span class="px-2.5 py-1 rounded-full bg-sun text-ink font-extrabold text-[10px] uppercase shadow-xs">👑 Super Admin</span>';
+        case 'ADMIN_MEDIS':
+          return '<span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">🩺 Tim Medis &amp; Vet</span>';
+        case 'ADMIN_FEEDING':
+          return '<span class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200">🍽️ Feeding &amp; Pakan</span>';
+        case 'ADMIN_ADOPSI':
+          return '<span class="px-2.5 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-[10px] border border-magenta/20">📋 Screening Adopsi</span>';
+        default:
+          return '<span class="px-2.5 py-1 rounded-full bg-cream text-ink font-semibold text-[10px] border border-line">🤝 Relawan</span>';
+      }
+    }
+
+    function renderUsersTable() {
+      const q = document.getElementById('userSearchInput').value.toLowerCase().trim();
+      const roleFilter = document.getElementById('userRoleFilter').value;
+      const tbody = document.getElementById('usersTableBody');
+      if (!tbody) return;
+
+      const filtered = superUsersList.filter(u => {
+        const matchesQuery = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || (u.roleLabel && u.roleLabel.toLowerCase().includes(q));
+        const matchesRole = roleFilter === 'ALL' || u.role === roleFilter;
+        return matchesQuery && matchesRole;
+      });
+
+      document.getElementById('statTotalUsers').innerText = superUsersList.filter(u => u.status === 'ACTIVE').length;
+
+      tbody.innerHTML = filtered.map(u => {
+        const initials = u.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const permsCount = u.perms ? u.perms.length : 0;
+        const isSuper = u.role === 'SUPER_ADMIN';
+
+        return `
+          <tr class="hover:bg-cream/40 transition">
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl ${isSuper ? 'bg-gradient-to-br from-magenta to-amber-500' : 'bg-cream border border-line'} text-ink flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs ${isSuper ? 'text-white' : ''}">
+                  ${initials}
+                </div>
+                <div>
+                  <strong class="font-bold text-xs text-ink block">${u.name}</strong>
+                  <span class="text-[11px] text-ink-muted">${u.email}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4">
+              ${getRoleBadge(u.role)}
+            </td>
+            <td class="py-3.5 px-4 font-semibold text-ink text-xs">
+              ${u.campus}
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="px-2 py-0.5 rounded-md bg-cream text-ink text-[11px] font-mono font-bold border border-line">
+                ${permsCount} Modul
+              </span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-[10px] font-bold ${u.status === 'ACTIVE' ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-coral bg-coral/10 border-coral/20'} px-2.5 py-1 rounded-full border">
+                ${u.status === 'ACTIVE' ? 'Aktif' : 'Dibekukan'}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-ink-muted text-xs font-mono">
+              ${u.lastLogin || '-'}
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="openEditUserModal('${u.id}')" title="Edit Akun &amp; Hak Akses" class="p-1.5 rounded-lg border border-line hover:border-magenta text-ink hover:text-magenta transition bg-white">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="toggleUserStatus('${u.id}')" title="${u.status === 'ACTIVE' ? 'Bekukan Akun' : 'Aktifkan Akun'}" class="p-1.5 rounded-lg border border-line hover:border-amber-500 text-ink-muted hover:text-amber-600 transition bg-white">
+                  <i data-lucide="${u.status === 'ACTIVE' ? 'user-x' : 'user-check'}" class="w-3.5 h-3.5"></i>
+                </button>
+                ${!isSuper ? `
+                  <button onclick="handleDeleteUser('${u.id}')" title="Hapus Akun" class="p-1.5 rounded-lg border border-line hover:border-coral text-coral hover:bg-coral-light transition bg-white">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : `
+                  <button disabled title="Super Admin Utama tidak dapat dihapus" class="p-1.5 rounded-lg border border-line text-ink-muted/30 bg-cream/40 cursor-not-allowed">
+                    <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                  </button>
+                `}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ================= USER MODAL OPERATIONS =================
+    function handleRoleChangeAutoCheck() {
+      const role = document.getElementById('formUserRole').value;
+      const chkCats = document.getElementById('perm_cats');
+      const chkFeeding = document.getElementById('perm_feeding');
+      const chkHealth = document.getElementById('perm_health');
+      const chkAdoptions = document.getElementById('perm_adoptions');
+      const chkMonitoring = document.getElementById('perm_monitoring');
+      const chkCms = document.getElementById('perm_cms');
+      const chkSuper = document.getElementById('perm_superadmin');
+
+      if (role === 'SUPER_ADMIN') {
+        chkCats.checked = true;
+        chkFeeding.checked = true;
+        chkHealth.checked = true;
+        chkAdoptions.checked = true;
+        chkMonitoring.checked = true;
+        chkCms.checked = true;
+        chkSuper.checked = true;
+      } else if (role === 'ADMIN_MEDIS') {
+        chkCats.checked = true; chkHealth.checked = true; chkMonitoring.checked = true;
+        chkFeeding.checked = false; chkAdoptions.checked = false; chkCms.checked = false; chkSuper.checked = false;
+      } else if (role === 'ADMIN_FEEDING') {
+        chkCats.checked = true; chkFeeding.checked = true;
+        chkHealth.checked = false; chkAdoptions.checked = false; chkMonitoring.checked = false; chkCms.checked = false; chkSuper.checked = false;
+      } else if (role === 'ADMIN_ADOPSI') {
+        chkCats.checked = true; chkAdoptions.checked = true; chkMonitoring.checked = true;
+        chkFeeding.checked = false; chkHealth.checked = false; chkCms.checked = false; chkSuper.checked = false;
+      } else {
+        chkCms.checked = true; chkCats.checked = true;
+        chkFeeding.checked = false; chkHealth.checked = false; chkAdoptions.checked = false; chkMonitoring.checked = false; chkSuper.checked = false;
+      }
+    }
+
+    function openAddUserModal() {
+      document.getElementById('userForm').reset();
+      document.getElementById('formUserId').value = '';
+      document.getElementById('userModalTitle').innerText = 'Tambah Akun Pengurus Baru';
+      document.getElementById('formUserRole').value = 'ADMIN_FEEDING';
+      handleRoleChangeAutoCheck();
+
+      const modal = document.getElementById('userModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function openEditUserModal(id) {
+      const u = superUsersList.find(x => x.id === id);
+      if (!u) return;
+
+      document.getElementById('userModalTitle').innerText = `Edit Akun: ${u.name}`;
+      document.getElementById('formUserId').value = u.id;
+      document.getElementById('formUserName').value = u.name;
+      document.getElementById('formUserEmail').value = u.email;
+      document.getElementById('formUserPassword').value = '';
+      document.getElementById('formUserRole').value = u.role;
+      document.getElementById('formUserCampus').value = u.campus;
+      document.getElementById('formUserStatus').value = u.status;
+
+      const p = u.perms || [];
+      document.getElementById('perm_cats').checked = p.includes('cats');
+      document.getElementById('perm_feeding').checked = p.includes('feeding');
+      document.getElementById('perm_health').checked = p.includes('health');
+      document.getElementById('perm_adoptions').checked = p.includes('adoptions');
+      document.getElementById('perm_monitoring').checked = p.includes('monitoring');
+      document.getElementById('perm_cms').checked = p.includes('cms');
+      document.getElementById('perm_superadmin').checked = p.includes('superadmin');
+
+      const modal = document.getElementById('userModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeUserModal() {
+      const modal = document.getElementById('userModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleSaveUser(e) {
+      e.preventDefault();
+      const id = document.getElementById('formUserId').value;
+      const name = document.getElementById('formUserName').value.trim();
+      const email = document.getElementById('formUserEmail').value.trim();
+      const role = document.getElementById('formUserRole').value;
+      const campus = document.getElementById('formUserCampus').value;
+      const status = document.getElementById('formUserStatus').value;
+
+      const perms = [];
+      if (document.getElementById('perm_cats').checked) perms.push('cats');
+      if (document.getElementById('perm_feeding').checked) perms.push('feeding');
+      if (document.getElementById('perm_health').checked) perms.push('health');
+      if (document.getElementById('perm_adoptions').checked) perms.push('adoptions');
+      if (document.getElementById('perm_monitoring').checked) perms.push('monitoring');
+      if (document.getElementById('perm_cms').checked) perms.push('cms');
+      if (document.getElementById('perm_superadmin').checked) perms.push('superadmin');
+
+      const roleLabels = {
+        'SUPER_ADMIN': 'Super Admin',
+        'ADMIN_MEDIS': 'Admin Tim Medis & Vet',
+        'ADMIN_FEEDING': 'Admin Feeding & Lapangan',
+        'ADMIN_ADOPSI': 'Admin Screening Adopsi',
+        'RELAWAN': 'Relawan Kontributor'
+      };
+
+      if (id) {
+        const idx = superUsersList.findIndex(u => u.id === id);
+        if (idx !== -1) {
+          superUsersList[idx] = {
+            ...superUsersList[idx],
+            name,
+            email,
+            role,
+            roleLabel: roleLabels[role] || 'Pengurus',
+            campus,
+            status,
+            perms
+          };
+          recordAuditAction('Update Akun Pengurus', `Memperbarui data & hak akses akun ${name} (${email})`);
+        }
+      } else {
+        const newId = 'usr-' + Date.now().toString().slice(-4);
+        superUsersList.push({
+          id: newId,
+          name,
+          email,
+          role,
+          roleLabel: roleLabels[role] || 'Pengurus',
+          campus,
+          status,
+          lastLogin: 'Belum pernah',
+          perms
+        });
+        recordAuditAction('Pembuatan Akun Pengurus', `Membuat akun pengurus baru ${name} dengan peran ${roleLabels[role]}`);
+      }
+
+      saveSuperData();
+      renderUsersTable();
+      closeUserModal();
+    }
+
+    function toggleUserStatus(id) {
+      const u = superUsersList.find(x => x.id === id);
+      if (!u) return;
+
+      u.status = u.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+      recordAuditAction('Toggle Status Akun', `Mengubah status akun ${u.name} menjadi ${u.status}`);
+      saveSuperData();
+      renderUsersTable();
+    }
+
+    function handleDeleteUser(id) {
+      const u = superUsersList.find(x => x.id === id);
+      if (!u) return;
+
+      if (confirm(`Apakah Anda yakin ingin menghapus akun pengurus "${u.name}" (${u.email})?`)) {
+        superUsersList = superUsersList.filter(x => x.id !== id);
+        recordAuditAction('Hapus Akun Pengurus', `Menghapus akun ${u.name} (${u.email}) dari sistem`);
+        saveSuperData();
+        renderUsersTable();
+      }
+    }
+
+    // ================= TAB 2: GLOBAL SETTINGS =================
+    function handleSaveGlobalSettings(e) {
+      e.preventDefault();
+      const mode = document.getElementById('cfgSiteMode').value;
+      const wa = document.getElementById('cfgWhatsapp').value.trim();
+      const sheet = document.getElementById('cfgSpreadsheetUrl').value.trim();
+      const don = document.getElementById('cfgDonationAccount').value.trim();
+      const maxAdopt = document.getElementById('cfgMaxAdoptions').value;
+
+      const settings = { mode, wa, sheet, don, maxAdopt };
+      localStorage.setItem('meownesa_global_settings', JSON.stringify(settings));
+
+      document.getElementById('statSystemMode').innerText = mode;
+      recordAuditAction('Simpan Pengaturan Global', `Memperbarui parameter sistem, mode: ${mode}, hotline: ${wa}`);
+      alert('Pengaturan global sistem MeowNesa berhasil disimpan!');
+    }
+
+    // ================= TAB 3: ZONES MANAGEMENT =================
+    function renderZones() {
+      const kttContainer = document.getElementById('ketintangZonesList');
+      const lwtContainer = document.getElementById('lidahZonesList');
+
+      document.getElementById('ketintangZoneCount').innerText = `${ketintangZones.length} Zona`;
+      document.getElementById('lidahZoneCount').innerText = `${lidahZones.length} Zona`;
+      document.getElementById('statTotalZones').innerText = ketintangZones.length + lidahZones.length;
+
+      kttContainer.innerHTML = ketintangZones.map((z, idx) => `
+        <div class="p-2.5 rounded-xl bg-cream/40 border border-line flex items-center justify-between text-xs">
+          <span class="font-bold text-ink">📍 ${z}</span>
+          <button onclick="handleDeleteZone('KETINTANG', ${idx})" title="Hapus Zona" class="text-ink-muted hover:text-coral transition p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
+
+      lwtContainer.innerHTML = lidahZones.map((z, idx) => `
+        <div class="p-2.5 rounded-xl bg-cream/40 border border-line flex items-center justify-between text-xs">
+          <span class="font-bold text-ink">📍 ${z}</span>
+          <button onclick="handleDeleteZone('LIDAH_WETAN', ${idx})" title="Hapus Zona" class="text-ink-muted hover:text-coral transition p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function handleAddZone(campus) {
+      if (campus === 'KETINTANG') {
+        const val = document.getElementById('newKetintangZoneInput').value.trim();
+        if (val) {
+          ketintangZones.push(val);
+          document.getElementById('newKetintangZoneInput').value = '';
+          recordAuditAction('Tambah Master Zona', `Menambahkan zona baru Ketintang: ${val}`);
+        }
+      } else {
+        const val = document.getElementById('newLidahZoneInput').value.trim();
+        if (val) {
+          lidahZones.push(val);
+          document.getElementById('newLidahZoneInput').value = '';
+          recordAuditAction('Tambah Master Zona', `Menambahkan zona baru Lidah Wetan: ${val}`);
+        }
+      }
+      saveSuperData();
+      renderZones();
+    }
+
+    function handleDeleteZone(campus, idx) {
+      if (confirm('Hapus zona feeding ini dari master data?')) {
+        if (campus === 'KETINTANG') {
+          const removed = ketintangZones.splice(idx, 1);
+          recordAuditAction('Hapus Master Zona', `Menghapus zona Ketintang: ${removed}`);
+        } else {
+          const removed = lidahZones.splice(idx, 1);
+          recordAuditAction('Hapus Master Zona', `Menghapus zona Lidah Wetan: ${removed}`);
+        }
+        saveSuperData();
+        renderZones();
+      }
+    }
+
+    // ================= TAB 4: BACKUP & RESTORE =================
+    function downloadCompleteBackup() {
+      const backupData = {
+        exportedAt: new Date().toISOString(),
+        version: '1.0.0',
+        system: 'MeowNesa - Jaga Satwa UNESA',
+        data: {
+          cats: JSON.parse(localStorage.getItem('meownesa_admin_cats') || '[]'),
+          feedingLogs: JSON.parse(localStorage.getItem('meownesa_feeding_logs') || '[]'),
+          articles: JSON.parse(localStorage.getItem('meownesa_admin_articles') || '[]'),
+          adoptions: JSON.parse(localStorage.getItem('meownesa_adoptions_data') || '[]'),
+          monitoring: JSON.parse(localStorage.getItem('meownesa_monitoring_data') || '[]'),
+          health: JSON.parse(localStorage.getItem('meownesa_health_data') || '[]'),
+          superUsers: superUsersList,
+          zonesKtt: ketintangZones,
+          zonesLwt: lidahZones,
+          settings: JSON.parse(localStorage.getItem('meownesa_global_settings') || '{}')
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MeowNesa_Complete_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      recordAuditAction('Backup Database', 'Mengunduh file backup JSON lengkap database sistem');
+    }
+
+    function handleRestoreDatabase(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.data) {
+            if (parsed.data.cats) localStorage.setItem('meownesa_admin_cats', JSON.stringify(parsed.data.cats));
+            if (parsed.data.feedingLogs) localStorage.setItem('meownesa_feeding_logs', JSON.stringify(parsed.data.feedingLogs));
+            if (parsed.data.articles) localStorage.setItem('meownesa_admin_articles', JSON.stringify(parsed.data.articles));
+            if (parsed.data.adoptions) localStorage.setItem('meownesa_adoptions_data', JSON.stringify(parsed.data.adoptions));
+            if (parsed.data.monitoring) localStorage.setItem('meownesa_monitoring_data', JSON.stringify(parsed.data.monitoring));
+            if (parsed.data.health) localStorage.setItem('meownesa_health_data', JSON.stringify(parsed.data.health));
+            if (parsed.data.superUsers) {
+              superUsersList = parsed.data.superUsers;
+              localStorage.setItem('meownesa_super_users', JSON.stringify(superUsersList));
+            }
+            if (parsed.data.zonesKtt) {
+              ketintangZones = parsed.data.zonesKtt;
+              localStorage.setItem('meownesa_zones_ktt', JSON.stringify(ketintangZones));
+            }
+            if (parsed.data.zonesLwt) {
+              lidahZones = parsed.data.zonesLwt;
+              localStorage.setItem('meownesa_zones_lwt', JSON.stringify(lidahZones));
+            }
+
+            recordAuditAction('Restore Database', `Memulihkan database dari file backup ${file.name}`);
+            alert('Database MeowNesa berhasil dipulihkan dari file backup!');
+            location.reload();
+          } else {
+            alert('Format file JSON tidak valid untuk database MeowNesa.');
+          }
+        } catch (err) {
+          alert('Gagal membaca file backup: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function updateStorageInspector() {
+      const grid = document.getElementById('storageInspectorGrid');
+      if (!grid) return;
+
+      const tables = [
+        { key: 'meownesa_admin_cats', label: 'Populasi Kucing' },
+        { key: 'meownesa_feeding_logs', label: 'Feeding Log Harian' },
+        { key: 'meownesa_admin_articles', label: 'CMS Artikel' },
+        { key: 'meownesa_adoptions_data', label: 'Screening Adopsi' },
+        { key: 'meownesa_monitoring_data', label: 'Monitoring Pasca' },
+        { key: 'meownesa_super_users', label: 'Pengurus RBAC' },
+        { key: 'meownesa_global_settings', label: 'Pengaturan Global' },
+        { key: 'meownesa_super_audit', label: 'Log Audit' }
+      ];
+
+      let totalBytes = 0;
+
+      grid.innerHTML = tables.map(t => {
+        const data = localStorage.getItem(t.key) || '';
+        const bytes = new Blob([data]).size;
+        totalBytes += bytes;
+        const count = data.startsWith('[') ? JSON.parse(data).length : (data ? 1 : 0);
+
+        return `
+          <div class="p-3 rounded-2xl bg-cream/30 border border-line flex flex-col justify-between">
+            <span class="font-bold text-ink truncate">${t.label}</span>
+            <div class="flex items-center justify-between text-[11px] text-ink-muted mt-2 pt-1 border-t border-line/60">
+              <span>${count} Record</span>
+              <span class="font-mono font-semibold">${(bytes / 1024).toFixed(1)} KB</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('totalStorageUsed').innerText = `${(totalBytes / 1024).toFixed(1)} KB Total Digunakan`;
+    }
+
+    function openFactoryResetModal() {
+      document.getElementById('factoryResetVerificationInput').value = '';
+      const modal = document.getElementById('factoryResetModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeFactoryResetModal() {
+      const modal = document.getElementById('factoryResetModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function executeFactoryReset() {
+      const input = document.getElementById('factoryResetVerificationInput').value.trim();
+      if (input !== 'RESET-MEOWNESA') {
+        alert('Kata verifikasi tidak cocok. Reset dibatalkan.');
+        return;
+      }
+
+      localStorage.removeItem('meownesa_admin_cats');
+      localStorage.removeItem('meownesa_feeding_logs');
+      localStorage.removeItem('meownesa_admin_articles');
+      localStorage.removeItem('meownesa_adoptions_data');
+      localStorage.removeItem('meownesa_monitoring_data');
+      localStorage.removeItem('meownesa_super_users');
+      localStorage.removeItem('meownesa_zones_ktt');
+      localStorage.removeItem('meownesa_zones_lwt');
+      localStorage.removeItem('meownesa_global_settings');
+
+      alert('Seluruh dataset sistem berhasil di-reset ke data bawaan awal Jaga Satwa UNESA!');
+      closeFactoryResetModal();
+      location.reload();
+    }
+
+    // ================= TAB 5: AUDIT LOGS =================
+    function renderSuperAuditTable() {
+      const tbody = document.getElementById('superAuditTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = superAuditLogs.map(l => `
+        <tr class="hover:bg-cream/40 transition">
+          <td class="py-3 px-4 font-mono text-[11px] text-ink-muted whitespace-nowrap">${l.time}</td>
+          <td class="py-3 px-4 font-bold text-xs text-ink">${l.actor}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded bg-magenta-50 text-magenta font-bold text-[10px] border border-magenta/20">${l.action}</span>
+          </td>
+          <td class="py-3 px-4 text-xs text-ink-light">${l.detail}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">${l.status}</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function clearSuperAuditLogs() {
+      if (confirm('Bersihkan seluruh log audit sesi Super Admin?')) {
+        superAuditLogs = [];
+        saveSuperData();
+        renderSuperAuditTable();
+      }
+    }
+
+    // ================= INITIALIZATION =================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSuperData();
+      renderUsersTable();
+      renderZones();
+      renderSuperAuditTable();
+      updateStorageInspector();
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

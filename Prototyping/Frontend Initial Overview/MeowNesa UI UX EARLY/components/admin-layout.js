@@ -31,8 +31,23 @@
       { id: 'adoptions', label: 'Screening Adopsi', icon: 'clipboard-check', href: ADMIN_PATH + 'adoptions.html', badge: '2 Baru', badgeColor: 'bg-sun text-ink' },
       { id: 'monitoring', label: 'Monitoring Pasca-Adopsi', icon: 'heart-handshake', href: ADMIN_PATH + 'monitoring.html', badge: '1 Alert', badgeColor: 'bg-coral text-white' },
       { id: 'cms', label: 'CMS Artikel & Edukasi', icon: 'book-open', href: ADMIN_PATH + 'cms.html', badge: null },
+      { id: 'superadmin', label: 'Super Admin & Sistem', icon: 'shield-alert', href: ADMIN_PATH + 'superadmin.html', badge: 'SUPER', badgeColor: 'bg-amber-400 text-ink font-black shadow-xs' },
       { id: 'audit', label: 'Audit Log Aktivitas', icon: 'history', href: ADMIN_PATH + 'audit.html', badge: null }
     ];
+
+    let userName = 'Super Admin JS';
+    let userRole = 'Ketua & Lead Pengurus';
+    let userInitials = 'SA';
+
+    try {
+      const storedUser = localStorage.getItem('meownesa_auth_user');
+      if (storedUser) {
+        const u = JSON.parse(storedUser);
+        userName = u.name || userName;
+        userRole = u.roleLabel || u.role || userRole;
+        userInitials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'SA';
+      }
+    } catch (e) {}
 
     return `
     <div class="h-full flex flex-col justify-between bg-ink text-white w-64 border-r border-magenta-900/40 select-none">
@@ -94,12 +109,12 @@
 
         <div class="p-3 rounded-2xl bg-white/10 flex items-center justify-between gap-2">
           <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-8 h-8 rounded-xl bg-magenta text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
-              JS
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-magenta to-amber-500 text-white flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
+              ${userInitials}
             </div>
             <div class="min-w-0">
-              <span class="text-xs font-bold text-white block truncate">Admin Jaga Satwa</span>
-              <span class="text-[10px] text-white/60 block truncate">Pengurus UNESA</span>
+              <span class="text-xs font-bold text-white block truncate">${userName}</span>
+              <span class="text-[10px] text-amber-300 font-semibold block truncate">${userRole}</span>
             </div>
           </div>
           <button onclick="adminLogout()" class="text-white/70 hover:text-coral p-1.5 rounded-lg hover:bg-white/10 transition" title="Keluar / Logout">
