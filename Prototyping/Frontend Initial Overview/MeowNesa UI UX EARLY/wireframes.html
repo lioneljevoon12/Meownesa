@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe Showcase - MeowNesa UI/UX (Bab 2.7.2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f1f3f5;
+      color: #1a1a1a;
+    }
+    .font-mono-code {
+      font-family: 'Space Mono', monospace;
+    }
+    
+    /* Low-fidelity Wireframe Image Placeholder Box (with cross X) */
+    .wf-img-box {
+      position: relative;
+      background-color: #f8f9fa;
+      border: 1.5px solid #2b2b2b;
+      overflow: hidden;
+    }
+    .wf-img-box::before, .wf-img-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .wf-img-box::before {
+      background: linear-gradient(to top right, transparent calc(50% - 0.75px), #a0a0a0 calc(50% - 0.75px), #a0a0a0 calc(50% + 0.75px), transparent calc(50% + 0.75px));
+    }
+    .wf-img-box::after {
+      background: linear-gradient(to bottom right, transparent calc(50% - 0.75px), #a0a0a0 calc(50% - 0.75px), #a0a0a0 calc(50% + 0.75px), transparent calc(50% + 0.75px));
+    }
+
+    /* Subtle Map Grid Pattern */
+    .wf-map-box {
+      position: relative;
+      background-color: #fafafa;
+      border: 1.5px solid #2b2b2b;
+      background-image: 
+        linear-gradient(to right, #e5e5e5 1px, transparent 1px),
+        linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    /* Wireframe Standard Border & Shadows */
+    .wf-border {
+      border: 1.5px solid #2b2b2b;
+    }
+    .wf-border-dashed {
+      border: 1.5px dashed #6b7280;
+    }
+    .wf-btn {
+      border: 1.5px solid #2b2b2b;
+      background-color: #ffffff;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+    .wf-btn-dark {
+      border: 1.5px solid #2b2b2b;
+      background-color: #2b2b2b;
+      color: #ffffff;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Skeleton Line Placeholders */
+    .wf-line {
+      height: 8px;
+      background-color: #d1d5db;
+      border-radius: 2px;
+    }
+    .wf-line-sm {
+      height: 5px;
+      background-color: #e5e7eb;
+      border-radius: 2px;
+    }
+
+    /* Print styling */
+    @media print {
+      .no-print { display: none !important; }
+      .wf-sheet { page-break-after: always; box-shadow: none !important; border: 2px solid #000 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Header Navigation -->
+  <header class="no-print bg-white border-b border-gray-300 sticky top-0 z-50 px-6 py-3 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-neutral-900 text-white rounded-lg flex items-center justify-center font-black text-base font-mono-code border border-black">
+          WF
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-gray-900 leading-tight">MeowNesa UI/UX Wireframe Portfolio</h1>
+          <p class="text-xs text-gray-500 font-medium">Sub-bab 2.7.2 Low-Fidelity Wireframe System (12 Halaman Terverifikasi)</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleViewMode('single')" id="btn-mode-single" class="px-3 py-1.5 text-xs font-semibold rounded-md border border-neutral-900 bg-neutral-900 text-white transition flex items-center gap-1.5">
+          <i data-lucide="monitor" class="w-3.5 h-3.5"></i> Mode Detail
+        </button>
+        <button onclick="toggleViewMode('grid')" id="btn-mode-grid" class="px-3 py-1.5 text-xs font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Grid Semua (12 WF)
+        </button>
+        <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak / Ekspor PDF
+        </button>
+        <a href="index.html" class="px-3 py-1.5 text-xs font-semibold rounded-md border border-emerald-600 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition flex items-center gap-1.5">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Ke Prototype Asli
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Wireframe Category Selector (Sub-tabs) -->
+  <div class="no-print bg-neutral-100 border-b border-gray-300 px-6 py-2">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 overflow-x-auto">
+      <div class="flex items-center gap-1 text-xs">
+        <span class="font-bold text-gray-400 uppercase tracking-wider text-[10px] mr-2">Cluster Publik:</span>
+        <button onclick="selectWireframe(1)" class="wf-tab-btn px-2.5 py-1 rounded bg-white font-bold border border-gray-300 text-gray-900" data-wf="1">WF-01: Beranda</button>
+        <button onclick="selectWireframe(2)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="2">WF-02: Katalog</button>
+        <button onclick="selectWireframe(3)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="3">WF-03: Detail Kucing</button>
+        <button onclick="selectWireframe(4)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="4">WF-04: Form Adopsi</button>
+        <button onclick="selectWireframe(5)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="5">WF-05: Tracking</button>
+        <button onclick="selectWireframe(6)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="6">WF-06: Blog Edukasi</button>
+      </div>
+      <div class="h-4 w-px bg-gray-300 hidden md:block"></div>
+      <div class="flex items-center gap-1 text-xs">
+        <span class="font-bold text-gray-400 uppercase tracking-wider text-[10px] mr-2">Cluster Admin:</span>
+        <button onclick="selectWireframe(7)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="7">WF-07: Login</button>
+        <button onclick="selectWireframe(8)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="8">WF-08: Dashboard</button>
+        <button onclick="selectWireframe(9)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="9">WF-09: Data Kucing</button>
+        <button onclick="selectWireframe(10)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="10">WF-10: Adopsi & BAST</button>
+        <button onclick="selectWireframe(11)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="11">WF-11: Feeding Log</button>
+        <button onclick="selectWireframe(12)" class="wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600" data-wf="12">WF-12: Pasca Adopsi & Superadmin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Showcase Workspace -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8">
+
+    <!-- Information Banner -->
+    <div class="no-print bg-white border border-gray-300 rounded-xl p-4 mb-8 shadow-xs flex items-start justify-between gap-4">
+      <div>
+        <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Standardisasi Low-Fidelity Wireframe (Bab 2.7.2)
+        </h2>
+        <p class="text-xs text-gray-600 mt-1">
+          Rancangan wireframe di bawah ini mengadopsi kaidah representasi skematis: kotak bertanda silang (<code class="font-mono-code bg-gray-100 px-1 py-0.5 rounded border border-gray-300">X</code>) untuk placeholder gambar/foto, garis horizontal untuk teks paragraf, dan outline tegas untuk komponen interaktif.
+        </p>
+      </div>
+      <div class="text-right shrink-0">
+        <span class="inline-block px-2.5 py-1 bg-neutral-900 text-white rounded text-[11px] font-mono-code font-bold">Total: 12 Screen Wireframes</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- WIREFRAME CONTAINER LIST -->
+    <!-- ========================================================================= -->
+    <div id="wireframes-wrapper" class="space-y-12">
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-01: LANDING PAGE -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-1" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-01</span>
+            <h3 class="text-lg font-bold text-black mt-1">Beranda Publik (Landing Page)</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/index.html</span>
+        </div>
+
+        <!-- Wireframe Content -->
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto">
+          <!-- Navbar Wireframe -->
+          <div class="border-b-2 border-black px-4 py-3 flex items-center justify-between bg-gray-50">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 wf-img-box rounded"></div>
+              <span class="font-black text-sm uppercase tracking-wider">MEOWNESA LOGO</span>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-xs font-bold uppercase">
+              <span>BERANDA</span>
+              <span>KATALOG KUCING</span>
+              <span>PETA SEBARAN</span>
+              <span>EDUKASI</span>
+              <span>DONASI</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="wf-btn px-3 py-1">LAPORKAN KUCING</button>
+              <button class="wf-btn-dark px-3 py-1">LOGIN ADMIN</button>
+            </div>
+          </div>
+
+          <!-- Hero Section -->
+          <div class="p-8 border-b-2 border-black grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-7 space-y-4">
+              <div class="inline-block px-2 py-0.5 border border-black text-[10px] font-bold uppercase bg-gray-100">
+                [ BADGE: OFFICIAL PORTAL JAGA SATWA UNESA ]
+              </div>
+              <h2 class="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight">
+                SISTEM INFORMASI POPULASI & ADOPSI KUCING RESMI KAMPUS
+              </h2>
+              <div class="space-y-2">
+                <div class="wf-line w-full"></div>
+                <div class="wf-line w-5/6"></div>
+                <div class="wf-line w-3/4"></div>
+              </div>
+              <div class="flex gap-3 pt-2">
+                <button class="wf-btn-dark px-4 py-2 text-xs">CARI KUCING ADOPSI</button>
+                <button class="wf-btn px-4 py-2 text-xs">LIHAT PETA KAMPUS</button>
+              </div>
+            </div>
+            <div class="md:col-span-5">
+              <div class="w-full h-48 wf-img-box rounded-lg flex items-center justify-center">
+                <span class="bg-white/90 border border-black px-2 py-1 text-[11px] font-bold uppercase font-mono-code z-10">[ HERO BANNER ILLUSTRATION / FOTO ]</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Bar -->
+          <div class="grid grid-cols-2 md:grid-cols-4 border-b-2 border-black bg-gray-50 text-center divide-x-2 divide-black">
+            <div class="p-4">
+              <div class="text-xl font-black font-mono-code">6+</div>
+              <div class="text-[10px] font-bold uppercase text-gray-600 mt-1">Kucing Berkalung</div>
+            </div>
+            <div class="p-4">
+              <div class="text-xl font-black font-mono-code">100%</div>
+              <div class="text-[10px] font-bold uppercase text-gray-600 mt-1">Sterilisasi Medis</div>
+            </div>
+            <div class="p-4">
+              <div class="text-xl font-black font-mono-code">2 KAMPUS</div>
+              <div class="text-[10px] font-bold uppercase text-gray-600 mt-1">Ketintang & Lidah</div>
+            </div>
+            <div class="p-4">
+              <div class="text-xl font-black font-mono-code">100%</div>
+              <div class="text-[10px] font-bold uppercase text-gray-600 mt-1">Monitoring Pasca</div>
+            </div>
+          </div>
+
+          <!-- Featured Cats Section -->
+          <div class="p-6 border-b-2 border-black">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h4 class="font-black text-sm uppercase">KUCING SIAP ADOPSI TERBARU</h4>
+                <div class="wf-line-sm w-32 mt-1"></div>
+              </div>
+              <span class="text-xs font-bold underline cursor-pointer uppercase font-mono-code">[ LIHAT SEMUA ]</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Cat Card 1 -->
+              <div class="border-2 border-black p-3 rounded bg-white">
+                <div class="h-32 wf-img-box rounded mb-2 flex items-end p-2">
+                  <span class="bg-white border border-black text-[9px] font-bold px-1.5 py-0.5 z-10">[ TAG: MN-01 ]</span>
+                </div>
+                <div class="font-bold text-xs uppercase">NAMA KUCING (CIMO)</div>
+                <div class="text-[10px] text-gray-600">Ketintang &bull; Betina &bull; Steril</div>
+                <button class="w-full wf-btn mt-2 py-1 text-[10px]">DETAIL & ADOPSI</button>
+              </div>
+              <!-- Cat Card 2 -->
+              <div class="border-2 border-black p-3 rounded bg-white">
+                <div class="h-32 wf-img-box rounded mb-2 flex items-end p-2">
+                  <span class="bg-white border border-black text-[9px] font-bold px-1.5 py-0.5 z-10">[ TAG: MN-02 ]</span>
+                </div>
+                <div class="font-bold text-xs uppercase">NAMA KUCING (BELANG)</div>
+                <div class="text-[10px] text-gray-600">Lidah Wetan &bull; Jantan &bull; Steril</div>
+                <button class="w-full wf-btn mt-2 py-1 text-[10px]">DETAIL & ADOPSI</button>
+              </div>
+              <!-- Cat Card 3 -->
+              <div class="border-2 border-black p-3 rounded bg-white">
+                <div class="h-32 wf-img-box rounded mb-2 flex items-end p-2">
+                  <span class="bg-white border border-black text-[9px] font-bold px-1.5 py-0.5 z-10">[ TAG: MN-03 ]</span>
+                </div>
+                <div class="font-bold text-xs uppercase">NAMA KUCING (OREN)</div>
+                <div class="text-[10px] text-gray-600">Ketintang &bull; Jantan &bull; Steril</div>
+                <button class="w-full wf-btn mt-2 py-1 text-[10px]">DETAIL & ADOPSI</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campus Map & Educational Article -->
+          <div class="grid grid-cols-1 md:grid-cols-2 divide-y-2 md:divide-y-0 md:divide-x-2 divide-black border-b-2 border-black">
+            <!-- Map Preview -->
+            <div class="p-6">
+              <h4 class="font-black text-xs uppercase mb-2">PETA TITIK FEEDING KAMPUS</h4>
+              <div class="h-40 wf-map-box rounded flex items-center justify-center">
+                <span class="bg-white border border-black px-2 py-1 text-[10px] font-bold uppercase font-mono-code">[ MAP INTERACTIVE CANVAS ]</span>
+              </div>
+              <div class="mt-2 flex justify-between items-center text-[10px] font-bold">
+                <span>Titik: Rektorat, Kantin T2, FBS</span>
+                <span class="underline uppercase font-mono-code">[ BUKA PETA LENGKAP ]</span>
+              </div>
+            </div>
+            <!-- Education/Blog -->
+            <div class="p-6">
+              <h4 class="font-black text-xs uppercase mb-2">EDUKASI & ARTIKEL TERBARU</h4>
+              <div class="border border-black p-2.5 rounded bg-gray-50 flex gap-3 mb-2">
+                <div class="w-16 h-14 wf-img-box shrink-0 rounded"></div>
+                <div>
+                  <div class="text-[11px] font-bold uppercase">Panduan Mengadopsi Kucing Kampus</div>
+                  <div class="wf-line-sm w-full mt-1"></div>
+                  <div class="wf-line-sm w-3/4 mt-1"></div>
+                </div>
+              </div>
+              <div class="border border-black p-2.5 rounded bg-gray-50 flex gap-3">
+                <div class="w-16 h-14 wf-img-box shrink-0 rounded"></div>
+                <div>
+                  <div class="text-[11px] font-bold uppercase">Mengapa Kucing Kampus Harus Disteril?</div>
+                  <div class="wf-line-sm w-full mt-1"></div>
+                  <div class="wf-line-sm w-3/4 mt-1"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="p-6 bg-gray-100 text-center text-xs space-y-2">
+            <div class="font-black uppercase tracking-wider">MEOWNESA &bull; JAGA SATWA UNESA (SURABAYA)</div>
+            <div class="text-gray-500 text-[10px]">Bukan Shelter Komersial &bull; Hanya Mengelola Populasi Kucing Resmi UNESA</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-02: KATALOG KUCING -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-2" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-02</span>
+            <h3 class="text-lg font-bold text-black mt-1">Katalog & Database Kucing Publik</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/cat-informations/index.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto">
+          <!-- Header Bar -->
+          <div class="border-b-2 border-black p-4 bg-gray-50 flex justify-between items-center">
+            <div class="font-bold text-xs uppercase">[ MEOWNESA / KATALOG KUCING ]</div>
+            <div class="wf-btn px-2 py-1 text-[10px]">KEMBALI KE BERANDA</div>
+          </div>
+
+          <!-- Page Title & Search Filter -->
+          <div class="p-6 border-b-2 border-black bg-white">
+            <h2 class="text-xl font-black uppercase">DATABASE & ADOPTION SHOWCASE</h2>
+            <p class="text-xs text-gray-500 mt-1">Jelajahi seluruh profil kucing resmi kampus yang dipantau Jaga Satwa UNESA</p>
+
+            <!-- Search and Filter Bar -->
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-2">
+              <div class="md:col-span-2 border border-black p-2 rounded text-xs flex items-center justify-between">
+                <span class="text-gray-400">[ INPUT: CARI NAMA / TAG ID KUCING... ]</span>
+                <i data-lucide="search" class="w-3.5 h-3.5 text-gray-500"></i>
+              </div>
+              <div class="border border-black p-2 rounded text-xs flex justify-between items-center">
+                <span>KAMPUS: SEMUA</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+              </div>
+              <div class="border border-black p-2 rounded text-xs flex justify-between items-center">
+                <span>STATUS: SIAP ADOPSI</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid of Cats (Catalog) -->
+          <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Item 1 -->
+            <div class="border-2 border-black p-3 rounded">
+              <div class="h-36 wf-img-box rounded mb-2 relative flex items-start justify-between p-2">
+                <span class="bg-white border border-black text-[9px] font-bold px-1 z-10">[ SIAP ADOPSI ]</span>
+                <span class="bg-black text-white text-[9px] font-bold px-1 font-mono-code z-10">MN-01</span>
+              </div>
+              <div class="font-bold text-sm uppercase">CIMO</div>
+              <div class="text-[10px] text-gray-500">Kampus Ketintang &bull; 1.5 Tahun</div>
+              <div class="text-[10px] font-semibold text-emerald-700 mt-1">&check; Sudah Steril &amp; Vaksin</div>
+              <button class="w-full wf-btn-dark mt-3 py-1.5 text-[10px]">LIHAT PROFIL DETAIL</button>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="border-2 border-black p-3 rounded">
+              <div class="h-36 wf-img-box rounded mb-2 relative flex items-start justify-between p-2">
+                <span class="bg-white border border-black text-[9px] font-bold px-1 z-10">[ SIAP ADOPSI ]</span>
+                <span class="bg-black text-white text-[9px] font-bold px-1 font-mono-code z-10">MN-02</span>
+              </div>
+              <div class="font-bold text-sm uppercase">BELANG</div>
+              <div class="text-[10px] text-gray-500">Kampus Lidah Wetan &bull; 2 Tahun</div>
+              <div class="text-[10px] font-semibold text-emerald-700 mt-1">&check; Sudah Steril &amp; Sehat</div>
+              <button class="w-full wf-btn-dark mt-3 py-1.5 text-[10px]">LIHAT PROFIL DETAIL</button>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="border-2 border-black p-3 rounded opacity-85">
+              <div class="h-36 wf-img-box rounded mb-2 relative flex items-start justify-between p-2">
+                <span class="bg-gray-200 border border-black text-[9px] font-bold px-1 z-10">[ PROSES SCREENING ]</span>
+                <span class="bg-black text-white text-[9px] font-bold px-1 font-mono-code z-10">MN-03</span>
+              </div>
+              <div class="font-bold text-sm uppercase">MOKA</div>
+              <div class="text-[10px] text-gray-500">Kampus Ketintang &bull; 8 Bulan</div>
+              <div class="text-[10px] font-semibold text-amber-700 mt-1">&bull; Antrean Review Adopter</div>
+              <button class="w-full wf-btn mt-3 py-1.5 text-[10px]">LIHAT STATUS</button>
+            </div>
+          </div>
+
+          <!-- Pagination Bar -->
+          <div class="p-4 border-t-2 border-black bg-gray-50 flex items-center justify-between text-xs">
+            <span class="text-gray-500">Menampilkan 1-6 dari 6 Kucing Terdata</span>
+            <div class="flex gap-1">
+              <button class="wf-btn px-2 py-0.5">&laquo; Prev</button>
+              <button class="wf-btn-dark px-2 py-0.5">1</button>
+              <button class="wf-btn px-2 py-0.5">Next &raquo;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-03: DETAIL PROFIL KUCING -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-3" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-03</span>
+            <h3 class="text-lg font-bold text-black mt-1">Detail Profil Kucing & Riwayat Medis</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/cat-informations/cat-detail.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto">
+          <!-- Breadcrumb -->
+          <div class="p-3 border-b-2 border-black bg-gray-50 text-[11px] font-bold uppercase">
+            [ BERANDA / KATALOG / DETAIL: CIMO (MN-01) ]
+          </div>
+
+          <!-- Main Detail Layout -->
+          <div class="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- Left Column: Photo Gallery -->
+            <div class="md:col-span-5 space-y-3">
+              <div class="h-56 wf-img-box rounded-lg flex items-center justify-center">
+                <span class="bg-white border border-black px-2 py-1 text-[10px] font-bold uppercase font-mono-code z-10">[ FOTO UTAMA PROFIL ]</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="h-16 wf-img-box rounded"></div>
+                <div class="h-16 wf-img-box rounded"></div>
+                <div class="h-16 wf-img-box rounded"></div>
+              </div>
+              <div class="border border-black p-2.5 rounded bg-gray-50 text-[10px]">
+                <div class="font-bold uppercase">&bull; SPESIFIKASI KALUNG:</div>
+                <div class="text-gray-600">Warna Merah Muda &bull; Tag Lonceng &bull; Lokasi Rektorat</div>
+              </div>
+            </div>
+
+            <!-- Right Column: Info, Story & CTA -->
+            <div class="md:col-span-7 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-2xl font-black uppercase">CIMO</h2>
+                  <div class="text-xs text-gray-600 font-mono-code font-bold">ID: MN-KTG-001</div>
+                </div>
+                <span class="px-2.5 py-1 bg-black text-white text-xs font-bold uppercase rounded">[ STATUS: SIAP ADOPSI ]</span>
+              </div>
+
+              <!-- Parameter Grid -->
+              <div class="grid grid-cols-2 gap-2 text-xs border-y-2 border-black py-3">
+                <div><span class="font-bold">Kampus:</span> Ketintang (Gedung E)</div>
+                <div><span class="font-bold">Jenis Kelamin:</span> Betina</div>
+                <div><span class="font-bold">Kelompok Usia:</span> Dewasa (~1.5 Th)</div>
+                <div><span class="font-bold">Status Steril:</span> <span class="font-bold underline">Sudah Steril</span></div>
+              </div>
+
+              <!-- Story / Description -->
+              <div>
+                <h4 class="font-black text-xs uppercase mb-1">CERITA & KARAKTERISTIK:</h4>
+                <div class="space-y-1.5">
+                  <div class="wf-line w-full"></div>
+                  <div class="wf-line w-11/12"></div>
+                  <div class="wf-line w-4/5"></div>
+                </div>
+              </div>
+
+              <!-- Medical History Box -->
+              <div class="border border-black p-3 rounded bg-gray-50">
+                <h4 class="font-black text-xs uppercase mb-2">REKAM MEDIS RESMI (NUSANTARA VET):</h4>
+                <div class="text-[11px] space-y-1">
+                  <div>&check; <strong>Sterilisasi:</strong> 14 Jan 2026 - Tuntas</div>
+                  <div>&check; <strong>Vaksin Tricat:</strong> 02 Feb 2026 - Lengkap</div>
+                  <div>&check; <strong>Obat Cacing / Kutu:</strong> Rutin Tiap 3 Bulan</div>
+                </div>
+              </div>
+
+              <!-- Action Adoption Button -->
+              <div class="pt-2">
+                <button class="w-full wf-btn-dark py-3 text-xs flex items-center justify-center gap-2">
+                  <i data-lucide="heart" class="w-4 h-4"></i> AJUKAN ADOPSI CIMO SEKARANG
+                </button>
+                <div class="text-[10px] text-gray-500 text-center mt-1.5">
+                  *Calon adopter wajib menyetujui komitmen &amp; proses screening
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-04: FORM PENGAJUAN ADOPSI -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-4" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-04</span>
+            <h3 class="text-lg font-bold text-black mt-1">Formulir Pengajuan Adopsi (Multi-step)</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/adoption/apply.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto">
+          <!-- Stepper Indicator -->
+          <div class="border-b-2 border-black p-4 bg-gray-50 grid grid-cols-3 text-center text-xs font-bold divide-x-2 divide-black">
+            <div class="text-black bg-white p-1 border border-black">1. DATA DIRI ADOPTER</div>
+            <div class="text-gray-400 p-1">2. KONDISI HUNIAN</div>
+            <div class="text-gray-400 p-1">3. KOMITMEN & BERKAS</div>
+          </div>
+
+          <!-- Form Content -->
+          <div class="p-6 space-y-4">
+            <div class="border border-black p-3 bg-gray-50 rounded flex items-center gap-3">
+              <div class="w-12 h-12 wf-img-box rounded shrink-0"></div>
+              <div>
+                <div class="text-xs font-bold uppercase">Mengajukan Adopsi untuk: CIMO (MN-01)</div>
+                <div class="text-[10px] text-gray-500">Pastikan Anda telah membaca syarat &amp; bersedia mengikuti monitoring 6 bulan.</div>
+              </div>
+            </div>
+
+            <!-- Field Group 1 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase mb-1">NAMA LENGKAP (SESUAI KTP):</label>
+                <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400">[ INPUT: TULIS NAMA LENGKAP ]</div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase mb-1">NOMOR WHATSAPP AKTIF:</label>
+                <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400">[ INPUT: 0812XXXXXXXX ]</div>
+              </div>
+            </div>
+
+            <!-- Field Group 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase mb-1">EMAIL:</label>
+                <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400">[ INPUT: EMAIL@EXAMPLE.COM ]</div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase mb-1">AKUN INSTAGRAM / SOSMED:</label>
+                <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400">[ INPUT: @USERNAME ]</div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1">ALAMAT DOMISILI SURABAYA/SEKITARNYA:</label>
+              <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400 h-16">[ TEXTAREA: ALAMAT LENGKAP ]</div>
+            </div>
+
+            <!-- Upload Box -->
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1">LAMPIRAN FOTO KTP &amp; KONDISI RUMAH:</label>
+              <div class="border-2 border-dashed border-black p-6 rounded text-center bg-gray-50">
+                <i data-lucide="upload-cloud" class="w-6 h-6 mx-auto mb-1 text-gray-600"></i>
+                <div class="text-xs font-bold">[ KLIK / DROP FILE LAMPIRAN DI SINI ]</div>
+                <div class="text-[10px] text-gray-500">Maksimal 3 File (Format JPG/PNG/PDF)</div>
+              </div>
+            </div>
+
+            <!-- Commitment Checkbox -->
+            <div class="border border-black p-3 rounded bg-white text-xs space-y-2">
+              <label class="flex items-start gap-2 cursor-pointer font-bold">
+                <input type="checkbox" checked class="mt-0.5">
+                <span>Saya berkomitmen merawat indoor, tidak memindahtangankan, dan bersedia mengirim foto monitoring bulan ke-1, 3, dan 6.</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-between items-center pt-2">
+              <button class="wf-btn px-4 py-2 text-xs">KEMBALI</button>
+              <button class="wf-btn-dark px-6 py-2 text-xs">KIRIM PENGAJUAN ADOPSI</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-05: TRACKING STATUS ADOPSI -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-5" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-05</span>
+            <h3 class="text-lg font-bold text-black mt-1">Tracking Status Pengajuan Adopsi Publik</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/adoption/tracking.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto p-6">
+          <!-- Search Header -->
+          <div class="max-w-md mx-auto text-center mb-6">
+            <h3 class="text-lg font-black uppercase">LACAK STATUS ADOPSI</h3>
+            <p class="text-xs text-gray-500">Masukkan kode registrasi adopsi yang Anda terima via WhatsApp</p>
+            <div class="mt-3 flex gap-2">
+              <div class="border border-black p-2 rounded text-xs flex-1 text-left font-mono-code font-bold">ADP-2026-003</div>
+              <button class="wf-btn-dark px-4 text-xs">CARI</button>
+            </div>
+          </div>
+
+          <!-- Result Card -->
+          <div class="border-2 border-black rounded-lg p-5 bg-gray-50 max-w-2xl mx-auto space-y-4">
+            <div class="flex justify-between items-center border-b border-black pb-3">
+              <div>
+                <span class="text-xs text-gray-500 uppercase font-bold">KODE REGISTRASI:</span>
+                <div class="text-base font-black font-mono-code">ADP-2026-003</div>
+              </div>
+              <span class="px-2 py-1 bg-black text-white text-xs font-bold uppercase rounded">[ STATUS: SCREENING ]</span>
+            </div>
+
+            <!-- Stepper Progress Tracker -->
+            <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-bold py-2">
+              <div class="border-b-4 border-black pb-1 text-black">1. Terkirim &check;</div>
+              <div class="border-b-4 border-black pb-1 text-black">2. Screening &check;</div>
+              <div class="border-b-4 border-gray-300 pb-1 text-gray-400">3. Wawancara</div>
+              <div class="border-b-4 border-gray-300 pb-1 text-gray-400">4. BAST/Selesai</div>
+            </div>
+
+            <div class="border border-black p-3 bg-white rounded text-xs space-y-1">
+              <div><strong>Kucing:</strong> Cimo (MN-01) - Ketintang</div>
+              <div><strong>Pemohon:</strong> Sarah Anindya</div>
+              <div><strong>Catatan Tim Jaga Satwa:</strong> Berkas KTP &amp; hunian telah lolos verifikasi awal. Menunggu jadwal wawancara santai.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-06: BLOG & EDUKASI -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-6" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-06</span>
+            <h3 class="text-lg font-bold text-black mt-1">Portal Berita &amp; Edukasi Kucing</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/cms-blog-awarness/blog.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto p-6 space-y-6">
+          <!-- Featured Banner Article -->
+          <div class="border-2 border-black rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-12 bg-gray-50">
+            <div class="md:col-span-5 h-48 wf-img-box"></div>
+            <div class="md:col-span-7 p-5 space-y-2 flex flex-col justify-between">
+              <div>
+                <span class="bg-black text-white text-[9px] font-bold px-2 py-0.5 uppercase rounded">[ ARTIKEL UTAMA ]</span>
+                <h3 class="text-base font-black uppercase mt-1">PROGRAM TNR STERILISASI MASSAL KAMPUS LIDAH WETAN 2026</h3>
+                <div class="wf-line-sm w-full mt-2"></div>
+                <div class="wf-line-sm w-4/5 mt-1"></div>
+              </div>
+              <button class="wf-btn self-start px-3 py-1 text-xs">BACA SELENGKAPNYA</button>
+            </div>
+          </div>
+
+          <!-- Article List -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border border-black p-3 rounded">
+              <div class="h-28 wf-img-box rounded mb-2"></div>
+              <div class="text-[10px] font-bold text-gray-500">EDUKASI &bull; 04 OKT 2026</div>
+              <div class="text-xs font-bold uppercase mt-0.5">Kenali Arti Warna Kalung Kucing UNESA</div>
+              <div class="wf-line-sm w-full mt-2"></div>
+            </div>
+            <div class="border border-black p-3 rounded">
+              <div class="h-28 wf-img-box rounded mb-2"></div>
+              <div class="text-[10px] font-bold text-gray-500">CERITA &bull; 02 OKT 2026</div>
+              <div class="text-xs font-bold uppercase mt-0.5">Kisah Moka yang Kini Punya Rumah Baru</div>
+              <div class="wf-line-sm w-full mt-2"></div>
+            </div>
+            <div class="border border-black p-3 rounded">
+              <div class="h-28 wf-img-box rounded mb-2"></div>
+              <div class="text-[10px] font-bold text-gray-500">TIPS &bull; 28 SEP 2026</div>
+              <div class="text-xs font-bold uppercase mt-0.5">Pakan Basah vs Kering: Kebutuhan Nutrisi</div>
+              <div class="wf-line-sm w-full mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-07: LOGIN ADMIN -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-7" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-07</span>
+            <h3 class="text-lg font-bold text-black mt-1">Autentikasi &amp; Login Admin Portal</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/admin/index.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg bg-gray-100 max-w-4xl mx-auto py-12 px-4 flex justify-center">
+          <div class="w-full max-w-sm bg-white border-2 border-black p-6 rounded-xl space-y-4 shadow-sm">
+            <div class="text-center space-y-1">
+              <div class="w-12 h-12 wf-img-box rounded-lg mx-auto mb-2"></div>
+              <h3 class="text-base font-black uppercase">LOGIN ADMIN MEOWNESA</h3>
+              <p class="text-[10px] text-gray-500">Khusus Pengurus Jaga Satwa UNESA &amp; Superadmin</p>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[11px] font-bold uppercase mb-1">EMAIL / USERNAME:</label>
+                <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400">[ admin@unesa.ac.id ]</div>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase mb-1">PASSWORD:</label>
+                <div class="border border-black p-2 rounded text-xs bg-gray-50 text-gray-400">[ &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull; ]</div>
+              </div>
+              <div class="flex justify-between items-center text-[10px]">
+                <label class="flex items-center gap-1 font-bold"><input type="checkbox"> Ingat Saya</label>
+                <span class="underline">Lupa Password?</span>
+              </div>
+            </div>
+
+            <button class="w-full wf-btn-dark py-2.5 text-xs font-bold">MASUK KE DASHBOARD</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-08: DASHBOARD ADMIN -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-8" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-08</span>
+            <h3 class="text-lg font-bold text-black mt-1">Dashboard Eksekutif Admin</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/admin/dashboard.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto flex">
+          <!-- Sidebar Mockup -->
+          <div class="w-48 border-r-2 border-black p-4 bg-gray-50 hidden md:block space-y-3 shrink-0">
+            <div class="font-black text-xs uppercase mb-4">MEOWNESA ADMIN</div>
+            <div class="text-[11px] font-bold space-y-2">
+              <div class="p-1.5 bg-black text-white rounded">[ DASHBOARD ]</div>
+              <div class="p-1.5">[ DATA KUCING ]</div>
+              <div class="p-1.5">[ ADOPSI &amp; BAST ]</div>
+              <div class="p-1.5">[ FEEDING LOG ]</div>
+              <div class="p-1.5">[ PASCA ADOPSI ]</div>
+              <div class="p-1.5">[ CMS ARTIKEL ]</div>
+              <div class="p-1.5">[ SUPER ADMIN ]</div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Canvas -->
+          <div class="flex-1 p-6 space-y-6">
+            <!-- Welcome Banner -->
+            <div class="border-2 border-black p-4 rounded bg-gray-50 flex justify-between items-center">
+              <div>
+                <h3 class="text-base font-black uppercase">SELAMAT BERTUGAS, ADMIN JAGA SATWA</h3>
+                <p class="text-xs text-gray-500">Monitoring real-time populasi Ketintang &amp; Lidah Wetan</p>
+              </div>
+              <div class="w-10 h-10 wf-img-box rounded-full shrink-0"></div>
+            </div>
+
+            <!-- 6 Statistical Metrics -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div class="border border-black p-3 rounded">
+                <div class="text-[10px] font-bold text-gray-500 uppercase">TOTAL KUCING</div>
+                <div class="text-xl font-black font-mono-code">6</div>
+                <div class="text-[9px] text-gray-500">100% Berkalung</div>
+              </div>
+              <div class="border border-black p-3 rounded">
+                <div class="text-[10px] font-bold text-gray-500 uppercase">SIAP ADOPSI</div>
+                <div class="text-xl font-black font-mono-code">4</div>
+                <div class="text-[9px] text-gray-500">Tersedia Publik</div>
+              </div>
+              <div class="border border-black p-3 rounded">
+                <div class="text-[10px] font-bold text-gray-500 uppercase">ANTEAN ADOPSI</div>
+                <div class="text-xl font-black font-mono-code">3</div>
+                <div class="text-[9px] text-gray-500">2 Perlu Review</div>
+              </div>
+              <div class="border border-black p-3 rounded">
+                <div class="text-[10px] font-bold text-gray-500 uppercase">FEEDING HARI INI</div>
+                <div class="text-xl font-black font-mono-code">8</div>
+                <div class="text-[9px] text-gray-500">Sore &amp; Pagi Tuntas</div>
+              </div>
+              <div class="border border-black p-3 rounded">
+                <div class="text-[10px] font-bold text-gray-500 uppercase">STATUS STERIL</div>
+                <div class="text-xl font-black font-mono-code">100%</div>
+                <div class="text-[9px] text-gray-500">Nusantara Vet</div>
+              </div>
+              <div class="border border-black p-3 rounded">
+                <div class="text-[10px] font-bold text-gray-500 uppercase">REMINDER TEMPO</div>
+                <div class="text-xl font-black font-mono-code text-red-600">1</div>
+                <div class="text-[9px] text-gray-500">Bulan ke-3 Jatuh Tempo</div>
+              </div>
+            </div>
+
+            <!-- Recent Tables -->
+            <div class="border border-black rounded p-3">
+              <div class="font-bold text-xs uppercase mb-2 flex justify-between">
+                <span>ANTREAN ADOPSI TERBARU</span>
+                <span class="underline text-[10px]">[ LIHAT SEMUA ]</span>
+              </div>
+              <div class="border border-black rounded overflow-hidden text-[10px]">
+                <div class="grid grid-cols-4 bg-gray-100 p-1.5 font-bold border-b border-black">
+                  <span>KODE</span>
+                  <span>KUCING</span>
+                  <span>ADOPTER</span>
+                  <span>STATUS</span>
+                </div>
+                <div class="grid grid-cols-4 p-1.5 border-b border-gray-200">
+                  <span>ADP-001</span>
+                  <span>Cimo</span>
+                  <span>Sarah A.</span>
+                  <span class="font-bold">[ REVIEW ]</span>
+                </div>
+                <div class="grid grid-cols-4 p-1.5">
+                  <span>ADP-002</span>
+                  <span>Belang</span>
+                  <span>Rian P.</span>
+                  <span class="font-bold">[ SCREENING ]</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-09: MANAJEMEN DATA KUCING (ADMIN) -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-9" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-09</span>
+            <h3 class="text-lg font-bold text-black mt-1">Manajemen Data Populasi Kucing</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/admin/cats.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto p-6 space-y-4">
+          <!-- Action Header -->
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-base font-black uppercase">MASTER DATA KUCING KAMPUS</h3>
+              <p class="text-xs text-gray-500">Kelola identitas, warna kalung, multi-foto, dan rekam medis</p>
+            </div>
+            <button class="wf-btn-dark px-3 py-1.5 text-xs">+ TAMBAH KUCING BARU</button>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="flex gap-2">
+            <div class="border border-black p-2 rounded text-xs flex-1 text-gray-400">[ CARI NAMA / TAG ID ]</div>
+            <div class="border border-black p-2 rounded text-xs">[ KAMPUS: SEMUA ]</div>
+            <div class="border border-black p-2 rounded text-xs">[ STATUS: SEMUA ]</div>
+          </div>
+
+          <!-- Table View -->
+          <div class="border-2 border-black rounded-lg overflow-hidden text-xs">
+            <div class="grid grid-cols-6 bg-gray-100 p-2 font-bold border-b-2 border-black">
+              <span>FOTO &amp; TAG</span>
+              <span>NAMA</span>
+              <span>KAMPUS</span>
+              <span>KALUNG</span>
+              <span>STERILISASI</span>
+              <span>AKSI</span>
+            </div>
+            <div class="grid grid-cols-6 p-2.5 border-b border-black items-center">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 wf-img-box rounded"></div>
+                <span class="font-mono-code font-bold">MN-01</span>
+              </div>
+              <span class="font-bold">Cimo</span>
+              <span>Ketintang</span>
+              <span>Merah Muda</span>
+              <span class="text-emerald-700 font-bold">&check; Sudah</span>
+              <div class="flex gap-1">
+                <button class="wf-btn px-1.5 py-0.5 text-[10px]">EDIT</button>
+                <button class="wf-btn px-1.5 py-0.5 text-[10px]">FOTO</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-6 p-2.5 items-center">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 wf-img-box rounded"></div>
+                <span class="font-mono-code font-bold">MN-02</span>
+              </div>
+              <span class="font-bold">Belang</span>
+              <span>Lidah Wetan</span>
+              <span>Biru</span>
+              <span class="text-emerald-700 font-bold">&check; Sudah</span>
+              <div class="flex gap-1">
+                <button class="wf-btn px-1.5 py-0.5 text-[10px]">EDIT</button>
+                <button class="wf-btn px-1.5 py-0.5 text-[10px]">FOTO</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-10: MANAJEMEN PENGAJUAN ADOPSI & BAST -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-10" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-10</span>
+            <h3 class="text-lg font-bold text-black mt-1">Verifikasi Adopsi &amp; Legalitas BAST</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/admin/adoptions.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-base font-black uppercase">VERIFIKASI PENGAJUAN ADOPSI</h3>
+              <p class="text-xs text-gray-500">Alur seleksi, evaluasi hunian, persetujuan, dan pembuatan Berita Acara (BAST)</p>
+            </div>
+            <span class="bg-gray-100 border border-black px-2 py-1 text-xs font-mono-code font-bold">3 Antrean Butuh Respon</span>
+          </div>
+
+          <!-- Application Item Card -->
+          <div class="border-2 border-black rounded-lg p-4 bg-gray-50 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="font-mono-code text-xs font-bold">ADP-2026-001 &bull; 04 Okt 2026</span>
+                <h4 class="text-sm font-bold uppercase mt-0.5">Pemohon: Sarah Anindya (Kucing: Cimo / MN-01)</h4>
+              </div>
+              <span class="bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">[ TAHAP: SCREENING ]</span>
+            </div>
+
+            <!-- Documents Preview Skeleton -->
+            <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
+              <div class="border border-black p-2 rounded bg-white">
+                <div class="h-12 wf-img-box rounded mb-1"></div>
+                <span>FOTO KTP</span>
+              </div>
+              <div class="border border-black p-2 rounded bg-white">
+                <div class="h-12 wf-img-box rounded mb-1"></div>
+                <span>FOTO AREA RUMAH</span>
+              </div>
+              <div class="border border-black p-2 rounded bg-white">
+                <div class="h-12 wf-img-box rounded mb-1"></div>
+                <span>SURAT PERNYATAAN</span>
+              </div>
+            </div>
+
+            <!-- Review Action Buttons -->
+            <div class="flex justify-end gap-2 pt-2 border-t border-black">
+              <button class="wf-btn px-3 py-1 text-xs text-red-600">TOLAK</button>
+              <button class="wf-btn px-3 py-1 text-xs">JADWALKAN WAWANCARA</button>
+              <button class="wf-btn-dark px-4 py-1 text-xs">&check; SETUJUI &amp; CETAK BAST</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-11: LOG PEMBERIAN MAKAN (FEEDING) -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-11" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-11</span>
+            <h3 class="text-lg font-bold text-black mt-1">Log Feeding Harian (Sistem Spreadsheet Terstruktur)</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/admin/feeding.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-base font-black uppercase">PENCATATAN FEEDING LOG HARIAN</h3>
+              <p class="text-xs text-gray-500">Mencatat porsi pakan pagi &amp; sore relawan Jaga Satwa per titik sebaran</p>
+            </div>
+            <button class="wf-btn-dark px-3 py-1.5 text-xs">+ CATAT FEEDING BARU</button>
+          </div>
+
+          <!-- Summary Bar -->
+          <div class="grid grid-cols-3 gap-3 text-center border-y-2 border-black py-3">
+            <div>
+              <span class="text-[10px] font-bold text-gray-500">FEEDING HARI INI</span>
+              <div class="text-lg font-black font-mono-code">8 Titik</div>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-gray-500">SHIFT PAGI</span>
+              <div class="text-lg font-black font-mono-code text-emerald-700">&check; 100% Selesai</div>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-gray-500">SHIFT SORE</span>
+              <div class="text-lg font-black font-mono-code text-emerald-700">&check; 100% Selesai</div>
+            </div>
+          </div>
+
+          <!-- Spreadsheet Table Wireframe -->
+          <div class="border-2 border-black rounded-lg overflow-hidden text-xs">
+            <div class="grid grid-cols-6 bg-gray-100 p-2 font-bold border-b-2 border-black">
+              <span>TANGGAL &amp; SHIFT</span>
+              <span>KUCING / TITIK</span>
+              <span>RELAVAN FEEDER</span>
+              <span>JENIS PAKAN</span>
+              <span>PORSI (GR)</span>
+              <span>STATUS</span>
+            </div>
+            <div class="grid grid-cols-6 p-2 border-b border-gray-300 items-center">
+              <span>06/10 &bull; Pagi</span>
+              <span>Cimo (Rektorat)</span>
+              <span>Budi Santoso</span>
+              <span>Dry Food (Cat Choize)</span>
+              <span>65 gr</span>
+              <span class="font-bold text-emerald-700">&check; Tuntas</span>
+            </div>
+            <div class="grid grid-cols-6 p-2 items-center">
+              <span>06/10 &bull; Sore</span>
+              <span>Belang (Kantin T2)</span>
+              <span>Dewi Ayu</span>
+              <span>Wet Food (Whiskas)</span>
+              <span>85 gr</span>
+              <span class="font-bold text-emerald-700">&check; Tuntas</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- WF-12: PASCA ADOPSI, CMS & SUPERADMIN -->
+      <!-- ------------------------------------------------------------- -->
+      <section id="wf-12" class="wf-item wf-sheet bg-white border-2 border-black rounded-xl p-6 shadow-md">
+        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-6">
+          <div>
+            <span class="font-mono-code text-xs font-black uppercase tracking-wider bg-black text-white px-2 py-0.5 rounded">WF-12</span>
+            <h3 class="text-lg font-bold text-black mt-1">Monitoring Pasca Adopsi &amp; Super Admin Portal</h3>
+          </div>
+          <span class="text-xs text-gray-500 font-mono-code">File ref: src/admin/monitoring.html &amp; superadmin.html</span>
+        </div>
+
+        <div class="border-2 border-black rounded-lg overflow-hidden bg-white max-w-4xl mx-auto p-6 space-y-6">
+          <!-- Post Adoption Monitoring Module -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <h4 class="font-black text-xs uppercase">1. TRACKING PASCA-ADOPSI (BULAN 1, 3, &amp; 6):</h4>
+              <span class="text-[10px] font-bold text-red-600 border border-red-600 px-2 py-0.5 rounded">[ 1 REMINDER JATUH TEMPO ]</span>
+            </div>
+            <div class="border border-black p-3 rounded bg-gray-50 flex items-center justify-between">
+              <div class="space-y-1">
+                <div class="text-xs font-bold uppercase">Kucing: Moka &bull; Adopter: Hendra Gunawan</div>
+                <div class="text-[10px] text-gray-600">Milestone: Laporan Bulan ke-3 &bull; Jatuh Tempo: 05 Okt 2026</div>
+              </div>
+              <div class="flex gap-2">
+                <button class="wf-btn px-2.5 py-1 text-[10px]">KIRIM REMINDER WA</button>
+                <button class="wf-btn-dark px-2.5 py-1 text-[10px]">VERIFIKASI FOTO</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Superadmin Module -->
+          <div class="border-t-2 border-black pt-4 space-y-3">
+            <h4 class="font-black text-xs uppercase">2. SUPER ADMIN (MANAJEMEN AKUN &amp; AUDIT LOG):</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Admin Accounts -->
+              <div class="border border-black p-3 rounded">
+                <div class="text-[11px] font-bold uppercase mb-2 flex justify-between">
+                  <span>Daftar Akun Pengurus</span>
+                  <span class="text-[10px] underline">[ + Akun ]</span>
+                </div>
+                <div class="text-[10px] space-y-1">
+                  <div class="flex justify-between"><span>superadmin@unesa.ac.id</span><span class="font-bold">Superadmin</span></div>
+                  <div class="flex justify-between"><span>relawan.ketintang@unesa.ac.id</span><span class="font-bold">Admin</span></div>
+                </div>
+              </div>
+
+              <!-- Audit Trail -->
+              <div class="border border-black p-3 rounded">
+                <div class="text-[11px] font-bold uppercase mb-2">Audit Trail Log Terbaru</div>
+                <div class="text-[10px] space-y-1 font-mono-code text-gray-600">
+                  <div>&bull; [UPDATE] Admin memverifikasi ADP-001</div>
+                  <div>&bull; [CREATE] Log feeding shift sore tuntas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer Info -->
+  <footer class="no-print bg-white border-t border-gray-300 py-6 mt-12 text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="font-bold text-gray-700">MeowNesa - Jaga Satwa UNESA (Surabaya) &copy; 2026</p>
+      <p class="text-[11px] mt-1">Dokumen Lampiran Perancangan Antarmuka UI/UX (Sub-bab 2.7.2 Low-Fidelity Wireframes)</p>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Mode Switching Logic (Single Detail View vs Grid of All)
+    function toggleViewMode(mode) {
+      const wrapper = document.getElementById('wireframes-wrapper');
+      const btnSingle = document.getElementById('btn-mode-single');
+      const btnGrid = document.getElementById('btn-mode-grid');
+
+      if (mode === 'grid') {
+        wrapper.className = 'grid grid-cols-1 md:grid-cols-2 gap-8 space-y-0';
+        btnGrid.className = 'px-3 py-1.5 text-xs font-semibold rounded-md border border-neutral-900 bg-neutral-900 text-white transition flex items-center gap-1.5';
+        btnSingle.className = 'px-3 py-1.5 text-xs font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5';
+        document.querySelectorAll('.wf-item').forEach(el => el.style.display = 'block');
+      } else {
+        wrapper.className = 'space-y-12';
+        btnSingle.className = 'px-3 py-1.5 text-xs font-semibold rounded-md border border-neutral-900 bg-neutral-900 text-white transition flex items-center gap-1.5';
+        btnGrid.className = 'px-3 py-1.5 text-xs font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5';
+      }
+    }
+
+    // Tab Navigation to jump directly to specific Wireframe
+    function selectWireframe(index) {
+      const target = document.getElementById(`wf-${index}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Update button active state
+      document.querySelectorAll('.wf-tab-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-wf')) === index) {
+          btn.className = 'wf-tab-btn px-2.5 py-1 rounded bg-white font-bold border border-gray-300 text-gray-900';
+        } else {
+          btn.className = 'wf-tab-btn px-2.5 py-1 rounded hover:bg-white font-medium text-gray-600';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
