@@ -168,8 +168,11 @@
           <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="h-5 sm:h-6 w-auto object-contain brightness-0">
         </div>
         <div>
-          <h2 class="font-display font-extrabold text-xl sm:text-2xl text-ink leading-tight">Design System &amp; UI Kit Specification</h2>
-          <p class="text-[11px] sm:text-xs text-ink-muted mt-0.5 font-medium">
+          <div class="flex items-center gap-3">
+            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-ink leading-tight">Design System &amp; UI Kit Specification</h2>
+            <span class="px-2.5 py-0.5 rounded-md bg-magenta text-white font-mono-code font-bold text-[10px] shrink-0 whitespace-nowrap">v1.0 OFFICIAL</span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-ink-muted mt-1 font-medium">
             Dokumen Standar Perancangan Antarmuka Sistem Informasi Jaga Satwa UNESA (Bab 2.7 UI/UX)
           </p>
         </div>
@@ -177,13 +180,13 @@
 
       <!-- Specs Pills -->
       <div class="flex flex-wrap items-center gap-2 text-[10px] font-mono-code font-bold relative z-10 shrink-0">
-        <div class="bg-[#FBF6F1] px-2.5 py-1 rounded-lg border border-line text-ink">
+        <div class="bg-[#FBF6F1] px-3 py-1.5 rounded-lg border border-line text-ink whitespace-nowrap">
           <span class="text-ink-muted">PLATFORM:</span> WEB RESPONSIVE
         </div>
-        <div class="bg-[#FBF6F1] px-2.5 py-1 rounded-lg border border-line text-ink">
+        <div class="bg-[#FBF6F1] px-3 py-1.5 rounded-lg border border-line text-ink whitespace-nowrap">
           <span class="text-ink-muted">GRID:</span> 8PX MODULAR
         </div>
-        <div class="bg-[#FBF6F1] px-2.5 py-1 rounded-lg border border-line text-magenta">
+        <div class="bg-[#FBF6F1] px-3 py-1.5 rounded-lg border border-line text-magenta whitespace-nowrap">
           <span class="text-ink-muted">STATUS:</span> WCAG 2.1 AA
         </div>
       </div>
@@ -535,33 +538,37 @@
     lucide.createIcons();
 
     // 1-Click High-Res PNG Download Function via html2canvas
-    function downloadAsPNG() {
+    async function downloadAsPNG() {
       const btn = document.getElementById('btn-download-png');
       const originalText = btn.innerHTML;
       btn.innerHTML = '<span class="animate-spin">⏳</span> Menyiapkan Gambar...';
       btn.disabled = true;
 
-      const artboard = document.getElementById('design-artboard');
+      try {
+        if (document.fonts) {
+          await document.fonts.ready;
+        }
 
-      html2canvas(artboard, {
-        scale: 2, // 2x Retina resolution for razor sharp texts and images
-        useCORS: true,
-        backgroundColor: '#FBF6F1',
-        logging: false
-      }).then(canvas => {
+        const artboard = document.getElementById('design-artboard');
+
+        const canvas = await html2canvas(artboard, {
+          scale: 2, // 2x Retina resolution for razor sharp texts and images
+          useCORS: true,
+          backgroundColor: '#FBF6F1',
+          logging: false
+        });
+
         const link = document.createElement('a');
         link.download = 'meownesa-design-system-artboard.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }).catch(err => {
+      } catch (err) {
         console.error('Download error:', err);
         alert('Gagal mengekspor gambar. Silakan gunakan tombol Print / PDF.');
+      } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
-      });
+      }
     }
   </script>
 </body>
