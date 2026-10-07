@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MeowNesa Design System &amp; Style Guide Board (Bab 2.7 UI/UX)</title>
+  <title>MeowNesa Design System &amp; Style Board — Jaga Satwa UNESA (Bab 2.7)</title>
   <link rel="icon" href="images/jagasatwa-logo.png">
 
   <!-- Google Fonts: Baloo 2 & Plus Jakarta Sans & Space Mono -->
@@ -15,6 +15,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML2Canvas for 1-Click High-Res PNG Download -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -60,9 +62,9 @@
             mono: ['"Space Mono"', 'monospace']
           },
           boxShadow: {
-            'board': '0 25px 60px -15px rgba(43, 18, 32, 0.12), 0 0 0 1px rgba(43, 18, 32, 0.05)',
-            'card': '0 8px 24px -4px rgba(43, 18, 32, 0.06)',
-            'soft': '0 4px 16px -2px rgba(179, 24, 79, 0.08)'
+            'board': '0 20px 50px -10px rgba(43, 18, 32, 0.15), 0 0 0 1px rgba(43, 18, 32, 0.08)',
+            'card': '0 4px 16px -2px rgba(43, 18, 32, 0.05)',
+            'soft': '0 4px 12px -2px rgba(179, 24, 79, 0.06)'
           }
         }
       }
@@ -72,63 +74,78 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0f172a;
+      background-color: #0b0f19;
       color: #2B1220;
     }
     .font-display { font-family: 'Baloo 2', sans-serif; }
     .font-mono-code { font-family: 'Space Mono', monospace; }
     
-    /* Background dot grid pattern for Figma / Stitch AI canvas look */
-    .canvas-bg {
-      background-color: #0f172a;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-      background-size: 20px 20px;
+    /* Background Canvas Dot Grid */
+    .canvas-grid {
+      background-color: #0b0f19;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+      background-size: 24px 24px;
     }
 
-    /* Print settings */
+    /* Fixed Print Layout into 1 Single Page Landscape */
+    @page {
+      size: A3 landscape;
+      margin: 8mm;
+    }
     @media print {
-      body { background: white !important; }
-      .no-print { display: none !important; }
+      body {
+        background: #FBF6F1 !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
       .artboard-container {
         box-shadow: none !important;
-        border: none !important;
+        border: 1.5px solid #E2C4D1 !important;
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 1.5rem !important;
+        page-break-inside: avoid !important;
       }
     }
   </style>
 </head>
-<body class="min-h-screen canvas-bg flex flex-col items-center py-6 px-3 sm:px-6 selection:bg-magenta selection:text-white">
+<body class="min-h-screen canvas-grid flex flex-col items-center py-6 px-3 sm:px-6 selection:bg-magenta selection:text-white">
 
-  <!-- Floating Toolbar (No-Print) -->
-  <header class="no-print w-full max-w-[1440px] bg-white/95 backdrop-blur-md border border-gray-300 rounded-2xl px-5 py-3 mb-6 shadow-xl flex flex-wrap items-center justify-between gap-4 sticky top-4 z-50">
+  <!-- ================= FLOATING ACTION TOOLBAR ================= -->
+  <header class="no-print w-full max-w-[1360px] bg-white/95 backdrop-blur-md border border-gray-300 rounded-2xl px-5 py-3 mb-6 shadow-2xl flex flex-wrap items-center justify-between gap-4 sticky top-4 z-50">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-magenta text-white flex items-center justify-center font-bold text-xs font-mono-code">
+      <div class="w-9 h-9 rounded-xl bg-magenta text-white flex items-center justify-center font-bold text-xs font-mono-code shadow-sm">
         DS
       </div>
       <div>
-        <h1 class="text-sm font-extrabold text-gray-900 leading-tight">MeowNesa Design System &amp; Style Board</h1>
-        <p class="text-[11px] text-gray-500 font-medium">Single-Sheet Artboard Format — Siap Screenshot &amp; Lampiran Bab 2.7</p>
+        <h1 class="text-sm font-extrabold text-gray-900 leading-tight">MeowNesa Design System Single Artboard</h1>
+        <p class="text-[11px] text-gray-500 font-medium">Bisa langsung diunduh jadi 1 File Gambar (PNG) untuk laporan Bab 2.7 UI/UX</p>
       </div>
     </div>
 
+    <!-- Actions: Download PNG, Print, Links -->
     <div class="flex items-center gap-2 text-xs font-bold">
-      <span class="text-gray-400 font-mono-code text-[10px] mr-2">Zoom / Scale:</span>
-      <button onclick="setScale(1)" class="px-2.5 py-1 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 transition" id="scale-100">100%</button>
-      <button onclick="setScale(0.85)" class="px-2.5 py-1 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 transition" id="scale-85">85%</button>
-      <button onclick="setScale(0.75)" class="px-2.5 py-1 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 transition" id="scale-75">75%</button>
-      <div class="h-4 w-px bg-gray-300 mx-1"></div>
-      <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-gray-900 text-white hover:bg-black transition flex items-center gap-1.5 shadow-sm">
-        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-        <span>Cetak / PDF</span>
+      <!-- 1-Click PNG Download Button -->
+      <button onclick="downloadAsPNG()" id="btn-download-png" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-2 shadow-md">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span>Download Gambar (PNG)</span>
       </button>
-      <a href="wireframes.html" class="px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5">
+
+      <!-- Print to PDF Button -->
+      <button onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-black text-white transition flex items-center gap-1.5 shadow-sm">
+        <i data-lucide="printer" class="w-4 h-4"></i>
+        <span>Cetak PDF</span>
+      </button>
+
+      <a href="wireframes.html" class="px-3 py-2 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5">
         <i data-lucide="layout" class="w-3.5 h-3.5 text-magenta"></i>
         <span>Wireframes</span>
       </a>
-      <a href="index.html" class="px-3 py-1.5 rounded-lg bg-magenta hover:bg-magenta-dark text-white transition flex items-center gap-1.5 shadow-sm">
+
+      <a href="index.html" class="px-3 py-2 rounded-xl bg-magenta hover:bg-magenta-dark text-white transition flex items-center gap-1.5 shadow-sm">
         <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
         <span>Prototype Live</span>
       </a>
@@ -136,307 +153,302 @@
   </header>
 
   <!-- ========================================================================= -->
-  <!-- SINGLE FULL DESIGN SYSTEM ARTBOARD (FIGMA / STITCH AI STYLE) -->
+  <!-- THE SINGLE DESIGN SYSTEM ARTBOARD CONTAINER (FOR INSTANT SCREENSHOT/PNG) -->
   <!-- ========================================================================= -->
-  <div id="design-artboard" class="artboard-container w-full max-w-[1440px] bg-[#FBF6F1] border border-line rounded-3xl p-6 sm:p-10 shadow-board space-y-10 transition-transform duration-200 origin-top">
+  <div id="design-artboard" class="artboard-container w-full max-w-[1360px] bg-[#FBF6F1] border-2 border-line rounded-3xl p-6 sm:p-8 shadow-board space-y-6">
 
     <!-- 1. ARTBOARD HEADER BAR -->
-    <div class="bg-white border-2 border-magenta/20 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+    <div class="bg-white border-2 border-magenta/20 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+      
+      <!-- Brand Co-Logos + Title -->
       <div class="flex items-center gap-4 relative z-10">
-        <div class="flex items-center gap-3 bg-cream px-4 py-2.5 rounded-2xl border border-line shadow-xs">
-          <img src="images/meownesa-logo.png" alt="Logo MeowNesa" class="h-8 w-auto object-contain">
-          <span class="text-ink/30 font-bold text-lg select-none">✕</span>
-          <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="h-7 w-auto object-contain brightness-0">
+        <div class="flex items-center gap-2.5 bg-[#FBF6F1] px-3.5 py-2 rounded-xl border border-line shrink-0">
+          <img src="images/meownesa-logo.png" alt="Logo MeowNesa" class="h-6 sm:h-7 w-auto object-contain">
+          <span class="text-ink/30 font-bold text-sm select-none">✕</span>
+          <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="h-5 sm:h-6 w-auto object-contain brightness-0">
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-ink">Design System &amp; UI Kit Specification</h2>
-            <span class="px-2.5 py-0.5 rounded-md bg-magenta text-white font-mono-code font-bold text-[10px]">v1.0 OFFICIAL</span>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-ink leading-tight">Design System &amp; UI Kit Specification</h2>
+            <span class="px-2 py-0.5 rounded-md bg-magenta text-white font-mono-code font-bold text-[9px]">v1.0 OFFICIAL</span>
           </div>
-          <p class="text-xs sm:text-sm text-ink-muted mt-0.5 font-medium">
+          <p class="text-[11px] sm:text-xs text-ink-muted mt-0.5 font-medium">
             Dokumen Standar Perancangan Antarmuka Sistem Informasi Jaga Satwa UNESA (Bab 2.7 UI/UX)
           </p>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-3 text-xs font-mono-code font-bold relative z-10">
-        <div class="bg-cream px-3 py-1.5 rounded-xl border border-line text-ink">
-          <span class="text-ink-muted">PLATFORM:</span> WEB &bull; RESPONSIVE
+      <!-- Specs Pills -->
+      <div class="flex flex-wrap items-center gap-2 text-[10px] font-mono-code font-bold relative z-10 shrink-0">
+        <div class="bg-[#FBF6F1] px-2.5 py-1 rounded-lg border border-line text-ink">
+          <span class="text-ink-muted">PLATFORM:</span> WEB RESPONSIVE
         </div>
-        <div class="bg-cream px-3 py-1.5 rounded-xl border border-line text-ink">
+        <div class="bg-[#FBF6F1] px-2.5 py-1 rounded-lg border border-line text-ink">
           <span class="text-ink-muted">GRID:</span> 8PX MODULAR
         </div>
-        <div class="bg-cream px-3 py-1.5 rounded-xl border border-line text-magenta">
+        <div class="bg-[#FBF6F1] px-2.5 py-1 rounded-lg border border-line text-magenta">
           <span class="text-ink-muted">STATUS:</span> WCAG 2.1 AA
         </div>
       </div>
 
-      <!-- Subtle Head Icon Background Watermark -->
-      <div class="absolute -right-6 -bottom-6 opacity-10 pointer-events-none select-none">
-        <img src="images/icon-head.png" alt="Watermark" class="w-40 h-40 object-contain rotate-12">
+      <!-- Watermark Asset Background -->
+      <div class="absolute -right-4 -bottom-4 opacity-10 pointer-events-none select-none">
+        <img src="images/icon-head.png" alt="Watermark" class="w-32 h-32 object-contain rotate-12">
       </div>
     </div>
 
-    <!-- 2. BRAND ASSETS & LOGOS SECTION -->
-    <div class="space-y-3">
+    <!-- 2. BRAND IDENTITY & OFFICIAL GRAPHIC ASSETS -->
+    <div class="space-y-2.5">
       <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-magenta font-mono-code">
         <span>01. BRAND IDENTITY &amp; OFFICIAL ASSETS</span>
         <div class="h-px flex-1 bg-line"></div>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <!-- Asset 1: MeowNesa Logo -->
-        <div class="bg-white border border-line rounded-2xl p-4 text-center space-y-2 shadow-xs">
-          <div class="h-20 bg-cream/60 rounded-xl border border-line flex items-center justify-center p-2">
-            <img src="images/meownesa-logo.png" alt="MeowNesa Logo" class="max-h-10 w-auto object-contain">
+        <div class="bg-white border border-line rounded-xl p-3 text-center space-y-1.5 shadow-card">
+          <div class="h-16 bg-[#FBF6F1] rounded-lg border border-line flex items-center justify-center p-2">
+            <img src="images/meownesa-logo.png" alt="MeowNesa Logo" class="max-h-8 w-auto object-contain">
           </div>
-          <div class="font-bold text-xs text-ink">Logo MeowNesa</div>
-          <span class="text-[10px] font-mono-code text-ink-muted block">meownesa-logo.png</span>
+          <div class="font-bold text-[11px] text-ink">Logo MeowNesa</div>
+          <span class="text-[9px] font-mono-code text-ink-muted block">meownesa-logo.png</span>
         </div>
 
         <!-- Asset 2: Jaga Satwa UNESA Logo -->
-        <div class="bg-white border border-line rounded-2xl p-4 text-center space-y-2 shadow-xs">
-          <div class="h-20 bg-cream/60 rounded-xl border border-line flex items-center justify-center p-2">
-            <img src="images/jagasatwa-logo.png" alt="Jaga Satwa Logo" class="max-h-10 w-auto object-contain brightness-0">
+        <div class="bg-white border border-line rounded-xl p-3 text-center space-y-1.5 shadow-card">
+          <div class="h-16 bg-[#FBF6F1] rounded-lg border border-line flex items-center justify-center p-2">
+            <img src="images/jagasatwa-logo.png" alt="Jaga Satwa Logo" class="max-h-8 w-auto object-contain brightness-0">
           </div>
-          <div class="font-bold text-xs text-ink">Logo Jaga Satwa</div>
-          <span class="text-[10px] font-mono-code text-ink-muted block">jagasatwa-logo.png</span>
+          <div class="font-bold text-[11px] text-ink">Logo Jaga Satwa</div>
+          <span class="text-[9px] font-mono-code text-ink-muted block">jagasatwa-logo.png</span>
         </div>
 
         <!-- Asset 3: Co-Brand Lockup -->
-        <div class="bg-white border border-line rounded-2xl p-4 text-center space-y-2 shadow-xs">
-          <div class="h-20 bg-cream/60 rounded-xl border border-line flex items-center justify-center p-2 gap-2">
-            <img src="images/meownesa-logo.png" alt="MeowNesa" class="h-5 w-auto object-contain">
-            <span class="text-ink/30 font-bold text-xs">✕</span>
-            <img src="images/jagasatwa-logo.png" alt="Jaga Satwa" class="h-4 w-auto object-contain brightness-0">
+        <div class="bg-white border border-line rounded-xl p-3 text-center space-y-1.5 shadow-card">
+          <div class="h-16 bg-[#FBF6F1] rounded-lg border border-line flex items-center justify-center p-2 gap-1.5">
+            <img src="images/meownesa-logo.png" alt="MeowNesa" class="h-4 w-auto object-contain">
+            <span class="text-ink/30 font-bold text-[10px]">✕</span>
+            <img src="images/jagasatwa-logo.png" alt="Jaga Satwa" class="h-3.5 w-auto object-contain brightness-0">
           </div>
-          <div class="font-bold text-xs text-ink">Co-Branding Lockup</div>
-          <span class="text-[10px] font-mono-code text-ink-muted block">Header &amp; Navbar</span>
+          <div class="font-bold text-[11px] text-ink">Co-Branding Lockup</div>
+          <span class="text-[9px] font-mono-code text-ink-muted block">Header &amp; Navbar</span>
         </div>
 
         <!-- Asset 4: Head Icon Watermark -->
-        <div class="bg-white border border-line rounded-2xl p-4 text-center space-y-2 shadow-xs">
-          <div class="h-20 bg-cream/60 rounded-xl border border-line flex items-center justify-center p-2">
-            <img src="images/icon-head.png" alt="Head Icon" class="h-12 w-12 object-contain">
+        <div class="bg-white border border-line rounded-xl p-3 text-center space-y-1.5 shadow-card">
+          <div class="h-16 bg-[#FBF6F1] rounded-lg border border-line flex items-center justify-center p-2">
+            <img src="images/icon-head.png" alt="Head Icon" class="h-10 w-10 object-contain">
           </div>
-          <div class="font-bold text-xs text-ink">Signature Head Icon</div>
-          <span class="text-[10px] font-mono-code text-ink-muted block">icon-head.png</span>
+          <div class="font-bold text-[11px] text-ink">Signature Head Icon</div>
+          <span class="text-[9px] font-mono-code text-ink-muted block">icon-head.png</span>
         </div>
 
-        <!-- Asset 5: Cat Silhouette Mascot -->
-        <div class="bg-white border border-line rounded-2xl p-4 text-center space-y-2 shadow-xs col-span-2 md:col-span-1">
-          <div class="h-20 bg-cream/60 rounded-xl border border-line flex items-center justify-center p-2">
-            <img src="images/icon-kucing.png" alt="Icon Kucing" class="h-12 w-12 object-contain">
+        <!-- Asset 5: Cat Mascot Silhouette -->
+        <div class="bg-white border border-line rounded-xl p-3 text-center space-y-1.5 shadow-card col-span-2 sm:col-span-1">
+          <div class="h-16 bg-[#FBF6F1] rounded-lg border border-line flex items-center justify-center p-2">
+            <img src="images/icon-kucing.png" alt="Icon Kucing" class="h-10 w-10 object-contain">
           </div>
-          <div class="font-bold text-xs text-ink">Cat Silhouette Mascot</div>
-          <span class="text-[10px] font-mono-code text-ink-muted block">icon-kucing.png</span>
+          <div class="font-bold text-[11px] text-ink">Cat Silhouette Mascot</div>
+          <span class="text-[9px] font-mono-code text-ink-muted block">icon-kucing.png</span>
         </div>
       </div>
     </div>
 
     <!-- 3. COLOR PALETTE & DESIGN TOKENS -->
-    <div class="space-y-3">
+    <div class="space-y-2.5">
       <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-magenta font-mono-code">
         <span>02. COLOR PALETTE &amp; DESIGN TOKENS</span>
         <div class="h-px flex-1 bg-line"></div>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
-        <!-- Color 1 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#B3184F] mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#B3184F] mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Magenta Primary</div>
           <div class="text-[10px] font-mono-code text-magenta font-bold">#B3184F</div>
-          <span class="text-[9px] text-ink-muted block">Hero &amp; CTA Utama</span>
+          <span class="text-[8.5px] text-ink-muted block">Hero &amp; CTA Utama</span>
         </div>
 
-        <!-- Color 2 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#7F0E38] mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#7F0E38] mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Magenta Dark</div>
           <div class="text-[10px] font-mono-code text-ink-muted font-bold">#7F0E38</div>
-          <span class="text-[9px] text-ink-muted block">Hover &amp; Dark Text</span>
+          <span class="text-[8.5px] text-ink-muted block">Hover &amp; Dark Text</span>
         </div>
 
-        <!-- Color 3 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#FDF2F6] border border-magenta/20 mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#FDF2F6] border border-magenta/20 mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Magenta 50</div>
           <div class="text-[10px] font-mono-code text-ink-muted font-bold">#FDF2F6</div>
-          <span class="text-[9px] text-ink-muted block">Badge &amp; Pill BG</span>
+          <span class="text-[8.5px] text-ink-muted block">Badge &amp; Pill BG</span>
         </div>
 
-        <!-- Color 4 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#FFC53D] mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#FFC53D] mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Sun Accent</div>
           <div class="text-[10px] font-mono-code text-sun-dark font-bold">#FFC53D</div>
-          <span class="text-[9px] text-ink-muted block">Cat of Week, Glow</span>
+          <span class="text-[8.5px] text-ink-muted block">Cat of Week, Glow</span>
         </div>
 
-        <!-- Color 5 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#E4572E] mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#E4572E] mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Coral Alert</div>
           <div class="text-[10px] font-mono-code text-coral font-bold">#E4572E</div>
-          <span class="text-[9px] text-ink-muted block">Proteksi Kalung</span>
+          <span class="text-[8.5px] text-ink-muted block">Proteksi Kalung</span>
         </div>
 
-        <!-- Color 6 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#FBF6F1] border border-line mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#FBF6F1] border border-line mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Cream Canvas</div>
           <div class="text-[10px] font-mono-code text-ink-muted font-bold">#FBF6F1</div>
-          <span class="text-[9px] text-ink-muted block">Background Utama</span>
+          <span class="text-[8.5px] text-ink-muted block">Background Utama</span>
         </div>
 
-        <!-- Color 7 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#2B1220] mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#2B1220] mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Ink Deep</div>
           <div class="text-[10px] font-mono-code text-ink font-bold">#2B1220</div>
-          <span class="text-[9px] text-ink-muted block">Heading &amp; Teks Body</span>
+          <span class="text-[8.5px] text-ink-muted block">Heading &amp; Teks Body</span>
         </div>
 
-        <!-- Color 8 -->
-        <div class="bg-white border border-line rounded-xl p-2.5 shadow-xs">
-          <div class="h-12 rounded-lg bg-[#10B981] mb-1.5 shadow-inner"></div>
+        <div class="bg-white border border-line rounded-xl p-2.5 shadow-card">
+          <div class="h-10 rounded-lg bg-[#10B981] mb-1.5 shadow-inner"></div>
           <div class="font-bold text-[11px] text-ink">Emerald Success</div>
           <div class="text-[10px] font-mono-code text-emerald-700 font-bold">#10B981</div>
-          <span class="text-[9px] text-ink-muted block">Status Siap Adopsi</span>
+          <span class="text-[8.5px] text-ink-muted block">Status Siap Adopsi</span>
         </div>
       </div>
     </div>
 
-    <!-- 4. TYPOGRAPHY HIERARCHY & SPECIMENS -->
-    <div class="space-y-3">
+    <!-- 4. TYPOGRAPHY SYSTEM & HIERARCHY -->
+    <div class="space-y-2.5">
       <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-magenta font-mono-code">
         <span>03. TYPOGRAPHY SYSTEM &amp; SCALE</span>
         <div class="h-px flex-1 bg-line"></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Display Typo: Baloo 2 -->
-        <div class="bg-white border border-line rounded-2xl p-5 shadow-xs space-y-3">
-          <div class="flex justify-between items-center border-b border-line pb-2">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <!-- Display: Baloo 2 -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card space-y-2.5">
+          <div class="flex justify-between items-center border-b border-line pb-1.5">
             <span class="text-xs font-extrabold text-magenta uppercase font-mono-code">DISPLAY FONT — BALOO 2</span>
-            <span class="text-[10px] font-mono-code bg-cream px-2 py-0.5 rounded border border-line">Headings &amp; Stats</span>
+            <span class="text-[9px] font-mono-code bg-[#FBF6F1] px-2 py-0.5 rounded border border-line">Headings &amp; Stats</span>
           </div>
-          <div class="space-y-2 text-ink">
+          <div class="space-y-1.5 text-ink">
             <div>
-              <div class="font-display font-extrabold text-3xl leading-tight">Hewan Sejahtera, Hidup Gembira.</div>
-              <span class="text-[10px] font-mono-code text-ink-muted">Display Heavy — 32px / Bold 800</span>
+              <div class="font-display font-extrabold text-2xl leading-tight">Hewan Sejahtera, Hidup Gembira.</div>
+              <span class="text-[9px] font-mono-code text-ink-muted">Display Heavy — 24px / Bold 800</span>
             </div>
             <div>
-              <div class="font-display font-bold text-xl text-magenta">Informasi &amp; Sebaran Kucing Kampus</div>
-              <span class="text-[10px] font-mono-code text-ink-muted">Section Title — 20px / Bold 700</span>
+              <div class="font-display font-bold text-lg text-magenta">Informasi &amp; Sebaran Kucing Kampus</div>
+              <span class="text-[9px] font-mono-code text-ink-muted">Section Title — 18px / Bold 700</span>
             </div>
             <div>
-              <div class="font-display font-semibold text-base">Mochi &bull; Gedung K10 Vokasi (KTT-01)</div>
-              <span class="text-[10px] font-mono-code text-ink-muted">Card Header — 16px / SemiBold 600</span>
+              <div class="font-display font-semibold text-sm">Mochi &bull; Gedung K10 Vokasi (KTT-01)</div>
+              <span class="text-[9px] font-mono-code text-ink-muted">Card Header — 14px / SemiBold 600</span>
             </div>
           </div>
         </div>
 
-        <!-- UI & Body Typo: Plus Jakarta Sans -->
-        <div class="bg-white border border-line rounded-2xl p-5 shadow-xs space-y-3">
-          <div class="flex justify-between items-center border-b border-line pb-2">
+        <!-- Body: Plus Jakarta Sans -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card space-y-2.5">
+          <div class="flex justify-between items-center border-b border-line pb-1.5">
             <span class="text-xs font-extrabold text-magenta uppercase font-mono-code">BODY &amp; UI — PLUS JAKARTA SANS</span>
-            <span class="text-[10px] font-mono-code bg-cream px-2 py-0.5 rounded border border-line">Paragraphs &amp; Forms</span>
+            <span class="text-[9px] font-mono-code bg-[#FBF6F1] px-2 py-0.5 rounded border border-line">Paragraphs &amp; Forms</span>
           </div>
-          <div class="space-y-2 text-ink">
+          <div class="space-y-1.5 text-ink">
             <div>
               <p class="text-xs text-ink-light leading-relaxed">
                 Meownesa membantu komunitas <strong>Jaga Satwa UNESA</strong> mengelola data populasi kucing resmi di Kampus Ketintang &amp; Lidah Wetan.
               </p>
-              <span class="text-[10px] font-mono-code text-ink-muted">Body Text — 13px / Regular 400</span>
+              <span class="text-[9px] font-mono-code text-ink-muted">Body Text — 12px / Regular 400</span>
             </div>
             <div>
-              <div class="text-[11px] font-bold uppercase tracking-wider text-ink">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-ink">
                 STATUS STERILISASI MEDIS KLINIK NUSANTARA VET
               </div>
-              <span class="text-[10px] font-mono-code text-ink-muted">UI Label &amp; Metadata — 11px / Bold 700</span>
+              <span class="text-[9px] font-mono-code text-ink-muted">UI Label &amp; Metadata — 10px / Bold 700</span>
             </div>
             <div>
-              <div class="text-[10px] font-mono-code text-ink-muted">
+              <div class="text-[9.5px] font-mono-code text-ink-muted">
                 ADP-2026-001 &bull; SHIFT SORE &bull; 65 GRAM &bull; LAT: -7.3129, LONG: 112.7275
               </div>
-              <span class="text-[10px] font-mono-code text-ink-muted">Mono Code &amp; Coordinates — 10px / Regular</span>
+              <span class="text-[9px] font-mono-code text-ink-muted">Mono Code &amp; Coordinates — 9.5px</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 5. UI COMPONENTS & CONTROLS (BUTTONS, BADGES, INPUTS) -->
-    <div class="space-y-3">
+    <!-- 5. UI KIT: BUTTONS, BADGES & FORM CONTROLS -->
+    <div class="space-y-2.5">
       <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-magenta font-mono-code">
         <span>04. UI KIT: BUTTONS, BADGES &amp; FORM CONTROLS</span>
         <div class="h-px flex-1 bg-line"></div>
       </div>
 
-      <div class="bg-white border border-line rounded-2xl p-5 shadow-xs grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Buttons Group -->
-        <div class="space-y-2.5">
-          <span class="text-[11px] font-extrabold uppercase text-ink-muted font-mono-code block">Interactive Buttons</span>
-          <div class="flex flex-col gap-2">
-            <button class="px-5 py-2.5 rounded-full bg-magenta text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2">
+      <div class="bg-white border border-line rounded-2xl p-4 shadow-card grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Buttons -->
+        <div class="space-y-2">
+          <span class="text-[10px] font-extrabold uppercase text-ink-muted font-mono-code block">Interactive Buttons</span>
+          <div class="flex flex-col gap-1.5">
+            <button class="px-4 py-2 rounded-full bg-magenta text-white font-bold text-xs shadow-xs flex items-center justify-center gap-1.5">
               <i data-lucide="heart" class="w-3.5 h-3.5"></i>
               <span>Primary Button (Magenta)</span>
             </button>
-            <button class="px-5 py-2.5 rounded-full bg-white border-2 border-magenta/20 text-ink font-bold text-xs flex items-center justify-center gap-2">
+            <button class="px-4 py-2 rounded-full bg-white border border-magenta/30 text-ink font-bold text-xs flex items-center justify-center gap-1.5">
               <i data-lucide="shield-check" class="w-3.5 h-3.5 text-magenta"></i>
               <span>Secondary Outline</span>
             </button>
-            <button class="px-4 py-2 rounded-xl bg-sun text-ink font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-xs">
+            <button class="px-3.5 py-1.5 rounded-xl bg-sun text-ink font-extrabold text-xs flex items-center justify-center gap-1 shadow-xs">
               <i data-lucide="sparkles" class="w-3 h-3 text-sun-dark"></i>
               <span>Sun Accent CTA</span>
             </button>
           </div>
         </div>
 
-        <!-- Badges & Chips Group -->
-        <div class="space-y-2.5">
-          <span class="text-[11px] font-extrabold uppercase text-ink-muted font-mono-code block">Status Badges &amp; Tags</span>
+        <!-- Badges & Chips -->
+        <div class="space-y-2">
+          <span class="text-[10px] font-extrabold uppercase text-ink-muted font-mono-code block">Status Badges &amp; Tags</span>
           <div class="flex flex-wrap gap-1.5">
-            <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-extrabold text-[10px] border border-emerald-200 flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-extrabold text-[9.5px] border border-emerald-200 flex items-center gap-1">
               <i data-lucide="check" class="w-3 h-3"></i> Siap Diadopsi
             </span>
-            <span class="px-2.5 py-1 rounded-full bg-sun/20 text-ink font-bold text-[10px] border border-sun/40 flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-sun/20 text-ink font-bold text-[9.5px] border border-sun/40 flex items-center gap-1">
               <i data-lucide="sparkles" class="w-3 h-3 text-sun-dark"></i> Cat of The Week
             </span>
-            <span class="px-2.5 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-[10px] border border-magenta/20 flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-magenta-50 text-magenta font-bold text-[9.5px] border border-magenta/20 flex items-center gap-1">
               <i data-lucide="tag" class="w-3 h-3"></i> Kalung Merah (KTT-01)
             </span>
-            <span class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200 flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[9.5px] border border-blue-200 flex items-center gap-1">
               <i data-lucide="stethoscope" class="w-3 h-3"></i> Sudah Steril
             </span>
-            <span class="px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 font-bold text-[10px] border border-purple-200 flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bold text-[9.5px] border border-purple-200 flex items-center gap-1">
               <i data-lucide="clipboard-list" class="w-3 h-3"></i> Screening Adopsi
             </span>
-            <span class="px-2.5 py-1 rounded-full bg-coral/15 text-coral font-bold text-[10px] border border-coral/20 flex items-center gap-1">
+            <span class="px-2 py-0.5 rounded-full bg-coral/15 text-coral font-bold text-[9.5px] border border-coral/20 flex items-center gap-1">
               <i data-lucide="bell" class="w-3 h-3"></i> Reminder Tempo
             </span>
           </div>
         </div>
 
-        <!-- Form Elements Group -->
-        <div class="space-y-2.5">
-          <span class="text-[11px] font-extrabold uppercase text-ink-muted font-mono-code block">Form Controls</span>
-          <div class="space-y-2">
+        <!-- Form Elements -->
+        <div class="space-y-2">
+          <span class="text-[10px] font-extrabold uppercase text-ink-muted font-mono-code block">Form Controls</span>
+          <div class="space-y-1.5">
             <div class="relative">
-              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-magenta">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-2.5 text-magenta">
                 <i data-lucide="search" class="w-3.5 h-3.5"></i>
               </span>
               <input type="text" value="Cari nama kucing (Mochi)..." readonly
-                class="w-full pl-9 pr-3 py-1.5 rounded-xl border border-line bg-cream/40 text-xs font-medium text-ink focus:outline-none">
+                class="w-full pl-8 pr-2.5 py-1.5 rounded-lg border border-line bg-[#FBF6F1] text-[11px] font-medium text-ink focus:outline-none">
             </div>
-            <select class="w-full px-3 py-1.5 rounded-xl border border-line bg-cream/40 text-xs font-semibold text-ink focus:outline-none">
+            <select class="w-full px-2.5 py-1.5 rounded-lg border border-line bg-[#FBF6F1] text-[11px] font-semibold text-ink focus:outline-none">
               <option>Kampus Ketintang (KTT)</option>
               <option>Kampus Lidah Wetan (LWT)</option>
             </select>
-            <label class="flex items-center gap-2 text-[11px] font-medium text-ink cursor-pointer pt-0.5">
-              <input type="checkbox" checked class="w-4 h-4 accent-magenta rounded">
+            <label class="flex items-center gap-1.5 text-[10px] font-medium text-ink cursor-pointer pt-0.5">
+              <input type="checkbox" checked class="w-3.5 h-3.5 accent-magenta rounded">
               <span>Komitmen Rawat Indoor &amp; Monitoring</span>
             </label>
           </div>
@@ -444,78 +456,78 @@
       </div>
     </div>
 
-    <!-- 6. COMPONENT CARDS & SURFACES -->
-    <div class="space-y-3">
+    <!-- 6. CARD ARCHITECTURE & SURFACE PATTERNS -->
+    <div class="space-y-2.5">
       <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-magenta font-mono-code">
         <span>05. CARD ARCHITECTURE &amp; SURFACE PATTERNS</span>
         <div class="h-px flex-1 bg-line"></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Surface Card 1: Stat Metric Card with Watermark -->
-        <div class="bg-white border border-line rounded-2xl p-4 shadow-card flex flex-col justify-between relative overflow-hidden group">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+        <!-- Card 1: Stat Metric Card with Watermark -->
+        <div class="bg-white border border-line rounded-2xl p-3.5 shadow-card flex flex-col justify-between relative overflow-hidden group">
           <div class="absolute -right-2 -bottom-2 opacity-10 pointer-events-none select-none">
             <img src="images/icon-head.png" alt="Head Icon" class="w-16 h-16 object-contain">
           </div>
           <div class="flex items-center justify-between relative z-10">
-            <span class="text-[11px] font-bold text-ink-muted uppercase tracking-wider">Total Kucing Terdata</span>
-            <div class="w-7 h-7 rounded-lg bg-magenta-50 text-magenta flex items-center justify-center p-1 border border-magenta/15 shadow-xs">
+            <span class="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Total Kucing Terdata</span>
+            <div class="w-6 h-6 rounded-lg bg-magenta-50 text-magenta flex items-center justify-center p-1 border border-magenta/15 shadow-xs">
               <img src="images/icon-head.png" alt="Cat Head" class="w-4 h-4 object-contain">
             </div>
           </div>
-          <div class="mt-3 relative z-10">
+          <div class="mt-2 relative z-10">
             <span class="font-display font-extrabold text-2xl text-ink">6</span>
-            <span class="text-[10px] text-emerald-600 block font-semibold">100% Berkalung Reflektif</span>
+            <span class="text-[9.5px] text-emerald-600 block font-semibold">100% Berkalung Reflektif</span>
           </div>
         </div>
 
-        <!-- Surface Card 2: Callout Alert Banner -->
-        <div class="p-4 rounded-2xl bg-sun/15 border border-sun/40 flex items-start justify-between gap-3 relative overflow-hidden">
+        <!-- Card 2: Callout Alert Banner -->
+        <div class="p-3.5 rounded-2xl bg-sun/15 border border-sun/40 flex items-start justify-between gap-3 relative overflow-hidden">
           <div class="absolute -right-2 -bottom-2 opacity-15 pointer-events-none select-none">
             <img src="images/icon-head.png" alt="Head Icon" class="w-16 h-16 object-contain">
           </div>
-          <div class="flex items-start gap-3 relative z-10">
-            <div class="w-8 h-8 rounded-xl bg-sun text-ink flex items-center justify-center font-bold text-sm shadow-xs p-1 border border-sun-dark/20 shrink-0">
+          <div class="flex items-start gap-2.5 relative z-10">
+            <div class="w-7 h-7 rounded-lg bg-sun text-ink flex items-center justify-center font-bold text-xs shadow-xs p-1 border border-sun-dark/20 shrink-0">
               <img src="images/icon-head.png" alt="Head Icon" class="w-full h-full object-contain">
             </div>
             <div>
-              <span class="text-[9px] font-extrabold text-ink uppercase tracking-wider block">ANTREAN ADOPSI</span>
+              <span class="text-[8.5px] font-extrabold text-ink uppercase tracking-wider block">ANTREAN ADOPSI</span>
               <h4 class="font-display font-bold text-xs text-ink">2 Calon Adopter Baru</h4>
-              <p class="text-[10px] text-ink-muted leading-tight">Pengajuan Mochi &amp; Milo siap ditinjau.</p>
+              <p class="text-[9.5px] text-ink-muted leading-tight">Pengajuan Mochi &amp; Milo siap ditinjau.</p>
             </div>
           </div>
-          <button class="px-2.5 py-1 rounded-lg bg-white border border-line text-[10px] font-bold text-ink shrink-0 relative z-10 shadow-xs">
+          <button class="px-2 py-1 rounded-md bg-white border border-line text-[9px] font-bold text-ink shrink-0 relative z-10 shadow-xs">
             Review →
           </button>
         </div>
 
-        <!-- Surface Card 3: Cat Catalog Mini Card -->
-        <div class="bg-white border border-line rounded-2xl p-3 shadow-card space-y-2">
-          <div class="h-24 rounded-xl bg-cream border border-line relative overflow-hidden flex items-center justify-center">
+        <!-- Card 3: Cat Catalog Mini Card -->
+        <div class="bg-white border border-line rounded-2xl p-3 shadow-card space-y-1.5">
+          <div class="h-20 rounded-lg bg-[#FBF6F1] border border-line relative overflow-hidden flex items-center justify-center">
             <img src="images/cat-images/cat1.jpg" alt="Mochi" class="w-full h-full object-cover">
-            <span class="absolute top-1.5 right-1.5 bg-emerald-500 text-white font-extrabold text-[9px] px-2 py-0.5 rounded-full shadow">
+            <span class="absolute top-1.5 right-1.5 bg-emerald-500 text-white font-extrabold text-[8.5px] px-1.5 py-0.5 rounded-full shadow">
               Siap Adopsi
             </span>
           </div>
           <div class="flex justify-between items-center">
             <div>
-              <h4 class="font-display font-extrabold text-sm text-ink leading-none">Mochi</h4>
-              <span class="text-[10px] text-ink-muted">Ketintang &bull; Vokasi</span>
+              <h4 class="font-display font-extrabold text-xs text-ink leading-none">Mochi</h4>
+              <span class="text-[9.5px] text-ink-muted">Ketintang &bull; Vokasi</span>
             </div>
-            <span class="text-[9px] font-mono-code font-bold text-magenta bg-magenta-50 px-1.5 py-0.5 rounded border border-magenta/20">KTT-01</span>
+            <span class="text-[8.5px] font-mono-code font-bold text-magenta bg-magenta-50 px-1.5 py-0.5 rounded border border-magenta/20">KTT-01</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 7. RADIUS, SHADOWS & ACCESSIBILITY FOOTNOTE -->
-    <div class="pt-4 border-t border-line flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono-code text-ink-muted">
-      <div class="flex flex-wrap items-center gap-4">
+    <div class="pt-3 border-t border-line flex flex-col md:flex-row items-center justify-between gap-3 text-[10px] font-mono-code text-ink-muted">
+      <div class="flex flex-wrap items-center gap-3">
         <span>RADIUS: 8px (lg) &bull; 12px (xl) &bull; 16px (2xl) &bull; 24px (3xl)</span>
         <span>&bull;</span>
         <span>SHADOWS: soft &bull; card &bull; hover &bull; glow</span>
       </div>
-      <div class="flex items-center gap-2 text-emerald-800 font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+      <div class="flex items-center gap-1.5 text-emerald-800 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
         <span>&check; WCAG 2.1 AA Compliant Contrast (7.42:1 Ratio)</span>
       </div>
     </div>
@@ -523,22 +535,35 @@
   </div>
 
   <script>
-    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Scale Artboard for Screenshot Viewing
-    function setScale(scale) {
+    // 1-Click High-Res PNG Download Function via html2canvas
+    function downloadAsPNG() {
+      const btn = document.getElementById('btn-download-png');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="animate-spin">⏳</span> Menyiapkan Gambar...';
+      btn.disabled = true;
+
       const artboard = document.getElementById('design-artboard');
-      artboard.style.transform = `scale(${scale})`;
-      
-      // Update active button state
-      ['100', '85', '75'].forEach(s => {
-        const btn = document.getElementById(`scale-${s}`);
-        if (s === String(scale * 100)) {
-          btn.className = 'px-2.5 py-1 rounded-lg border border-gray-900 bg-gray-900 text-white transition';
-        } else {
-          btn.className = 'px-2.5 py-1 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 transition';
-        }
+
+      html2canvas(artboard, {
+        scale: 2, // 2x Retina resolution for razor sharp texts and images
+        useCORS: true,
+        backgroundColor: '#FBF6F1',
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'meownesa-design-system-artboard.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }).catch(err => {
+        console.error('Download error:', err);
+        alert('Gagal mengekspor gambar. Silakan gunakan tombol Print / PDF.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
       });
     }
   </script>
