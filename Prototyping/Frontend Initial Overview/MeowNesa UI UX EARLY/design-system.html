@@ -117,12 +117,14 @@
   <header class="bg-white/95 backdrop-blur-md border-b border-line sticky top-0 z-40 px-6 py-3.5 shadow-xs">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-magenta text-white flex items-center justify-center p-2 shadow-sm border border-magenta-dark/20">
-          <img src="images/icon-head.png" alt="MeowNesa Head" class="w-full h-full object-contain brightness-0 invert">
+        <div class="flex items-center gap-2.5 bg-cream/70 border border-line px-3 py-1.5 rounded-xl shadow-xs">
+          <img src="images/meownesa-logo.png" alt="MeowNesa Logo" class="h-5 sm:h-6 w-auto object-contain">
+          <span class="text-ink/30 font-bold text-xs">✕</span>
+          <img src="images/jagasatwa-logo.png" alt="Jaga Satwa UNESA" class="h-4 sm:h-5 w-auto object-contain brightness-0">
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base font-extrabold text-ink leading-tight font-display tracking-wide">MeowNesa Design System &amp; UI Kit</h1>
+            <h1 class="text-base font-extrabold text-ink leading-tight font-display tracking-wide">Design System &amp; UI Kit</h1>
             <span class="px-2 py-0.5 rounded-md bg-magenta-50 text-magenta font-mono-code font-bold text-[10px] border border-magenta/20">v1.2.0</span>
           </div>
           <p class="text-xs text-ink-muted">Dokumentasi Perancangan Antarmuka &amp; Standar Desain UI/UX (Bab 2.7)</p>
@@ -170,65 +172,103 @@
     <section id="brand" class="space-y-6 pt-4">
       <div class="border-b border-line pb-3">
         <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
-          Sub-bab 2.7.1 — Identitas Visual
+          Sub-bab 2.7.1 — Identitas Visual &amp; Logo Resmi
         </span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">1. Brand Identity &amp; Design Philosophy</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">1. Brand Identity &amp; Aset Grafis Resmi</h2>
         <p class="text-xs sm:text-sm text-ink-muted mt-1">
-          Karakter visual sistem MeowNesa dirancang mengedepankan nilai <strong>empati, kehangatan komunitas kampus, akuntabilitas perlindungan satwa,</strong> serta kejelasan informasi bagi civitas akademika UNESA.
+          Seluruh aset logo dan simbolik resmi sistem MeowNesa yang digunakan secara konsisten pada antarmuka publik dan modul admin.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Brand Card 1: Official Lockup -->
-        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
-          <div class="text-xs font-bold text-ink-muted uppercase">Logo Lockup Resmi</div>
-          <div class="h-28 bg-cream/60 rounded-2xl border border-line flex items-center justify-center p-4">
-            <div class="flex items-center gap-2.5">
-              <span class="font-display font-extrabold text-2xl text-magenta tracking-tight">MeowNesa</span>
-              <span class="text-line-dark font-light text-xl">×</span>
-              <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="h-7 w-auto object-contain brightness-0">
-            </div>
+      <!-- Main Logo Grid (4 Official Assets + Co-Brand Lockup) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Asset 1: MeowNesa Primary Logo -->
+        <div class="bg-white border border-line rounded-3xl p-5 shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <span class="text-[10px] font-mono-code font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded border border-magenta/20 uppercase">
+              Logo Utama Platform
+            </span>
+            <h4 class="font-bold text-sm text-ink mt-2">MeowNesa Logo</h4>
+            <span class="text-[10px] font-mono-code text-ink-muted">images/meownesa-logo.png</span>
           </div>
-          <p class="text-xs text-ink-light leading-relaxed">
-            Penggabungan identitas platform digital (<strong>MeowNesa</strong>) dengan komunitas resmi pelindung satwa kampus (<strong>Jaga Satwa UNESA</strong>).
+          <div class="h-28 bg-cream/70 rounded-2xl border border-line flex items-center justify-center p-3">
+            <img src="images/meownesa-logo.png" alt="Logo MeowNesa" class="max-h-12 w-auto object-contain">
+          </div>
+          <p class="text-[11px] text-ink-muted leading-relaxed">
+            Logo typemark resmi MeowNesa dengan tipografi khas dan aksen daun/telinga kucing.
           </p>
         </div>
 
-        <!-- Brand Card 2: Signature Head Icon -->
-        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
-          <div class="text-xs font-bold text-ink-muted uppercase">Signature Watermark Asset</div>
-          <div class="h-28 bg-cream/60 rounded-2xl border border-line flex items-center justify-center p-4 relative overflow-hidden">
-            <img src="images/icon-head.png" alt="Head Icon" class="w-16 h-16 object-contain">
+        <!-- Asset 2: Jaga Satwa UNESA Logo -->
+        <div class="bg-white border border-line rounded-3xl p-5 shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <span class="text-[10px] font-mono-code font-bold text-ink bg-gray-100 px-2 py-0.5 rounded border border-line uppercase">
+              Logo Komunitas Kampus
+            </span>
+            <h4 class="font-bold text-sm text-ink mt-2">Jaga Satwa UNESA</h4>
+            <span class="text-[10px] font-mono-code text-ink-muted">images/jagasatwa-logo.png</span>
+          </div>
+          <div class="h-28 bg-cream/70 rounded-2xl border border-line flex items-center justify-center p-3">
+            <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="max-h-12 w-auto object-contain brightness-0">
+          </div>
+          <p class="text-[11px] text-ink-muted leading-relaxed">
+            Logo resmi komunitas pelindung satwa resmi Universitas Negeri Surabaya sejak 2021.
+          </p>
+        </div>
+
+        <!-- Asset 3: Signature Cat Head Icon -->
+        <div class="bg-white border border-line rounded-3xl p-5 shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <span class="text-[10px] font-mono-code font-bold text-magenta bg-magenta-50 px-2 py-0.5 rounded border border-magenta/20 uppercase">
+              Watermark &amp; Favicon
+            </span>
+            <h4 class="font-bold text-sm text-ink mt-2">Signature Head Icon</h4>
+            <span class="text-[10px] font-mono-code text-ink-muted">images/icon-head.png</span>
+          </div>
+          <div class="h-28 bg-cream/70 rounded-2xl border border-line flex items-center justify-center p-3 relative overflow-hidden">
+            <img src="images/icon-head.png" alt="Head Icon" class="h-16 w-16 object-contain z-10">
             <div class="absolute -right-2 -bottom-2 opacity-15 pointer-events-none">
-              <img src="images/icon-head.png" alt="Head Icon Watermark" class="w-24 h-24 object-contain">
+              <img src="images/icon-head.png" alt="Head Watermark" class="w-24 h-24 object-contain">
             </div>
           </div>
-          <p class="text-xs text-ink-light leading-relaxed">
-            Ikon kepala kucing khas (<code>images/icon-head.png</code>) digunakan secara konsisten sebagai watermark kartu dashboard, badge metrik, dan penanda identitas resmi.
+          <p class="text-[11px] text-ink-muted leading-relaxed">
+            Ikon kepala kucing khas untuk watermark kartu dashboard, badge metrik, dan favicon portal.
           </p>
         </div>
 
-        <!-- Brand Card 3: Design Principles -->
-        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-3">
-          <div class="text-xs font-bold text-ink-muted uppercase">4 Prinsip Desain UI/UX</div>
-          <ul class="text-xs space-y-2 text-ink-light">
-            <li class="flex items-start gap-2">
-              <i data-lucide="heart" class="w-4 h-4 text-magenta shrink-0 mt-0.5"></i>
-              <span><strong>Empati &amp; Humanis:</strong> Visual ramah yang mendorong komitmen adopsi yang bertanggung jawab.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
-              <span><strong>Transparan &amp; Terverifikasi:</strong> Menampilkan rekam medis klinik dan nomor kalung reflektif secara gamblang.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <i data-lucide="map-pin" class="w-4 h-4 text-sun-dark shrink-0 mt-0.5"></i>
-              <span><strong>Kontekstual 2 Kampus:</strong> Kemudahan navigasi lokasi antara Ketintang dan Lidah Wetan.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <i data-lucide="zap" class="w-4 h-4 text-coral shrink-0 mt-0.5"></i>
-              <span><strong>Efisien untuk Pengurus:</strong> Alur feeding dan screening yang cepat tanpa birokrasi berbelit.</span>
-            </li>
-          </ul>
+        <!-- Asset 4: Cat Mascot Silhouette -->
+        <div class="bg-white border border-line rounded-3xl p-5 shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <span class="text-[10px] font-mono-code font-bold text-sun-dark bg-sun/20 px-2 py-0.5 rounded border border-sun/30 uppercase">
+              Maskot Ilustrasi
+            </span>
+            <h4 class="font-bold text-sm text-ink mt-2">Cat Silhouette</h4>
+            <span class="text-[10px] font-mono-code text-ink-muted">images/icon-kucing.png</span>
+          </div>
+          <div class="h-28 bg-cream/70 rounded-2xl border border-line flex items-center justify-center p-3">
+            <img src="images/icon-kucing.png" alt="Icon Kucing" class="h-16 w-16 object-contain">
+          </div>
+          <p class="text-[11px] text-ink-muted leading-relaxed">
+            Aset siluet kucing utuh untuk ilustrasi edukasi, modul feeding, dan sertifikat adopsi BAST.
+          </p>
+        </div>
+      </div>
+
+      <!-- Co-Branding Lockup Banner -->
+      <div class="bg-white border border-line rounded-3xl p-6 shadow-card grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <div class="md:col-span-5 bg-cream/80 border border-line rounded-2xl p-6 flex items-center justify-center">
+          <div class="flex items-center gap-3 sm:gap-4">
+            <img src="images/meownesa-logo.png" alt="Logo MeowNesa" class="h-7 sm:h-8 w-auto object-contain">
+            <span class="text-ink/30 font-bold text-base select-none">✕</span>
+            <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="h-6 sm:h-7 w-auto object-contain brightness-0">
+          </div>
+        </div>
+        <div class="md:col-span-7 space-y-2">
+          <span class="text-[10px] font-mono-code font-bold text-magenta uppercase">Kaidah Co-Branding</span>
+          <h4 class="font-display font-extrabold text-lg text-ink">Penerapan Logo Kolaborasi (Header &amp; Navbar)</h4>
+          <p class="text-xs text-ink-muted leading-relaxed">
+            Pada seluruh header portal publik dan admin, logo MeowNesa selalu disandingkan dengan logo Jaga Satwa UNESA yang dipisahkan oleh simbol silang proporsional (<code>✕</code>) untuk menegaskan status MeowNesa sebagai platform resmi komunitas.
+          </p>
         </div>
       </div>
     </section>
