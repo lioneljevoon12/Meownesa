@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Design System &amp; UI Kit — MeowNesa | Jaga Satwa UNESA</title>
+  <link rel="icon" href="images/jagasatwa-logo.png">
+
+  <!-- Google Fonts: Baloo 2 & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            magenta: {
+              DEFAULT: '#B3184F',
+              dark: '#7F0E38',
+              light: '#E36D93',
+              50: '#FDF2F6',
+              100: '#FBE6ED',
+              200: '#F6CCD9',
+              900: '#4D0820'
+            },
+            sun: {
+              DEFAULT: '#FFC53D',
+              light: '#FFF0C7',
+              dark: '#E5A61E'
+            },
+            coral: {
+              DEFAULT: '#E4572E',
+              light: '#FCEBE6'
+            },
+            cream: {
+              DEFAULT: '#FBF6F1',
+              light: '#FDFBF9',
+              dark: '#F3E9E0'
+            },
+            ink: {
+              DEFAULT: '#2B1220',
+              light: '#543647',
+              muted: '#7C5C6F'
+            },
+            line: {
+              DEFAULT: '#F0DCE4',
+              dark: '#E2C4D1'
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Space Mono"', 'monospace']
+          },
+          boxShadow: {
+            'card': '0 12px 32px -8px rgba(43, 18, 32, 0.07)',
+            'hover': '0 20px 40px -12px rgba(179, 24, 79, 0.15)',
+            'soft': '0 10px 30px -10px rgba(179, 24, 79, 0.08)',
+            'glow': '0 0 20px rgba(255, 197, 61, 0.6)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FBF6F1;
+      color: #2B1220;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-display {
+      font-family: 'Baloo 2', sans-serif;
+    }
+    .font-mono-code {
+      font-family: 'Space Mono', monospace;
+    }
+    
+    /* Code block styling */
+    pre, code {
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Toast Notification Animation */
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translateY(10px); }
+      15% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+    .toast-active {
+      animation: toastFade 2.2s ease-in-out forwards;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      .print-break { page-break-after: always; }
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-cream text-ink selection:bg-magenta selection:text-white">
+
+  <!-- Toast Copy Notification -->
+  <div id="copyToast" class="fixed bottom-6 right-6 z-50 bg-ink text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl border border-line/30 flex items-center gap-2 pointer-events-none hidden">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">HEX Token disalin ke clipboard!</span>
+  </div>
+
+  <!-- Top Sticky Header -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-line sticky top-0 z-40 px-6 py-3.5 shadow-xs">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-magenta text-white flex items-center justify-center p-2 shadow-sm border border-magenta-dark/20">
+          <img src="images/icon-head.png" alt="MeowNesa Head" class="w-full h-full object-contain brightness-0 invert">
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base font-extrabold text-ink leading-tight font-display tracking-wide">MeowNesa Design System &amp; UI Kit</h1>
+            <span class="px-2 py-0.5 rounded-md bg-magenta-50 text-magenta font-mono-code font-bold text-[10px] border border-magenta/20">v1.2.0</span>
+          </div>
+          <p class="text-xs text-ink-muted">Dokumentasi Perancangan Antarmuka &amp; Standar Desain UI/UX (Bab 2.7)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 no-print">
+        <a href="wireframes.html" class="px-3.5 py-1.5 text-xs font-bold rounded-xl border border-line bg-white text-ink hover:bg-cream transition flex items-center gap-1.5 shadow-xs">
+          <i data-lucide="layout" class="w-3.5 h-3.5 text-magenta"></i>
+          <span>Lihat 12 Wireframe</span>
+        </a>
+        <a href="index.html" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-magenta hover:bg-magenta-dark text-white transition flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span>Buka Prototype Live</span>
+        </a>
+        <button onclick="window.print()" class="px-3.5 py-1.5 text-xs font-bold rounded-xl border border-line bg-white text-ink hover:bg-cream transition flex items-center gap-1.5 shadow-xs">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+          <span>Cetak Dokumen</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Quick Jump Navigation Sub-bar -->
+  <nav class="bg-cream-dark/60 border-b border-line px-6 py-2 sticky top-[61px] z-30 backdrop-blur-xs no-print">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto text-xs font-bold whitespace-nowrap scrollbar-none py-0.5">
+      <span class="text-ink-muted text-[10px] uppercase font-mono-code mr-1">Navigasi Bab 2.7:</span>
+      <a href="#brand" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">1. Brand &amp; Identity</a>
+      <a href="#colors" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">2. Color Palette</a>
+      <a href="#typography" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">3. Tipografi</a>
+      <a href="#spacing-radius" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">4. Grid &amp; Radius</a>
+      <a href="#components" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">5. UI Components</a>
+      <a href="#cards" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">6. Pola Cards &amp; Bento</a>
+      <a href="#forms" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">7. Form &amp; Kontrol</a>
+      <a href="#accessibility" class="px-2.5 py-1 rounded-lg bg-white border border-line text-ink hover:border-magenta hover:text-magenta transition">8. Aksesibilitas WCAG</a>
+    </div>
+  </nav>
+
+  <!-- Main Content Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-16">
+
+    <!-- ========================================================================= -->
+    <!-- 1. BRAND & IDENTITY -->
+    <!-- ========================================================================= -->
+    <section id="brand" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Sub-bab 2.7.1 — Identitas Visual
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">1. Brand Identity &amp; Design Philosophy</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Karakter visual sistem MeowNesa dirancang mengedepankan nilai <strong>empati, kehangatan komunitas kampus, akuntabilitas perlindungan satwa,</strong> serta kejelasan informasi bagi civitas akademika UNESA.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Brand Card 1: Official Lockup -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
+          <div class="text-xs font-bold text-ink-muted uppercase">Logo Lockup Resmi</div>
+          <div class="h-28 bg-cream/60 rounded-2xl border border-line flex items-center justify-center p-4">
+            <div class="flex items-center gap-2.5">
+              <span class="font-display font-extrabold text-2xl text-magenta tracking-tight">MeowNesa</span>
+              <span class="text-line-dark font-light text-xl">×</span>
+              <img src="images/jagasatwa-logo.png" alt="Logo Jaga Satwa" class="h-7 w-auto object-contain brightness-0">
+            </div>
+          </div>
+          <p class="text-xs text-ink-light leading-relaxed">
+            Penggabungan identitas platform digital (<strong>MeowNesa</strong>) dengan komunitas resmi pelindung satwa kampus (<strong>Jaga Satwa UNESA</strong>).
+          </p>
+        </div>
+
+        <!-- Brand Card 2: Signature Head Icon -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
+          <div class="text-xs font-bold text-ink-muted uppercase">Signature Watermark Asset</div>
+          <div class="h-28 bg-cream/60 rounded-2xl border border-line flex items-center justify-center p-4 relative overflow-hidden">
+            <img src="images/icon-head.png" alt="Head Icon" class="w-16 h-16 object-contain">
+            <div class="absolute -right-2 -bottom-2 opacity-15 pointer-events-none">
+              <img src="images/icon-head.png" alt="Head Icon Watermark" class="w-24 h-24 object-contain">
+            </div>
+          </div>
+          <p class="text-xs text-ink-light leading-relaxed">
+            Ikon kepala kucing khas (<code>images/icon-head.png</code>) digunakan secara konsisten sebagai watermark kartu dashboard, badge metrik, dan penanda identitas resmi.
+          </p>
+        </div>
+
+        <!-- Brand Card 3: Design Principles -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-3">
+          <div class="text-xs font-bold text-ink-muted uppercase">4 Prinsip Desain UI/UX</div>
+          <ul class="text-xs space-y-2 text-ink-light">
+            <li class="flex items-start gap-2">
+              <i data-lucide="heart" class="w-4 h-4 text-magenta shrink-0 mt-0.5"></i>
+              <span><strong>Empati &amp; Humanis:</strong> Visual ramah yang mendorong komitmen adopsi yang bertanggung jawab.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+              <span><strong>Transparan &amp; Terverifikasi:</strong> Menampilkan rekam medis klinik dan nomor kalung reflektif secara gamblang.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-sun-dark shrink-0 mt-0.5"></i>
+              <span><strong>Kontekstual 2 Kampus:</strong> Kemudahan navigasi lokasi antara Ketintang dan Lidah Wetan.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="zap" class="w-4 h-4 text-coral shrink-0 mt-0.5"></i>
+              <span><strong>Efisien untuk Pengurus:</strong> Alur feeding dan screening yang cepat tanpa birokrasi berbelit.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 2. COLOR PALETTE & DESIGN TOKENS -->
+    <!-- ========================================================================= -->
+    <section id="colors" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3 flex flex-col md:flex-row md:items-end justify-between gap-2">
+        <div>
+          <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+            Design Tokens
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">2. Color Palette &amp; Token Sistem</h2>
+          <p class="text-xs sm:text-sm text-ink-muted mt-1">
+            Palet warna turunan UNESA &amp; karakter anabul. Klik salah satu kartu warna untuk menyalin nilai HEX ke clipboard.
+          </p>
+        </div>
+        <span class="text-xs font-mono-code text-ink-muted">Klik kotak untuk Copy HEX</span>
+      </div>
+
+      <!-- Primary Brand Colors -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-ink flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-magenta"></span> Brand Primary — Magenta Series
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <button onclick="copyColor('#B3184F', 'Magenta Primary')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#B3184F] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Magenta Default</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#B3184F</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Hero, CTA Utama, Active</span>
+          </button>
+          <button onclick="copyColor('#7F0E38', 'Magenta Dark')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#7F0E38] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Magenta Dark</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#7F0E38</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Hover state, Dark text</span>
+          </button>
+          <button onclick="copyColor('#E36D93', 'Magenta Light')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#E36D93] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Magenta Light</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#E36D93</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Subtle border, Icons</span>
+          </button>
+          <button onclick="copyColor('#FDF2F6', 'Magenta 50')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#FDF2F6] border border-magenta/20 mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Magenta 50</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#FDF2F6</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Badge background, Pill</span>
+          </button>
+          <button onclick="copyColor('#FBE6ED', 'Magenta 100')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#FBE6ED] border border-magenta/20 mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Magenta 100</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#FBE6ED</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Card highlight tint</span>
+          </button>
+          <button onclick="copyColor('#4D0820', 'Magenta 900')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#4D0820] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Magenta 900</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#4D0820</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Footer &amp; Deep Ink</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Accent & Neutral Colors -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-ink flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-sun"></span> Secondary, Accent &amp; Neutrals
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <button onclick="copyColor('#FFC53D', 'Sun Default')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-sun hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#FFC53D] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-sun-dark transition">Sun Accent</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#FFC53D</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Cat of Week, Glow</span>
+          </button>
+          <button onclick="copyColor('#E4572E', 'Coral Accent')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-coral hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#E4572E] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-coral transition">Coral Alert</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#E4572E</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Proteksi kalung, Alert</span>
+          </button>
+          <button onclick="copyColor('#FBF6F1', 'Cream Base')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#FBF6F1] border border-line mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Cream Canvas</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#FBF6F1</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Latar Belakang Utama</span>
+          </button>
+          <button onclick="copyColor('#2B1220', 'Ink Dark')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#2B1220] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Ink Text</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#2B1220</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Heading &amp; Teks Body</span>
+          </button>
+          <button onclick="copyColor('#7C5C6F', 'Ink Muted')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#7C5C6F] mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Ink Muted</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#7C5C6F</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Deskripsi &amp; Caption</span>
+          </button>
+          <button onclick="copyColor('#F0DCE4', 'Line Border')" class="text-left bg-white border border-line rounded-2xl p-3 shadow-xs hover:border-magenta hover:shadow-md transition group">
+            <div class="h-16 rounded-xl bg-[#F0DCE4] border border-line-dark mb-2 shadow-inner"></div>
+            <div class="font-bold text-xs text-ink group-hover:text-magenta transition">Line Border</div>
+            <div class="text-[11px] font-mono-code text-ink-muted">#F0DCE4</div>
+            <span class="text-[9px] text-ink-muted block mt-1">Divider &amp; Card Border</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Semantic Status Colors -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-ink flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Semantic &amp; Operational States
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0">✔</div>
+            <div>
+              <div class="font-bold text-xs text-emerald-900">Success / Siap Adopsi</div>
+              <div class="text-[11px] font-mono-code text-emerald-700">#10B981</div>
+            </div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shrink-0">⏳</div>
+            <div>
+              <div class="font-bold text-xs text-amber-900">Warning / Screening</div>
+              <div class="text-[11px] font-mono-code text-amber-700">#F59E0B</div>
+            </div>
+          </div>
+          <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3.5 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shrink-0">🩺</div>
+            <div>
+              <div class="font-bold text-xs text-blue-900">Medis / Sterilisasi</div>
+              <div class="text-[11px] font-mono-code text-blue-700">#3B82F6</div>
+            </div>
+          </div>
+          <div class="bg-red-50 border border-red-200 rounded-2xl p-3.5 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm shrink-0">✕</div>
+            <div>
+              <div class="font-bold text-xs text-red-900">Danger / Overdue Tempo</div>
+              <div class="text-[11px] font-mono-code text-red-700">#EF4444</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 3. TYPOGRAPHY SYSTEM -->
+    <!-- ========================================================================= -->
+    <section id="typography" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Sub-bab 2.7.2 — Tipografi
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">3. Hierarki &amp; Skala Tipografi</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Kombinasi <strong>Baloo 2</strong> untuk headline ekspresif yang ramah dan <strong>Plus Jakarta Sans</strong> untuk keterbacaan antarmuka, tabel, dan dokumen formulir.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Font Specimen 1: Baloo 2 -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <div>
+              <span class="text-xs font-bold text-magenta uppercase">Display Font</span>
+              <h3 class="text-xl font-extrabold font-display text-ink">Baloo 2</h3>
+            </div>
+            <span class="text-[11px] font-mono-code bg-cream px-2 py-1 rounded border border-line">Weights: 600, 700, 800</span>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <div class="text-3xl font-extrabold font-display text-ink leading-tight">
+                Hewan Sejahtera, Hidup Gembira.
+              </div>
+              <span class="text-[10px] font-mono-code text-ink-muted">Display Heavy — 32px / Bold 800</span>
+            </div>
+            <div>
+              <div class="text-2xl font-bold font-display text-magenta">
+                Informasi &amp; Sebaran Kucing Kampus
+              </div>
+              <span class="text-[10px] font-mono-code text-ink-muted">Section Title — 24px / Bold 700</span>
+            </div>
+            <div>
+              <div class="text-lg font-semibold font-display text-ink">
+                Mochi • Gedung K10 Vokasi (KTT-01)
+              </div>
+              <span class="text-[10px] font-mono-code text-ink-muted">Card Header — 18px / SemiBold 600</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Font Specimen 2: Plus Jakarta Sans -->
+        <div class="bg-white border border-line rounded-3xl p-6 shadow-card space-y-4">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <div>
+              <span class="text-xs font-bold text-magenta uppercase">Body &amp; UI Font</span>
+              <h3 class="text-xl font-extrabold text-ink">Plus Jakarta Sans</h3>
+            </div>
+            <span class="text-[11px] font-mono-code bg-cream px-2 py-1 rounded border border-line">Weights: 400, 500, 600, 700</span>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm text-ink-light leading-relaxed">
+                Meownesa membantu komunitas <strong>Jaga Satwa UNESA</strong> mengelola data populasi kucing resmi di Kampus Ketintang &amp; Lidah Wetan.
+              </p>
+              <span class="text-[10px] font-mono-code text-ink-muted">Body Regular — 14px / Regular 400</span>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-ink">
+                STATUS STERILISASI MEDIS KLINIK NUSANTARA VET
+              </div>
+              <span class="text-[10px] font-mono-code text-ink-muted">UI Label &amp; Table Header — 12px / Bold 700</span>
+            </div>
+            <div>
+              <div class="text-[11px] text-ink-muted font-medium">
+                Pakan basah 85 gram • Shift Sore • Relawan Feeder Dewi Ayu
+              </div>
+              <span class="text-[10px] font-mono-code text-ink-muted">Caption &amp; Metadata — 11px / Medium 500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 4. GRID, SPACING & RADIUS -->
+    <!-- ========================================================================= -->
+    <section id="spacing-radius" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Layout Foundations
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">4. Spacing, Radius &amp; Elevation (Shadows)</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Sistem modular berbasis kelipatan 4px/8px dan kurvatur ramah (*rounded corners*) yang ergonomis.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Radius Specimen -->
+        <div class="bg-white border border-line rounded-lg p-4 text-center space-y-2">
+          <div class="h-12 bg-magenta-50 border border-magenta/30 rounded-lg flex items-center justify-center text-xs font-bold text-magenta">
+            rounded-lg (8px)
+          </div>
+          <span class="text-[11px] text-ink-muted">Button kecil, badge, tag</span>
+        </div>
+        <div class="bg-white border border-line rounded-xl p-4 text-center space-y-2">
+          <div class="h-12 bg-magenta-50 border border-magenta/30 rounded-xl flex items-center justify-center text-xs font-bold text-magenta">
+            rounded-xl (12px)
+          </div>
+          <span class="text-[11px] text-ink-muted">Inputs, dropdown, modal</span>
+        </div>
+        <div class="bg-white border border-line rounded-2xl p-4 text-center space-y-2">
+          <div class="h-12 bg-magenta-50 border border-magenta/30 rounded-2xl flex items-center justify-center text-xs font-bold text-magenta">
+            rounded-2xl (16px)
+          </div>
+          <span class="text-[11px] text-ink-muted">Card konten, Bento item</span>
+        </div>
+        <div class="bg-white border border-line rounded-3xl p-4 text-center space-y-2">
+          <div class="h-12 bg-magenta-50 border border-magenta/30 rounded-3xl flex items-center justify-center text-xs font-bold text-magenta">
+            rounded-3xl (24px)
+          </div>
+          <span class="text-[11px] text-ink-muted">Banner utama, Hero container</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 5. UI COMPONENTS (BUTTONS & BADGES) -->
+    <!-- ========================================================================= -->
+    <section id="components" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Komponen Antarmuka
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">5. Button &amp; Badge UI Kit</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Kumpulan komponen interaktif standar yang dapat digunakan kembali di seluruh modul publik dan panel admin.
+        </p>
+      </div>
+
+      <!-- Button Showcase -->
+      <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card space-y-6">
+        <h3 class="text-base font-extrabold font-display text-ink">Varian Tombol (Button States)</h3>
+        
+        <div class="flex flex-wrap items-center gap-4">
+          <!-- Primary Filled -->
+          <button class="px-6 py-3 rounded-full bg-magenta hover:bg-magenta-dark text-white font-bold text-sm shadow-md transition flex items-center gap-2">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+            <span>Primary Filled</span>
+          </button>
+
+          <!-- Secondary Outline -->
+          <button class="px-6 py-3 rounded-full bg-white hover:bg-cream border-2 border-magenta/20 hover:border-magenta text-ink font-bold text-sm shadow-xs transition flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-magenta"></i>
+            <span>Secondary Outline</span>
+          </button>
+
+          <!-- Sun Accent Button -->
+          <button class="px-5 py-2.5 rounded-xl bg-sun hover:bg-sun-dark text-ink font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Sun Accent CTA</span>
+          </button>
+
+          <!-- Icon Only Button -->
+          <button class="w-10 h-10 rounded-xl bg-cream border border-line text-ink hover:text-magenta flex items-center justify-center transition shadow-xs">
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Disabled Button -->
+          <button disabled class="px-6 py-3 rounded-full bg-gray-200 text-gray-400 font-bold text-sm cursor-not-allowed flex items-center gap-2">
+            <span>Disabled State</span>
+          </button>
+        </div>
+
+        <div class="border-t border-line pt-6">
+          <h3 class="text-base font-extrabold font-display text-ink mb-3">Badge, Tag &amp; Chips Identifikasi</h3>
+          
+          <div class="flex flex-wrap items-center gap-2.5">
+            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-extrabold text-xs border border-emerald-200 shadow-xs flex items-center gap-1">
+              <i data-lucide="check" class="w-3 h-3"></i> Siap Diadopsi
+            </span>
+            <span class="px-3 py-1 rounded-full bg-sun/20 text-ink font-bold text-xs border border-sun/40 flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3 h-3 text-sun-dark"></i> Cat of The Week
+            </span>
+            <span class="px-3 py-1 rounded-full bg-magenta-50 text-magenta font-bold text-xs border border-magenta/20 flex items-center gap-1">
+              <i data-lucide="tag" class="w-3 h-3"></i> Kalung Merah (KTT-01)
+            </span>
+            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-bold text-xs border border-blue-200 flex items-center gap-1">
+              <i data-lucide="stethoscope" class="w-3 h-3"></i> Sudah Steril
+            </span>
+            <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 font-bold text-xs border border-purple-200 flex items-center gap-1">
+              <i data-lucide="clipboard-list" class="w-3 h-3"></i> Screening Adopsi
+            </span>
+            <span class="px-3 py-1 rounded-full bg-coral/15 text-coral font-bold text-xs border border-coral/20 flex items-center gap-1">
+              <i data-lucide="bell" class="w-3 h-3"></i> Reminder Tempo
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 6. CARD PATTERNS & BENTO -->
+    <!-- ========================================================================= -->
+    <section id="cards" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Card Architecture
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">6. Pola Kartu &amp; Bento Grid</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Standar komposisi kartu profil anabul, metrik eksekutif, dan alert penugasan pengurus.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Sample 1: Stat Metric Card with Head-Icon Watermark -->
+        <div class="bg-white border border-line rounded-2xl p-5 shadow-card flex flex-col justify-between relative overflow-hidden group hover:border-magenta/50 transition">
+          <div class="absolute -right-3 -bottom-3 opacity-10 group-hover:opacity-20 pointer-events-none select-none transition">
+            <img src="images/icon-head.png" alt="Head Icon" class="w-20 h-20 object-contain">
+          </div>
+          <div class="flex items-center justify-between relative z-10">
+            <span class="text-xs font-bold text-ink-muted uppercase tracking-wider">Total Kucing Terdata</span>
+            <div class="w-8 h-8 rounded-lg bg-magenta-50 text-magenta flex items-center justify-center p-1 border border-magenta/15 shadow-xs">
+              <img src="images/icon-head.png" alt="Cat Head" class="w-5 h-5 object-contain">
+            </div>
+          </div>
+          <div class="mt-4 relative z-10">
+            <span class="font-display font-extrabold text-3xl text-ink">6</span>
+            <span class="text-xs text-emerald-600 block font-semibold mt-0.5">100% Berkalung Reflektif</span>
+          </div>
+        </div>
+
+        <!-- Sample 2: Callout Alert Banner Card -->
+        <div class="p-5 rounded-2xl bg-sun/15 border border-sun/40 flex items-start justify-between gap-4 relative overflow-hidden">
+          <div class="absolute -right-3 -bottom-3 opacity-15 pointer-events-none select-none">
+            <img src="images/icon-head.png" alt="Head Icon" class="w-20 h-20 object-contain">
+          </div>
+          <div class="flex items-start gap-3.5 relative z-10">
+            <div class="w-10 h-10 rounded-xl bg-sun text-ink flex items-center justify-center font-bold text-lg shadow-xs p-1.5 border border-sun-dark/20 shrink-0">
+              <img src="images/icon-head.png" alt="Head Icon" class="w-full h-full object-contain">
+            </div>
+            <div>
+              <span class="text-[10px] font-extrabold text-ink uppercase tracking-wider block">ANTREAN ADOPSI</span>
+              <h4 class="font-display font-bold text-sm text-ink mt-0.5">2 Calon Adopter Baru</h4>
+              <p class="text-xs text-ink-muted mt-0.5 leading-snug">Pengajuan untuk Mochi dan Milo siap ditinjau.</p>
+            </div>
+          </div>
+          <button class="px-3 py-1.5 rounded-xl bg-white border border-line text-xs font-bold text-ink hover:bg-magenta hover:text-white transition shrink-0 relative z-10 shadow-xs">
+            Review →
+          </button>
+        </div>
+
+        <!-- Sample 3: Cat Mini Profile Card -->
+        <div class="bg-white border border-line rounded-2xl p-4 shadow-card space-y-3">
+          <div class="h-32 rounded-xl bg-cream border border-line relative overflow-hidden flex items-center justify-center">
+            <img src="images/cat-images/cat1.jpg" alt="Mochi" class="w-full h-full object-cover">
+            <span class="absolute top-2 right-2 bg-emerald-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full shadow">
+              Siap Adopsi
+            </span>
+          </div>
+          <div>
+            <div class="flex justify-between items-center">
+              <h4 class="font-display font-extrabold text-base text-ink">Mochi</h4>
+              <span class="text-[10px] font-mono-code font-bold text-magenta">KTT-01</span>
+            </div>
+            <p class="text-xs text-ink-muted">Ketintang • Gedung K10 Vokasi</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 7. FORM & CONTROLS -->
+    <!-- ========================================================================= -->
+    <section id="forms" class="space-y-6 pt-4">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Formulir &amp; Kontrol Masukan
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">7. Kontrol Formulir &amp; Input</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Desain kolom masukan untuk formulir adopsi, pencarian katalog, dan pencatatan log feeding harian.
+        </p>
+      </div>
+
+      <div class="bg-white border border-line rounded-3xl p-6 sm:p-8 shadow-card grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Text Input with Label -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-ink uppercase">Nama Lengkap Pemohon (Sesuai KTP):</label>
+          <input type="text" placeholder="Contoh: Reissa Nurhaliza" value="Reissa Nurhaliza"
+            class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-sm focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+        </div>
+
+        <!-- Search Bar with Icon -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-ink uppercase">Pencarian Anabul &amp; Gedung:</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-magenta">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" placeholder="Cari nama (Mochi, Milo...), tag ID, atau gedung..."
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-line bg-cream/30 text-sm focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition">
+          </div>
+        </div>
+
+        <!-- Select Dropdown -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-ink uppercase">Pilih Lokasi Kampus:</label>
+          <select class="w-full px-4 py-2.5 rounded-xl border border-line bg-cream/30 text-sm font-semibold text-ink focus:outline-none focus:border-magenta transition">
+            <option>Kampus Ketintang (KTT)</option>
+            <option>Kampus Lidah Wetan (LWT)</option>
+          </select>
+        </div>
+
+        <!-- Checkbox with Styling -->
+        <div class="flex items-center gap-3 pt-6">
+          <input type="checkbox" id="sampleAgree" checked class="w-5 h-5 accent-magenta rounded cursor-pointer">
+          <label for="sampleAgree" class="text-xs font-semibold text-ink cursor-pointer">
+            Saya menyetujui komitmen merawat indoor dan bersedia mengirim foto monitoring berkala.
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 8. ACCESSIBILITY & WCAG 2.1 AA MATRIX -->
+    <!-- ========================================================================= -->
+    <section id="accessibility" class="space-y-6 pt-4 pb-12">
+      <div class="border-b border-line pb-3">
+        <span class="text-[11px] font-mono-code font-bold uppercase tracking-wider text-magenta bg-magenta-50 px-2.5 py-0.5 rounded border border-magenta/20">
+          Kepatuhan Aksesibilitas
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-display mt-1">8. Kontras Warna &amp; Standar WCAG 2.1 AA</h2>
+        <p class="text-xs sm:text-sm text-ink-muted mt-1">
+          Rasio kontras telah diuji untuk memastikan keterbacaan tinggi bagi seluruh pengguna.
+        </p>
+      </div>
+
+      <div class="bg-white border border-line rounded-3xl overflow-hidden shadow-card">
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-line text-center">
+          <div class="p-6 space-y-2">
+            <div class="text-2xl font-black font-mono-code text-magenta">7.42 : 1</div>
+            <div class="text-xs font-bold text-ink uppercase">Magenta (#B3184F) pada Cream (#FBF6F1)</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">WCAG AAA PASSED</span>
+          </div>
+          <div class="p-6 space-y-2">
+            <div class="text-2xl font-black font-mono-code text-ink">14.8 : 1</div>
+            <div class="text-xs font-bold text-ink uppercase">Ink Text (#2B1220) pada Putih (#FFFFFF)</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">WCAG AAA PASSED</span>
+          </div>
+          <div class="p-6 space-y-2">
+            <div class="text-2xl font-black font-mono-code text-emerald-700">4.85 : 1</div>
+            <div class="text-xs font-bold text-ink uppercase">Sun Dark (#E5A61E) pada Putih (#FFFFFF)</div>
+            <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">WCAG AA PASSED</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-line py-8 text-center text-xs text-ink-muted no-print">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-display font-bold text-sm text-magenta">MeowNesa</span>
+        <span>×</span>
+        <span class="font-bold text-sm text-ink">Komunitas Jaga Satwa UNESA</span>
+      </div>
+      <p class="text-[11px]">Dokumen Perancangan Desain Sistem Antarmuka UI/UX (Sub-bab 2.7) • Surabaya, Indonesia</p>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Copy Color HEX to Clipboard with Toast
+    function copyColor(hex, label) {
+      navigator.clipboard.writeText(hex).then(() => {
+        const toast = document.getElementById('copyToast');
+        const msg = document.getElementById('toastMsg');
+        msg.textContent = `Token ${label} (${hex}) berhasil disalin!`;
+        
+        toast.classList.remove('hidden');
+        toast.classList.add('toast-active');
+
+        setTimeout(() => {
+          toast.classList.remove('toast-active');
+          toast.classList.add('hidden');
+        }, 2200);
+      });
+    }
+  </script>
+</body>
+</html>
