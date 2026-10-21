@@ -8,15 +8,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Sesuai Proposal Bab 2.5.2: Tabel user
      */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->id('id_user');
+            $table->string('nama', 100);
+            $table->string('email', 150)->unique();
+            $table->string('password_hash', 255);
+            $table->string('role', 30)->default('admin'); // Super Admin, Admin Jaga Satwa, Adopter
+            $table->string('status_akun', 20)->default('aktif'); // aktif, nonaktif
             $table->rememberToken();
             $table->timestamps();
         });
@@ -42,8 +44,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };
