@@ -7,10 +7,26 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    public const ROLE_SUPERADMIN = 'superadmin';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_ADOPTER = 'adopter';
+
+    /** Hak akses (permission) per role, ditampilkan di GET /api/auth/me untuk frontend. */
+    public const AKSES = [
+        self::ROLE_SUPERADMIN => ['akun.kelola', 'role.kelola', 'audit.lihat', 'konfigurasi.kelola'],
+        self::ROLE_ADMIN => [
+            'dashboard.lihat', 'kucing.kelola', 'feeding.kelola', 'kesehatan.kelola',
+            'adopsi.proses', 'serah-terima.kelola', 'pasca-adopsi.kelola',
+            'artikel.kelola', 'notifikasi.kirim',
+        ],
+        self::ROLE_ADOPTER => ['pengingat.terima'],
+    ];
 
     protected $table = 'users';
     protected $primaryKey = 'id_user';
@@ -41,6 +57,17 @@ class User extends Authenticatable
     public function getAuthPasswordName(): string
     {
         return 'password_hash';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status_akun === 'aktif';
+    }
+
+    /** @return array<int, string> */
+    public function akses(): array
+    {
+        return self::AKSES[$this->role] ?? [];
     }
 
     // Accessor / Mutator untuk kompatibilitas Laravel standar 'name'
