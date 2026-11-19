@@ -1,0 +1,97 @@
+/* MeowNesa — tema di atas Bootstrap 5. Palet dari prototipe/design system. */
+:root {
+    --mn-magenta: #B3184F;
+    --mn-magenta-dark: #7F0E38;
+    --mn-magenta-50: #FDF2F6;
+    --mn-sun: #FFC53D;
+    --mn-cream: #FBF6F1;
+    --mn-ink: #2B1220;
+    --mn-ink-light: #543647;
+    --mn-line: #F0DCE4;
+
+    --bs-body-font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --bs-body-color: var(--mn-ink);
+    --bs-body-bg: var(--mn-cream);
+    --bs-link-color: var(--mn-magenta);
+    --bs-link-hover-color: var(--mn-magenta-dark);
+    --bs-border-color: var(--mn-line);
+    --bs-primary: var(--mn-magenta);
+    --bs-primary-rgb: 179, 24, 79;
+}
+
+body { font-feature-settings: 'cv11'; }
+.bg-cream { background: var(--mn-cream) !important; }
+.text-brand { color: var(--mn-magenta) !important; }
+.text-ink-light { color: var(--mn-ink-light) !important; }
+.mn-display { font-family: 'Baloo 2', sans-serif; letter-spacing: -.01em; }
+.font-mono { font-family: ui-monospace, 'Space Mono', monospace; }
+.min-vw-0 { min-width: 0; }
+.shadow-card { box-shadow: 0 12px 32px -8px rgba(43, 18, 32, .08) !important; }
+
+/* Tombol */
+.btn-brand { --bs-btn-bg: var(--mn-magenta); --bs-btn-border-color: var(--mn-magenta); --bs-btn-color: #fff;
+    --bs-btn-hover-bg: var(--mn-magenta-dark); --bs-btn-hover-border-color: var(--mn-magenta-dark); --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: var(--mn-magenta-dark); --bs-btn-active-border-color: var(--mn-magenta-dark); --bs-btn-active-color: #fff;
+    font-weight: 600; border-radius: .75rem; }
+.btn-outline-brand { --bs-btn-color: var(--mn-magenta); --bs-btn-border-color: var(--mn-magenta);
+    --bs-btn-hover-bg: var(--mn-magenta); --bs-btn-hover-border-color: var(--mn-magenta); --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: var(--mn-magenta-dark); --bs-btn-active-border-color: var(--mn-magenta-dark); --bs-btn-active-color: #fff;
+    font-weight: 600; border-radius: .75rem; }
+.form-control, .form-select { border-radius: .65rem; border-color: var(--mn-line); }
+.form-control:focus, .form-select:focus { border-color: var(--mn-magenta); box-shadow: 0 0 0 .2rem rgba(179, 24, 79, .15); }
+
+/* Navbar & footer */
+.mn-navbar { background: rgba(251, 246, 241, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--mn-line); }
+.mn-navbar .nav-link { font-weight: 600; color: var(--mn-ink-light); }
+.mn-navbar .nav-link.active, .mn-navbar .nav-link:hover { color: var(--mn-magenta); }
+.mn-footer { background: #fff; border-top: 1px solid var(--mn-line); }
+
+/* Hero & statistik */
+.mn-hero { background: radial-gradient(1000px 400px at 90% -10%, var(--mn-magenta-50), transparent 60%); }
+.mn-hero-photo { position: relative; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 4 / 3; background: #eee; }
+.mn-hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+.mn-hero-caption { position: absolute; left: 1rem; bottom: 1rem; background: rgba(255, 255, 255, .92); border-radius: 1rem;
+    padding: .6rem 1rem; display: flex; flex-direction: column; gap: .15rem; }
+.mn-stat { background: #fff; border: 1px solid var(--mn-line); border-radius: 1.25rem; padding: 1.25rem .75rem; }
+.mn-stat i { font-size: 1.5rem; color: var(--mn-magenta); }
+.mn-stat-num { font-family: 'Baloo 2', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1.1; }
+
+/* Kartu kucing */
+.mn-card { border: 1px solid var(--mn-line); border-radius: 1.25rem; overflow: hidden; background: #fff; transition: transform .15s, box-shadow .15s; }
+.mn-cat-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -12px rgba(179, 24, 79, .25); }
+.mn-cat-photo { position: relative; aspect-ratio: 4 / 3; background: var(--mn-magenta-50); overflow: hidden; }
+.mn-cat-photo img { width: 100%; height: 100%; object-fit: cover; }
+.mn-cat-status { position: absolute; top: .75rem; left: .75rem; }
+.mn-cat-card .card-body { color: var(--mn-ink); }
+.mn-thumb { aspect-ratio: 16 / 10; object-fit: cover; }
+.mn-filter { background: #fff; border: 1px solid var(--mn-line); border-radius: 1rem; padding: 1rem; margin-inline: 0; }
+#cat-grid.loading { opacity: .5; transition: opacity .15s; }
+
+/* Detail kucing */
+.mn-gallery-main { border-radius: 1.25rem; overflow: hidden; aspect-ratio: 4 / 3; background: var(--mn-magenta-50); }
+.mn-gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+.mn-thumb-btn { width: 72px; height: 72px; padding: 0; border: 2px solid transparent; border-radius: .75rem; overflow: hidden; background: none; }
+.mn-thumb-btn img { width: 100%; height: 100%; object-fit: cover; }
+.mn-thumb-btn.active { border-color: var(--mn-magenta); }
+.mn-dl dt { color: var(--mn-ink-light); font-weight: 600; }
+.mn-timeline { border-left: 2px solid var(--mn-line); padding-left: 1.25rem; margin-left: .4rem; }
+.mn-timeline li { position: relative; padding-bottom: 1rem; }
+.mn-timeline li::before { content: ''; position: absolute; left: -1.7rem; top: .35rem; width: .75rem; height: .75rem;
+    border-radius: 50%; background: var(--mn-magenta); border: 2px solid var(--mn-cream); }
+
+/* Login */
+.mn-login { max-width: 440px; border-radius: 1.5rem; }
+.d-block-if-invalid { display: none; }
+.was-validated .form-control:invalid ~ .d-block-if-invalid,
+.was-validated .input-group:has(.form-control:invalid) ~ .d-block-if-invalid { display: block; }
+
+/* Admin */
+.mn-sidebar { width: 260px; min-height: 100vh; background: #fff; border-right: 1px solid var(--mn-line); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; flex-shrink: 0; }
+@media (max-width: 991.98px) { .mn-sidebar { position: fixed; } }
+.mn-side-link { color: var(--mn-ink-light); font-weight: 600; border-radius: .75rem; padding: .6rem .85rem; }
+.mn-side-link:hover { background: var(--mn-magenta-50); color: var(--mn-magenta); }
+.mn-side-link.active { background: var(--mn-magenta); color: #fff; }
+.mn-topbar { height: 64px; background: #fff; border-bottom: 1px solid var(--mn-line); position: sticky; top: 0; z-index: 10; }
+.mn-kpi-icon { width: 40px; height: 40px; border-radius: .75rem; display: grid; place-items: center; margin-bottom: .75rem; font-size: 1.15rem; }
+.mn-kpi-num { font-family: 'Baloo 2', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1; }
+.card { --bs-card-border-color: var(--mn-line); }
