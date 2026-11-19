@@ -11,7 +11,7 @@
 | Kode Task | Nama Modul | Rujukan Kebutuhan (Proposal) | Prioritas |
 |---|---|---|:---:|
 | **dev-backend-01** | Inisialisasi Database, Skema Migrasi 14 Tabel, & Seeder Master Data | Bab 2.5 (Struktur Tabel 2.5.2) | ✅ **SELESAI** |
-| **dev-backend-02** | Autentikasi Pengguna Multi-Role, Manajemen Sesi & Middleware Audit Log | MEOW-F-41 s/d MEOW-F-44, MEOW-NF-01 s/d 03 | P0 (Core Auth) |
+| **dev-backend-02** | Autentikasi Pengguna Multi-Role, Manajemen Sesi & Middleware Audit Log | MEOW-F-41 s/d MEOW-F-44, MEOW-NF-01 s/d 03 | ✅ **SELESAI** |
 | **dev-backend-03** | Modul Wilayah & Master Lokasi Persebaran Kucing (Ketintang & Lidah Wetan) | MEOW-F-05, MEOW-F-38, DFD 1.0 & 8.0 | P1 (Master Data) |
 | **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | P1 (Core Domain) |
 | **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | P1 (Clinical History) |
@@ -82,14 +82,21 @@
   - Middleware `RoleMiddleware` (`role:superadmin`, `role:admin`, `role:adopter`).
   - Middleware `AuditLogMiddleware` (Merekam otomatis perubahan tabel kritis ke `audit_log`).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Pengguna tanpa hak akses ditolak dengan respon HTTP `401 Unauthorized` atau `403 Forbidden`.
-  - [ ] Password ter-hash kuat (minimal bcrypt cost 12).
-  - [ ] Setiap aksi admin (menambah/mengubah data) langsung tercatat di tabel `audit_log` lengkap dengan id_user, nama_tabel, dan waktu aktivitas.
+  - [x] Pengguna tanpa hak akses ditolak dengan respon HTTP `401 Unauthorized` atau `403 Forbidden`.
+  - [x] Password ter-hash kuat (minimal bcrypt cost 12).
+  - [x] Setiap aksi admin (menambah/mengubah data) langsung tercatat di tabel `audit_log` lengkap dengan id_user, nama_tabel, dan waktu aktivitas.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/AuthController.php`
   - `app/Http/Middleware/CheckRole.php`
   - `app/Http/Middleware/RecordAuditLog.php`
   - `app/Models/User.php`, `app/Models/AuditLog.php`
+  - `app/Services/AuditLogger.php`, `routes/api.php`, `bootstrap/app.php` (alias middleware & error JSON)
+  - `tests/Feature/AuthApiTest.php` (16 tes; SQLite in-memory, tidak menyentuh MySQL dev)
+- **Catatan implementasi:**  
+  - Token Bearer via Laravel Sanctum, masa berlaku `SANCTUM_EXPIRATION` (menit, default 720).  
+  - Login dibatasi 5x/menit per email+IP (429). Login gagal/ditolak juga masuk `audit_log`.  
+  - `role:` bersifat eksak (Super Admin tidak otomatis lolos `role:admin`). Akun `nonaktif` langsung 403 walau token masih berlaku.  
+  - Konvensi untuk modul berikutnya: `/api/admin/*` → `['auth:sanctum','role:admin','audit:<tabel>']`.
 
 ---
 
