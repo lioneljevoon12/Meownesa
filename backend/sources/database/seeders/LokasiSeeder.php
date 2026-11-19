@@ -2,69 +2,46 @@
 
 namespace Database\Seeders;
 
+use App\Models\Kampus;
 use App\Models\Lokasi;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
+/**
+ * Lokasi aktual dari spreadsheet presensi Jaga Satwa (1 sheet = 1 titik feeding).
+ * Sumber: database/seeders/data/kucing_aktual.json.
+ *
+ * KOORDINAT SEMENTARA: spreadsheet tidak memuat koordinat, jadi semua lokasi memakai titik
+ * tengah kampus. Admin wajib mengoreksi lewat PUT /api/admin/lokasi/{id}.
+ */
 class LokasiSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $lokasiData = [
-            // Kampus 1: Ketintang
-            [
-                'id_kampus' => 1,
-                'nama_lokasi' => 'Gedung K10 & K4 — Fakultas Vokasi',
-                'koordinat_x' => -7.31290000,
-                'koordinat_y' => 112.72750000,
-            ],
-            [
-                'id_kampus' => 1,
-                'nama_lokasi' => 'Gedung C — FMIPA',
-                'koordinat_x' => -7.31150000,
-                'koordinat_y' => 112.72800000,
-            ],
-            [
-                'id_kampus' => 1,
-                'nama_lokasi' => 'Gedung G — FEB',
-                'koordinat_x' => -7.31200000,
-                'koordinat_y' => 112.72900000,
-            ],
-            [
-                'id_kampus' => 1,
-                'nama_lokasi' => 'Kantin T2 & Gazebo Rektorat',
-                'koordinat_x' => -7.31350000,
-                'koordinat_y' => 112.72700000,
-            ],
+        foreach (self::data()['kampus'] as $kampusData) {
+            $kampus = Kampus::where('nama_kampus', $kampusData['nama_kampus'])->first()
+                ?? throw new RuntimeException("Kampus '{$kampusData['nama_kampus']}' belum ada. Jalankan KampusSeeder dulu.");
 
-            // Kampus 2: Lidah Wetan
-            [
-                'id_kampus' => 2,
-                'nama_lokasi' => 'Kantin T2 & Selasar Lapangan',
-                'koordinat_x' => -7.30150000,
-                'koordinat_y' => 112.67400000,
-            ],
-            [
-                'id_kampus' => 2,
-                'nama_lokasi' => 'Gedung T1 — FBS',
-                'koordinat_x' => -7.30250000,
-                'koordinat_y' => 112.67550000,
-            ],
-            [
-                'id_kampus' => 2,
-                'nama_lokasi' => 'Gedung Rektorat Liwet & Danau',
-                'koordinat_x' => -7.30100000,
-                'koordinat_y' => 112.67350000,
-            ],
-        ];
+            [$lat, $lng] = $kampusData['koordinat_default'];
 
-        foreach ($lokasiData as $lokasi) {
-            Lokasi::firstOrCreate(
-                ['nama_lokasi' => $lokasi['nama_lokasi'], 'id_kampus' => $lokasi['id_kampus']],
-                $lokasi
-            );
+            foreach ($kampusData['lokasi'] as $lok) {
+                Lokasi::firstOrCreate(
+                    ['id_kampus' => $kampus->id_kampus, 'nama_lokasi' => $lok['nama_lokasi']],
+                    ['koordinat_x' => $lat, 'koordinat_y' => $lng]
+                );
+            }
         }
+    }
+
+    /** @return array<string, mixed> */
+    public static function data(): array
+    {
+        static $data = null;
+
+        return $data ??= json_decode(
+            file_get_contents(database_path('seeders/data/kucing_aktual.json')),
+            true,
+            flags: JSON_THROW_ON_ERROR
+        );
     }
 }

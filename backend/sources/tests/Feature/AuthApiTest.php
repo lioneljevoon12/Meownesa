@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Tests\Concerns\InteractsWithApiAuth;
 use Tests\TestCase;
 
 /**
@@ -15,9 +16,7 @@ use Tests\TestCase;
  */
 class AuthApiTest extends TestCase
 {
-    use RefreshDatabase;
-
-    private const PASSWORD = 'Rahasia-123';
+    use InteractsWithApiAuth, RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -33,32 +32,6 @@ class AuthApiTest extends TestCase
             Route::delete('/api/_t/kucing/{id}', fn () => ['success' => true]);
             Route::post('/api/_t/gagal', fn () => response()->json(['success' => false], 422));
         });
-    }
-
-    private function makeUser(string $role = 'admin', string $status = 'aktif', string $email = null): User
-    {
-        return User::create([
-            'nama'          => 'Uji '.$role,
-            'email'         => $email ?? $role.'@uji.test',
-            'password_hash' => self::PASSWORD,
-            'role'          => $role,
-            'status_akun'   => $status,
-        ]);
-    }
-
-    private function tokenFor(User $user): string
-    {
-        return $this->postJson('/api/auth/login', ['email' => $user->email, 'password' => self::PASSWORD])
-            ->assertOk()->json('data.token');
-    }
-
-    private function bearer(string $token): array
-    {
-        // Di produksi tiap request = proses baru. Dalam satu tes, guard menyimpan user dari request
-        // sebelumnya, jadi dilupakan di sini agar token yang berbeda benar-benar dievaluasi ulang.
-        $this->app['auth']->forgetGuards();
-
-        return ['Authorization' => 'Bearer '.$token];
     }
 
     // ---------------------------------------------------------------- login

@@ -1,0 +1,1353 @@
+{
+  "sumber": {
+    "dokumen": [
+      "Presensi Ketintang 2026.xlsx",
+      "PRESENSI LIDAH WETAN.xlsx",
+      "documentations/sources-images/foto-kucing"
+    ],
+    "diekstrak": "2026-11-19",
+    "catatan_koordinat": "Koordinat semua lokasi = titik tengah kampus (sementara). Koreksi lewat PUT /api/admin/lokasi/{id}."
+  },
+  "kampus": [
+    {
+      "nama_kampus": "Kampus Ketintang",
+      "koordinat_default": [
+        -7.3129,
+        112.7275
+      ],
+      "lokasi": [
+        {
+          "nama_lokasi": "FISIPOL",
+          "sheet": "FISIPOL",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-001",
+              "nama_kucing": "Belang",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Pakai kalung. Ekor setengah. dipanggil belang noleh",
+              "foto": "images/kucing/KTT-001.jpg",
+              "sumber_foto": "foto-kucing/KTT-01.jpg"
+            },
+            {
+              "kode_kucing": "KTT-002",
+              "nama_kucing": "Oyen Ganteng",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan putih ekor oren",
+              "foto": "images/kucing/KTT-002.jpg",
+              "sumber_foto": "foto-kucing/KTT-02.jpg"
+            },
+            {
+              "kode_kucing": "KTT-003",
+              "nama_kucing": "Oreo",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan putih. Ekor panjang",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-004",
+              "nama_kucing": "Mujaer",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Full abu. Ekor setengah",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-005",
+              "nama_kucing": "Yaya",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga campur. Ekor setengah. Takut manusia",
+              "foto": "images/kucing/KTT-005.jpg",
+              "sumber_foto": "foto-kucing/KTT-03.jpg"
+            },
+            {
+              "kode_kucing": "KTT-006",
+              "nama_kucing": "Felly",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Warna keabu-abu an. Ekor panjang",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "FISIPOL (Perbatasan FEB)",
+          "sheet": "FISIPOL perbatasan FEB",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-007",
+              "nama_kucing": "Celli",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga banyak hitam. Ekor setengah",
+              "foto": "images/kucing/KTT-007.jpg",
+              "sumber_foto": "foto-kucing/KTT-04.jpg"
+            },
+            {
+              "kode_kucing": "KTT-008",
+              "nama_kucing": "Bleki",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Bulu lebat. Ekor panjang. Agak takut manusia",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "FEB",
+          "sheet": "FEB",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-009",
+              "nama_kucing": "Putih",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan putih ekor coklat. Ekor pendek. Badan gemuk",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-010",
+              "nama_kucing": "Lolly",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga campur. Ekor panjang. Tidurnya di BTN",
+              "foto": "images/kucing/KTT-010.jpg",
+              "sumber_foto": "foto-kucing/KTT-05.jpg"
+            },
+            {
+              "kode_kucing": "KTT-011",
+              "nama_kucing": "Om Coklat",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Motif marble coklat. Ekor panjang. Kadang tidur di BTN",
+              "foto": "images/kucing/KTT-011.jpg",
+              "sumber_foto": "foto-kucing/KTT-06.jpg"
+            },
+            {
+              "kode_kucing": "KTT-012",
+              "nama_kucing": "Om Abu",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan kekar abu putih. Ekor setengah",
+              "foto": "images/kucing/KTT-012.jpg",
+              "sumber_foto": "foto-kucing/KTT-07.jpg"
+            },
+            {
+              "kode_kucing": "KTT-013",
+              "nama_kucing": "Febri",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga campur. Ekor panjang. FEB sebrang Tenis",
+              "foto": "images/kucing/KTT-013.jpg",
+              "sumber_foto": "foto-kucing/KTT-08.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Fakultas Hukum",
+          "sheet": "HUKUM",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-014",
+              "nama_kucing": "Brownis",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil brownies noleh",
+              "foto": "images/kucing/KTT-014.jpg",
+              "sumber_foto": "foto-kucing/KTT-09.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Lapangan",
+          "sheet": "LAPANGAN",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-015",
+              "nama_kucing": "Puma",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam full. Ekor panjang. Dipanggil puma noleh",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-016",
+              "nama_kucing": "Jabrik",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Hilang",
+              "deskripsi": "Belang tiga. Ekor sangat pendek & menjeprak",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-017",
+              "nama_kucing": "Rally",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Abu + sedikit putih. Ekor panjang. Pakai kalung. Di dalam lapangan tennis",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "FC",
+          "sheet": "FC",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-018",
+              "nama_kucing": "Boni",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Biasanya ke Danau",
+              "foto": "images/kucing/KTT-018.jpg",
+              "sumber_foto": "foto-kucing/KTT-10.jpg"
+            },
+            {
+              "kode_kucing": "KTT-019",
+              "nama_kucing": "Puyo",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": null,
+              "foto": "images/kucing/KTT-019.jpg",
+              "sumber_foto": "foto-kucing/KTT-11.jpg"
+            },
+            {
+              "kode_kucing": "KTT-020",
+              "nama_kucing": "Kaki Tiga",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Diadopsi",
+              "deskripsi": "Selalu di dalam FC lama",
+              "foto": "images/kucing/KTT-020.jpg",
+              "sumber_foto": "foto-kucing/KTT-12.jpg"
+            },
+            {
+              "kode_kucing": "KTT-021",
+              "nama_kucing": "Annisa",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga. Ekor panjang",
+              "foto": "images/kucing/KTT-021.jpg",
+              "sumber_foto": "foto-kucing/KTT-13.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Area Miko",
+          "sheet": "MIKO",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-022",
+              "nama_kucing": "Miko",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": null,
+              "foto": "images/kucing/KTT-022.jpg",
+              "sumber_foto": "foto-kucing/KTT-14.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Danau",
+          "sheet": "DANAU",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-023",
+              "nama_kucing": "Cerry",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor sangat pendek. Selalu di danau",
+              "foto": "images/kucing/KTT-023.jpg",
+              "sumber_foto": "foto-kucing/KTT-15.jpg"
+            },
+            {
+              "kode_kucing": "KTT-024",
+              "nama_kucing": "Kimo",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Mata agak juling. Warna abu muda bercampur putih",
+              "foto": "images/kucing/KTT-024.jpg",
+              "sumber_foto": "foto-kucing/KTT-16.jpg"
+            },
+            {
+              "kode_kucing": "KTT-025",
+              "nama_kucing": "Sinyo",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Abu muda dan putih. Mata sipit",
+              "foto": "images/kucing/KTT-025.jpg",
+              "sumber_foto": "foto-kucing/KTT-17.jpg"
+            },
+            {
+              "kode_kucing": "KTT-026",
+              "nama_kucing": "Bocil",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor setengah. Oren dan putih. Selalu di danau",
+              "foto": "images/kucing/KTT-026.jpg",
+              "sumber_foto": "foto-kucing/KTT-18.jpg"
+            },
+            {
+              "kode_kucing": "KTT-027",
+              "nama_kucing": "Farrel",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badannya gagah kalau jalan. Dipanggil farel noleh",
+              "foto": "images/kucing/KTT-027.jpg",
+              "sumber_foto": "foto-kucing/KTT-19.jpg"
+            },
+            {
+              "kode_kucing": "KTT-028",
+              "nama_kucing": "Dobby",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil dobby noleh. Tinggal di area stupid chicken",
+              "foto": "images/kucing/KTT-028.jpg",
+              "sumber_foto": "foto-kucing/KTT-20.jpg"
+            },
+            {
+              "kode_kucing": "KTT-029",
+              "nama_kucing": "Moci",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Full abu kecuali area perut. Ekor panjang. Biasanya di dalam FC",
+              "foto": "images/kucing/KTT-029.jpg",
+              "sumber_foto": "foto-kucing/KTT-21.jpg"
+            },
+            {
+              "kode_kucing": "KTT-030",
+              "nama_kucing": "Kubo",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor panjang. Friendly ke manusia. Selalu di danau",
+              "foto": "images/kucing/KTT-030.jpg",
+              "sumber_foto": "foto-kucing/KTT-22.jpg"
+            },
+            {
+              "kode_kucing": "KTT-031",
+              "nama_kucing": "Cemong",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor setengah warna abu. Friendly ke manusia. Selalu di danau",
+              "foto": "images/kucing/KTT-031.jpg",
+              "sumber_foto": "foto-kucing/KTT-23.jpg"
+            },
+            {
+              "kode_kucing": "KTT-032",
+              "nama_kucing": "Bleki",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan dan ekor full hitam. Suka jalan agak jauh",
+              "foto": "images/kucing/KTT-032.jpg",
+              "sumber_foto": "foto-kucing/KTT-24.jpg"
+            },
+            {
+              "kode_kucing": "KTT-033",
+              "nama_kucing": "Cumil",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Agak galak. Badan gendut. Selalu di danau",
+              "foto": "images/kucing/KTT-033.jpg",
+              "sumber_foto": "foto-kucing/KTT-25.jpg"
+            },
+            {
+              "kode_kucing": "KTT-034",
+              "nama_kucing": "Nela",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Full putih agak krem",
+              "foto": "images/kucing/KTT-034.jpg",
+              "sumber_foto": "foto-kucing/KTT-26.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Danau Depan Masjid",
+          "sheet": "DANAU DEPAN MASJID",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-035",
+              "nama_kucing": "Siti",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": null,
+              "foto": "images/kucing/KTT-035.jpg",
+              "sumber_foto": "foto-kucing/KTT-27.jpg"
+            },
+            {
+              "kode_kucing": "KTT-036",
+              "nama_kucing": "Kuro",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan putih. Ekor panjang",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-037",
+              "nama_kucing": "Meli",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga tapi bercampur. Ekor panjang",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Masjid Samping Biologi",
+          "sheet": "MASJID SAMPING BIOLOGI",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-038",
+              "nama_kucing": "Snowy",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan putih dan abu. Mata belekan. Ekor panjang. Dipanggil snowy noleh. Kadang ke danau masjid",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-039",
+              "nama_kucing": "Soleha",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Hilang",
+              "deskripsi": "Belang tiga. Ekor panjang. Bulu panjang. Kadang ke danau masjid",
+              "foto": "images/kucing/KTT-039.jpg",
+              "sumber_foto": "foto-kucing/KTT-28.jpg"
+            },
+            {
+              "kode_kucing": "KTT-040",
+              "nama_kucing": "Curros",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan putih dan abu. Ekor panjang. Bulu panjang. Kadang ke danau masjid",
+              "foto": "images/kucing/KTT-040.jpg",
+              "sumber_foto": "foto-kucing/KTT-29.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Danau Depan FMIPA",
+          "sheet": "DANAU Depan FMIPA",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-041",
+              "nama_kucing": "Bella",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam ada sedikit putih di leher. Ekor sangat pendek. Dipanggil Bella noleh",
+              "foto": "images/kucing/KTT-041.jpg",
+              "sumber_foto": "foto-kucing/KTT-30.jpg"
+            },
+            {
+              "kode_kucing": "KTT-042",
+              "nama_kucing": "Cimot",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Putih dan corak oren. Ekor agak panjang oren",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-043",
+              "nama_kucing": "Poki",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan ada corak putih",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-044",
+              "nama_kucing": "Lilly",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan putih, telinga hitam. Ekor setengah warna hitam. Dipanggil Lilly noleh",
+              "foto": "images/kucing/KTT-044.jpg",
+              "sumber_foto": "foto-kucing/KTT-31.jpg"
+            },
+            {
+              "kode_kucing": "KTT-045",
+              "nama_kucing": "Ola",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dominan abu muda campur sedikit oren. Ekor panjang",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Teknik (ATM)",
+          "sheet": "TEKNIK ATM",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-046",
+              "nama_kucing": "Sapi",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Putih dan abu. Badan gendut sekali",
+              "foto": "images/kucing/KTT-046.jpg",
+              "sumber_foto": "foto-kucing/KTT-32.jpg"
+            },
+            {
+              "kode_kucing": "KTT-047",
+              "nama_kucing": "Marki",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Tidak Diketahui",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan putih. Ekor setengah. Wajahnya cowok banget",
+              "foto": "images/kucing/KTT-047.jpg",
+              "sumber_foto": "foto-kucing/KTT-33.jpg"
+            },
+            {
+              "kode_kucing": "KTT-048",
+              "nama_kucing": "Taro",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Tidak Diketahui",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan sedikit putih. Ekor panjang. Kadang ke parkiran teknik",
+              "foto": "images/kucing/KTT-048.jpg",
+              "sumber_foto": "foto-kucing/KTT-34.jpg"
+            },
+            {
+              "kode_kucing": "KTT-049",
+              "nama_kucing": "Ciro",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Tidak Diketahui",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan sedikit putih. Ekor pendek. Kadang ke parkiran teknik. Catatan: anak taro",
+              "foto": "images/kucing/KTT-049.jpg",
+              "sumber_foto": "foto-kucing/KTT-35.jpg"
+            },
+            {
+              "kode_kucing": "KTT-050",
+              "nama_kucing": "Leli",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Tidak Diketahui",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga campur abu2. Ekor panjang. Paling galak dari yg lain wkwk",
+              "foto": "images/kucing/KTT-050.jpg",
+              "sumber_foto": "foto-kucing/KTT-36.jpg"
+            },
+            {
+              "kode_kucing": "KTT-051",
+              "nama_kucing": "Kalesi",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga campur. Ekor panjang. Suka ngomel. Kadang di depan SIPIL",
+              "foto": "images/kucing/KTT-051.jpg",
+              "sumber_foto": "foto-kucing/KTT-37.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Fisika",
+          "sheet": "FISIKA",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-052",
+              "nama_kucing": "Fika",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Almarhum",
+              "deskripsi": "Belang tiga. Ekor setengah. Dipanggil Fika noleh. Catatan: ibu fiki",
+              "foto": "images/kucing/KTT-052.jpg",
+              "sumber_foto": "foto-kucing/KTT-38.jpg"
+            },
+            {
+              "kode_kucing": "KTT-053",
+              "nama_kucing": "Fiki",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Abu tua dan putih. Ekor setengah. Dipanggil Fiki noleh. Catatan: anak fika",
+              "foto": "images/kucing/KTT-053.jpg",
+              "sumber_foto": "foto-kucing/KTT-39.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Teknik Sains Data",
+          "sheet": "TEKNIK SAINS DATA",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-054",
+              "nama_kucing": "Molly",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil Molly noleh. Badan hitam. Ekor setengah",
+              "foto": "images/kucing/KTT-054.jpg",
+              "sumber_foto": "foto-kucing/KTT-40.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Sekretariat Teknik",
+          "sheet": "SEKRE TEKNIK",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-055",
+              "nama_kucing": "Elektro 1",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor panjang. Dominan abu sedikit putih",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-056",
+              "nama_kucing": "Elektro 2",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor panjang. Dominan oren sedikit putih",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-057",
+              "nama_kucing": "Elektro 3",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor panjang. Abu campur oren dan kuning",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-058",
+              "nama_kucing": "Elektro 4",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor panjang. Warna putih",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Samping Elektro",
+          "sheet": "SAMPING ELEKTRO",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-059",
+              "nama_kucing": "Upin",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor panjang. Warna abu dan putih",
+              "foto": "images/kucing/KTT-059.jpg",
+              "sumber_foto": "foto-kucing/KTT-41.jpg"
+            },
+            {
+              "kode_kucing": "KTT-060",
+              "nama_kucing": "Ipin",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor pendek. Warna oren dan putih",
+              "foto": "images/kucing/KTT-060.jpg",
+              "sumber_foto": "foto-kucing/KTT-42.jpg"
+            },
+            {
+              "kode_kucing": "KTT-061",
+              "nama_kucing": "Teman Mereka",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor pendek. Belang tiga. Agak cerewet",
+              "foto": "images/kucing/KTT-061.jpg",
+              "sumber_foto": "foto-kucing/KTT-43.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "PKK",
+          "sheet": "PKK",
+          "kucing": []
+        },
+        {
+          "nama_lokasi": "Teknik Mesin",
+          "sheet": "TEKNIK MESIN",
+          "kucing": []
+        },
+        {
+          "nama_lokasi": "Gerbang Belakang",
+          "sheet": "GERBANG BELAKANG",
+          "kucing": []
+        },
+        {
+          "nama_lokasi": "Depan Gedung IDB",
+          "sheet": "DEPAN GED. IDB",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-062",
+              "nama_kucing": "Cika",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Diadopsi",
+              "deskripsi": "Belang tiga. Ekor pendek badan kecil",
+              "foto": "images/kucing/KTT-062.jpg",
+              "sumber_foto": "foto-kucing/KTT-44.jpg"
+            },
+            {
+              "kode_kucing": "KTT-063",
+              "nama_kucing": "Otto",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Tidak Diketahui",
+              "status_kucing": "Terdata",
+              "deskripsi": "Abu dan sedikit putih. Ekor panjang. Kadang ke unipress dan jogkim. Dipanggil Otto noleh",
+              "foto": "images/kucing/KTT-063.jpg",
+              "sumber_foto": "foto-kucing/KTT-45.jpg"
+            },
+            {
+              "kode_kucing": "KTT-064",
+              "nama_kucing": "Cakue",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Hilang",
+              "deskripsi": "Ekor setengah. Takut manusia. Badan putih ekor hitam",
+              "foto": "images/kucing/KTT-064.jpg",
+              "sumber_foto": "foto-kucing/KTT-46.jpg"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Joglo Kimia",
+          "sheet": "JOGLO KIMIA",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-065",
+              "nama_kucing": "Noni",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga pastel campur. Ekor setengah. Pakai kalung bernama. Introvert",
+              "foto": "images/kucing/KTT-065.jpg",
+              "sumber_foto": "foto-kucing/KTT-47.jpg"
+            },
+            {
+              "kode_kucing": "KTT-066",
+              "nama_kucing": "Jena",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Corak oren marble. Ekor panjang. Pakai kalung bernama. Introvert",
+              "foto": "images/kucing/KTT-066.jpg",
+              "sumber_foto": "foto-kucing/KTT-48.jpg"
+            },
+            {
+              "kode_kucing": "KTT-067",
+              "nama_kucing": "Orenji",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Corak oren marble. Selalu di parkiran FMIPA",
+              "foto": "images/kucing/KTT-067.jpg",
+              "sumber_foto": "foto-kucing/KTT-49.jpg"
+            },
+            {
+              "kode_kucing": "KTT-068",
+              "nama_kucing": "Sabi",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Corak oren muda dan putih. Takut manusia. Ekor panjang",
+              "foto": "images/kucing/KTT-068.jpg",
+              "sumber_foto": "foto-kucing/KTT-50.jpg"
+            },
+            {
+              "kode_kucing": "KTT-069",
+              "nama_kucing": "Roti",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Diadopsi",
+              "deskripsi": "Belang tiga. Selalu di Joglo Kimia. Pakai kalung bernama. Ekor panjang badan kurus",
+              "foto": "images/kucing/KTT-069.jpg",
+              "sumber_foto": "foto-kucing/KTT-51.jpg"
+            },
+            {
+              "kode_kucing": "KTT-070",
+              "nama_kucing": "Jeliteng",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Full abu mujaer. Ekor panjang",
+              "foto": "images/kucing/KTT-070.jpg",
+              "sumber_foto": "foto-kucing/KTT-52.jpg"
+            },
+            {
+              "kode_kucing": "KTT-071",
+              "nama_kucing": "Ibu Nya Tiren",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga, coklat muda dan kuning. Ekor panjang",
+              "foto": "images/kucing/KTT-071.jpg",
+              "sumber_foto": "foto-kucing/KTT-53.jpg"
+            },
+            {
+              "kode_kucing": "KTT-072",
+              "nama_kucing": "Tiren",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": "Kitten",
+              "status_steril": "Tidak Diketahui",
+              "status_kucing": "Diadopsi",
+              "deskripsi": "Masih kecil. Ekor pendek. Selalu di jogkim",
+              "foto": "images/kucing/KTT-072.jpg",
+              "sumber_foto": "foto-kucing/KTT-54.jpg"
+            },
+            {
+              "kode_kucing": "KTT-073",
+              "nama_kucing": "Abuy",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Ekor pendek. Takut manusia. Badan abu ada sedikit oren kuning",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "KTT-074",
+              "nama_kucing": "Keju",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan oren ekor pendek. Agak introvert",
+              "foto": "images/kucing/KTT-074.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "KTT-075",
+              "nama_kucing": "Poca",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Hitam dan putih. Ekor pendek. Tidak mau dipegang",
+              "foto": "images/kucing/KTT-075.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "KTT-076",
+              "nama_kucing": "Dini",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga. Mau dekat manusia tapi tidak mau dipegang",
+              "foto": "images/kucing/KTT-076.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Unesa Press",
+          "sheet": "UNESAPRESS",
+          "kucing": [
+            {
+              "kode_kucing": "KTT-077",
+              "nama_kucing": "Mia",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga. Ekor panjang. Suara kecil",
+              "foto": "images/kucing/KTT-077.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "KTT-078",
+              "nama_kucing": "Cimeng",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Full abu. Ekor panjang. Agak takut manusia. Catatan: anak mia",
+              "foto": "images/kucing/KTT-078.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "KTT-079",
+              "nama_kucing": "Dory",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Belang tiga banyak putihnya. Ekor panjang. Kadang ke jogkim. Dipanggil dory noleh",
+              "foto": "images/kucing/KTT-079.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "KTT-080",
+              "nama_kucing": "Lili",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Diadopsi",
+              "deskripsi": "Belang tiga banyak putihnya. Ekor panjang. Kadang ke jogkim. Dipanggil dory noleh",
+              "foto": "images/kucing/KTT-080.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nama_kampus": "Kampus Lidah Wetan",
+      "koordinat_default": [
+        -7.3015,
+        112.674
+      ],
+      "lokasi": [
+        {
+          "nama_lokasi": "FIP",
+          "sheet": "FIP",
+          "kucing": [
+            {
+              "kode_kucing": "LWT-001",
+              "nama_kucing": "Jojo",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di Kantin",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-002",
+              "nama_kucing": "Miso",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di Kantin",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-003",
+              "nama_kucing": "Lala",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Suka pindah² tapi sering di kantin",
+              "foto": "images/kucing/LWT-003.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "LWT-004",
+              "nama_kucing": "Lulu",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di pendopo ki hajar",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-005",
+              "nama_kucing": "Bolu",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di gedung PLB",
+              "foto": "images/kucing/LWT-005.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "LWT-006",
+              "nama_kucing": "Kismis",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di pos satpam",
+              "foto": "images/kucing/LWT-006.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "LWT-007",
+              "nama_kucing": "Malika",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di pos satpam",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-008",
+              "nama_kucing": "Milo",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Di gedung BK. Kalau di ecek-ecek/dipanggil langsung datang",
+              "foto": "images/kucing/LWT-008.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "FBS",
+          "sheet": "FBS",
+          "kucing": [
+            {
+              "kode_kucing": "LWT-009",
+              "nama_kucing": "Mika",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": null,
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-010",
+              "nama_kucing": "Lento",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": null,
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-011",
+              "nama_kucing": "Sulis",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil sulis datang. Ekor panjang. Catatan: T3-T4-T8",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-012",
+              "nama_kucing": "Nori",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil nori datang. Gak mau digendong. Catatan: T3-T4-T8",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-013",
+              "nama_kucing": "Jahe",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan gemuk. Catatan: T4-T8",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-014",
+              "nama_kucing": "Cimeng",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil cimeng/kipli datang. Badan full abu. Catatan: T1-Pendopo",
+              "foto": "images/kucing/LWT-014.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            },
+            {
+              "kode_kucing": "LWT-015",
+              "nama_kucing": "Morris",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "FBS T8 (Sulis, Nori, Jahe). Kalau diecek² langsung datang. Kepalanya agak miring",
+              "foto": "images/kucing/LWT-015.jpg",
+              "sumber_foto": "spreadsheet (gambar tertanam)"
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "Labmer",
+          "sheet": "LABMER",
+          "kucing": [
+            {
+              "kode_kucing": "LWT-016",
+              "nama_kucing": "Oyen",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": "Dipanggil oyen oyen dateng. Badan oren dan putih",
+              "foto": null,
+              "sumber_foto": null
+            },
+            {
+              "kode_kucing": "LWT-017",
+              "nama_kucing": "Jerry",
+              "jenis_kelamin": "Jantan",
+              "kelompok_usia": null,
+              "status_steril": "Belum",
+              "status_kucing": "Terdata",
+              "deskripsi": "Badan oren full. Catatan: anak oyen",
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        },
+        {
+          "nama_lokasi": "FIKK",
+          "sheet": "FIKK",
+          "kucing": []
+        },
+        {
+          "nama_lokasi": "Lapangan Kuda",
+          "sheet": "LAPANGAN KUDA",
+          "kucing": []
+        },
+        {
+          "nama_lokasi": "Rektorat",
+          "sheet": "REKTORAT",
+          "kucing": [
+            {
+              "kode_kucing": "LWT-018",
+              "nama_kucing": "Syahrini",
+              "jenis_kelamin": "Betina",
+              "kelompok_usia": null,
+              "status_steril": "Sudah",
+              "status_kucing": "Terdata",
+              "deskripsi": null,
+              "foto": null,
+              "sumber_foto": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "dikecualikan": [
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "SEKRE TEKNIK",
+      "nama_di_sheet": "ELEKTRO 6",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "SEKRE TEKNIK",
+      "nama_di_sheet": "ELEKTRO 7",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "TEKNIK MESIN",
+      "nama_di_sheet": "MESIN 1",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "TEKNIK MESIN",
+      "nama_di_sheet": "MESIN 2",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "TEKNIK MESIN",
+      "nama_di_sheet": "MESIN 3",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "TEKNIK MESIN",
+      "nama_di_sheet": "MESIN 4",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "GERBANG BELAKANG",
+      "nama_di_sheet": "1.0",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "GERBANG BELAKANG",
+      "nama_di_sheet": "2.0",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "GERBANG BELAKANG",
+      "nama_di_sheet": "3.0",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "GERBANG BELAKANG",
+      "nama_di_sheet": "4.0",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Ketintang",
+      "sheet": "DEPAN GED. IDB",
+      "nama_di_sheet": "IDB 1",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    },
+    {
+      "kampus": "Kampus Lidah Wetan",
+      "sheet": "FIP",
+      "nama_di_sheet": "SIMBI (HILANG)",
+      "alasan": "Tidak ada deskripsi (jenis kelamin/steril) di spreadsheet"
+    }
+  ],
+  "catatan_privat_dihapus": [
+    {
+      "kucing": "Curros",
+      "catatan": "[disembunyikan]",
+      "alasan": "menunjuk tempat tinggal orang"
+    }
+  ]
+}

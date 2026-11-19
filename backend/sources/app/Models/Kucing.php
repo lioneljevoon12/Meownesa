@@ -12,6 +12,15 @@ class Kucing extends Model
 {
     use HasFactory;
 
+    /** Nilai status_kucing yang dipakai (data presensi Jaga Satwa menambah "Hilang"). */
+    public const STATUS = ['Terdata', 'Tersedia', 'Proses Screening', 'Diadopsi', 'Hilang', 'Almarhum'];
+
+    /** Kucing yang masih berada di area kampus (dihitung pada statistik lokasi). */
+    public const STATUS_DI_KAMPUS = ['Terdata', 'Tersedia', 'Proses Screening'];
+
+    /** "Tidak Diketahui" dipakai bila spreadsheet tidak mencantumkan status steril. */
+    public const STATUS_STERIL = ['Sudah', 'Belum', 'Tidak Diketahui'];
+
     protected $table = 'kucing';
     protected $primaryKey = 'id_kucing';
 

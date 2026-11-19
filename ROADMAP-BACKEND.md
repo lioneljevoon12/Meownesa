@@ -12,7 +12,7 @@
 |---|---|---|:---:|
 | **dev-backend-01** | Inisialisasi Database, Skema Migrasi 14 Tabel, & Seeder Master Data | Bab 2.5 (Struktur Tabel 2.5.2) | ✅ **SELESAI** |
 | **dev-backend-02** | Autentikasi Pengguna Multi-Role, Manajemen Sesi & Middleware Audit Log | MEOW-F-41 s/d MEOW-F-44, MEOW-NF-01 s/d 03 | ✅ **SELESAI** |
-| **dev-backend-03** | Modul Wilayah & Master Lokasi Persebaran Kucing (Ketintang & Lidah Wetan) | MEOW-F-05, MEOW-F-38, DFD 1.0 & 8.0 | P1 (Master Data) |
+| **dev-backend-03** | Modul Wilayah & Master Lokasi Persebaran Kucing (Ketintang & Lidah Wetan) | MEOW-F-05, MEOW-F-38, DFD 1.0 & 8.0 | ✅ **SELESAI** |
 | **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | P1 (Core Domain) |
 | **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | P1 (Clinical History) |
 | **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | P1 (Daily Operation) |
@@ -113,12 +113,23 @@
   - `POST /api/admin/lokasi` (Admin menambah spot gedung baru beserta koordinat).
   - `PUT /api/admin/lokasi/{id}` & `DELETE /api/admin/lokasi/{id}`.
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Endpoint publik menyajikan daftar titik lokasi umum kampus.
-  - [ ] Lokasi tervalidasi terhubung dengan `id_kampus` yang sah.
+  - [x] Endpoint publik menyajikan daftar titik lokasi umum kampus.
+  - [x] Lokasi tervalidasi terhubung dengan `id_kampus` yang sah.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/KampusController.php`
   - `app/Http/Controllers/LokasiController.php`
   - `app/Models/Kampus.php`, `app/Models/Lokasi.php`
+  - `app/Http/Requests/StoreLokasiRequest.php`, `UpdateLokasiRequest.php`, `app/Http/Resources/KampusResource.php`, `LokasiResource.php`
+  - `database/seeders/LokasiSeeder.php`, `KucingSeeder.php`, `database/seeders/data/kucing_aktual.json`, `public/images/kucing/`
+  - `backend/tools/import-presensi/` (skrip impor spreadsheet presensi)
+  - `tests/Feature/LokasiApiTest.php` (17 tes), `tests/Feature/SeederDataAktualTest.php` (5 tes)
+- **Catatan implementasi:**  
+  - Tambahan endpoint `GET /api/lokasi/{id}`. Respons kampus & lokasi memuat `jumlah_kucing` (hanya status Terdata/Tersedia/Proses Screening).  
+  - Nama lokasi unik per kampus; koordinat X = lintang (−90..90), Y = bujur (−180..180), maks. 8 desimal.  
+  - `DELETE` ditolak **409** bila lokasi masih dipakai kucing atau feeding log (FK di DB bersifat CASCADE, jadi pengecekan ini mencegah data kucing ikut terhapus).  
+  - **Data aktual:** seeder kini memakai spreadsheet presensi Jaga Satwa — 28 lokasi (22 Ketintang, 6 Lidah Wetan), 98 kucing, 67 foto. Data dummy (Mochi, Milo, dst.) dan riwayat medis/feeding dummy dihapus.  
+  - Nilai baru: `status_kucing = Hilang`, `status_steril = Tidak Diketahui` (konstanta di `App\Models\Kucing`).  
+  - **Koordinat semua lokasi masih titik tengah kampus** (spreadsheet tidak memuat koordinat) — perlu dikoreksi admin.
 
 ---
 
