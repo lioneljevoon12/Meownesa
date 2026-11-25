@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 04)",
+    "name": "MeowNesa API (dev-backend-01 s/d 05)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -49,6 +49,14 @@
     },
     {
       "key": "id_lokasi",
+      "value": ""
+    },
+    {
+      "key": "id_kesehatan",
+      "value": ""
+    },
+    {
+      "key": "id_kesehatan_vaksin",
       "value": ""
     }
   ],
@@ -1471,7 +1479,609 @@
       "description": "Jalankan berurutan. Request \"Upload foto\" butuh file yang dipilih manual."
     },
     {
-      "name": "7. Bersih-bersih",
+      "name": "7. Riwayat Kesehatan",
+      "item": [
+        {
+          "name": "Riwayat kesehatan publik (kucing 1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Data berupa array\", function () { pm.expect(j.data).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing/1/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing",
+                "1",
+                "kesehatan"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Riwayat kucing non-publik (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing/99999/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing",
+                "99999",
+                "kesehatan"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Siapkan kucing uji: Terdata + belum steril",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_kucing\": \"Terdata\",\n  \"status_steril\": \"Belum\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Menurunkan status dari Tersedia ke Terdata sekaligus mengembalikan steril ke Belum, supaya sinkronisasi steril bisa didemonstrasikan."
+          }
+        },
+        {
+          "name": "Tambah vaksinasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_kesehatan !== undefined) { pm.collectionVariables.set(\"id_kesehatan_vaksin\", j.data.id_kesehatan); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Vaksinasi\",\n  \"tanggal\": \"2026-09-01\",\n  \"catatan\": \"Tricat, Klinik Nusantara Vet\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tambah sterilisasi (status steril ikut berubah)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_kesehatan !== undefined) { pm.collectionVariables.set(\"id_kesehatan\", j.data.id_kesehatan); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Sterilisasi\",\n  \"tanggal\": \"2026-10-15\",\n  \"catatan\": \"Kastrasi tuntas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Status steril kucing otomatis \"Sudah\"",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"status_steril = Sudah\", function () { pm.expect(j.data.status_steril).to.eql(\"Sudah\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sterilisasi kedua ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Sterilisasi\",\n  \"tanggal\": \"2026-10-20\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tanggal masa depan ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Pemeriksaan\",\n  \"tanggal\": \"2099-01-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Jenis tindakan tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Operasi Plastik\",\n  \"tanggal\": \"2026-10-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Ubah catatan vaksinasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kesehatan/{{id_kesehatan_vaksin}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kesehatan",
+                "{{id_kesehatan_vaksin}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan\": \"Tricat + Rabies\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Riwayat publik: urut tindakan terbaru",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"2 catatan\", function () { pm.expect(j.data.length).to.eql(2); });",
+                  "pm.test(\"Terbaru di atas\", function () { pm.expect(j.data[0].tanggal >= j.data[1].tanggal).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Riwayat admin (dengan id)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Memuat id_kesehatan\", function () { pm.expect(j.data[0]).to.have.property(\"id_kesehatan\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan vaksinasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kesehatan/{{id_kesehatan_vaksin}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kesehatan",
+                "{{id_kesehatan_vaksin}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan sterilisasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kesehatan/{{id_kesehatan}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kesehatan",
+                "{{id_kesehatan}}"
+              ]
+            },
+            "description": "Dihapus agar kucing uji bisa dihapus di folder Bersih-bersih (kucing yang punya riwayat tidak boleh dihapus)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

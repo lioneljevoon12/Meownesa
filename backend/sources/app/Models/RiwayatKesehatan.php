@@ -10,6 +10,20 @@ class RiwayatKesehatan extends Model
 {
     use HasFactory;
 
+    /**
+     * Jenis tindakan (MEOW-F-11: vaksinasi, sterilisasi, pemeriksaan, vitamin; roadmap menambah obat
+     * cacing/kutu dan penanganan luka). Detail seperti "Tricat" atau nama klinik ditulis di catatan.
+     */
+    public const JENIS = [
+        'Sterilisasi', 'Vaksinasi', 'Pemeriksaan', 'Pemberian Vitamin',
+        'Obat Cacing', 'Obat Kutu', 'Penanganan Luka', 'Lainnya',
+    ];
+
+    public const JENIS_STERILISASI = 'Sterilisasi';
+
+    /** Tanggal tindakan dinilai menurut waktu setempat Jaga Satwa, bukan UTC bawaan aplikasi. */
+    public const ZONA_WAKTU = 'Asia/Jakarta';
+
     protected $table = 'riwayat_kesehatan';
     protected $primaryKey = 'id_kesehatan';
 

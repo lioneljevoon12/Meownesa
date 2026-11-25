@@ -14,7 +14,7 @@
 | **dev-backend-02** | Autentikasi Pengguna Multi-Role, Manajemen Sesi & Middleware Audit Log | MEOW-F-41 s/d MEOW-F-44, MEOW-NF-01 s/d 03 | ✅ **SELESAI** |
 | **dev-backend-03** | Modul Wilayah & Master Lokasi Persebaran Kucing (Ketintang & Lidah Wetan) | MEOW-F-05, MEOW-F-38, DFD 1.0 & 8.0 | ✅ **SELESAI** |
 | **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | ✅ **SELESAI** |
-| **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | P1 (Clinical History) |
+| **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | ✅ **SELESAI** |
 | **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | P1 (Daily Operation) |
 | **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | P1 (Adoption Flow) |
 | **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | P1 (Screening Review) |
@@ -186,11 +186,22 @@
   - `POST /api/admin/kucing/{id}/kesehatan` (Admin input tindakan medis baru).
   - `PUT /api/admin/kesehatan/{id}` & `DELETE /api/admin/kesehatan/{id}`.
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Tindakan sterilisasi yang diinput otomatis menyinkronkan atribut `status_steril` pada data kucing.
-  - [ ] Riwayat medis tersusun urut secara kronologis (dari tindakan terbaru).
+  - [x] Tindakan sterilisasi yang diinput otomatis menyinkronkan atribut `status_steril` pada data kucing.
+  - [x] Riwayat medis tersusun urut secara kronologis (dari tindakan terbaru).
 - **Target File / Komponen:**  
-  - `app/Http/Controllers/RiwayatKesehatanController.php`
+  - `app/Http/Controllers/RiwayatKesehatanController.php` (publik), `RiwayatKesehatanAdminController.php`
   - `app/Models/RiwayatKesehatan.php`
+  - `app/Http/Requests/RiwayatKesehatanRequest.php`, `StoreRiwayatKesehatanRequest.php`, `UpdateRiwayatKesehatanRequest.php`
+  - `app/Http/Resources/RiwayatKesehatanResource.php` (publik), `RiwayatKesehatanAdminResource.php`
+  - `tests/Feature/KesehatanApiTest.php` (21 tes)
+- **Catatan implementasi:**  
+  - Tambahan endpoint `GET /api/admin/kucing/{id}/kesehatan` (admin melihat riwayat lengkap dengan `id_kesehatan` untuk ubah/hapus, termasuk kucing non-publik). Riwayat publik hanya untuk kucing yang tampil di katalog (selain itu 404) dan hanya memuat `tanggal`, `jenis_tindakan`, `catatan`.  
+  - **Jenis tindakan** (daftar tetap): Sterilisasi, Vaksinasi, Pemeriksaan, Pemberian Vitamin, Obat Cacing, Obat Kutu, Penanganan Luka, Lainnya. Detail seperti "Tricat" atau nama klinik ditulis di `catatan`; `Lainnya` wajib berisi catatan.  
+  - **Tanggal** format `YYYY-MM-DD`, tidak boleh di masa depan menurut **WIB** (bukan UTC bawaan aplikasi) dan tidak sebelum 2015.  
+  - **Sinkronisasi steril satu arah:** mencatat atau mengubah menjadi `Sterilisasi` menetapkan `kucing.status_steril = Sudah` dan menulis audit `SINKRON_STERIL`. Menghapus atau mengubah catatan sterilisasi **tidak** mengembalikan status ke Belum, karena status "Sudah" juga berasal dari data presensi yang tidak punya catatan medis (kebenaran sebelumnya tidak diketahui sistem).  
+  - Satu kucing hanya boleh satu catatan `Sterilisasi` (dicek ulang di dalam transaksi dengan kunci baris kucing).  
+  - Kucing yang sudah punya riwayat kesehatan tidak dapat dihapus (409, lihat modul 04).  
+  - Data seeder tidak berisi riwayat kesehatan (spreadsheet presensi hanya memuat status steril); riwayat diisi admin lewat API.
 
 ---
 

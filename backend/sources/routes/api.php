@@ -6,6 +6,8 @@ use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\RiwayatKesehatanAdminController;
+use App\Http\Controllers\RiwayatKesehatanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +39,9 @@ Route::get('lokasi/{id}', [LokasiController::class, 'show'])->whereNumber('id');
 Route::get('kucing', [KucingController::class, 'index']);
 Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id');
 
+// ---- dev-backend-05: riwayat kesehatan (publik) ----------------------------------
+Route::get('kucing/{id}/kesehatan', [RiwayatKesehatanController::class, 'index'])->whereNumber('id');
+
 // ---- Admin Jaga Satwa ------------------------------------------------------------
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // dev-backend-03
@@ -62,5 +67,14 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('kucing/{kucing}/foto', [FotoKucingController::class, 'store'])->whereNumber('kucing');
         Route::put('kucing/{kucing}/foto/{foto}/utama', [FotoKucingController::class, 'setUtama'])->whereNumber(['kucing', 'foto']);
         Route::delete('kucing/{kucing}/foto/{foto}', [FotoKucingController::class, 'destroy'])->whereNumber(['kucing', 'foto']);
+    });
+
+    // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
+    // respons; PUT/DELETE memakai {id} (= id_kesehatan).
+    Route::get('kucing/{kucing}/kesehatan', [RiwayatKesehatanAdminController::class, 'index'])->whereNumber('kucing');
+    Route::middleware('audit:riwayat_kesehatan')->group(function () {
+        Route::post('kucing/{kucing}/kesehatan', [RiwayatKesehatanAdminController::class, 'store'])->whereNumber('kucing');
+        Route::put('kesehatan/{id}', [RiwayatKesehatanAdminController::class, 'update'])->whereNumber('id');
+        Route::delete('kesehatan/{id}', [RiwayatKesehatanAdminController::class, 'destroy'])->whereNumber('id');
     });
 });
