@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        // Foto kucing: berkas bawaan seeder ada di public/images/kucing, unggahan admin di subfolder upload/.
+        // Disimpan langsung di folder public agar tidak butuh `php artisan storage:link` (bermasalah di Windows).
+        'kucing_foto' => [
+            'driver' => 'local',
+            'root' => public_path('images/kucing'),
+            'url' => env('APP_URL').'/images/kucing',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

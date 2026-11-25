@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FotoKucingController;
 use App\Http\Controllers\KampusController;
+use App\Http\Controllers\KucingAdminController;
+use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,11 +33,34 @@ Route::get('kampus', [KampusController::class, 'index']);
 Route::get('lokasi', [LokasiController::class, 'index']);
 Route::get('lokasi/{id}', [LokasiController::class, 'show'])->whereNumber('id');
 
+// ---- dev-backend-04: katalog kucing (publik) -------------------------------------
+Route::get('kucing', [KucingController::class, 'index']);
+Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id');
+
 // ---- Admin Jaga Satwa ------------------------------------------------------------
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // dev-backend-03
     Route::middleware('audit:lokasi')->group(function () {
         Route::post('lokasi', [LokasiController::class, 'store']);
         Route::put('lokasi/{id}', [LokasiController::class, 'update'])->whereNumber('id');
         Route::delete('lokasi/{id}', [LokasiController::class, 'destroy'])->whereNumber('id');
+    });
+
+    // dev-backend-04: data kucing (admin melihat semua status)
+    Route::get('kucing', [KucingAdminController::class, 'index']);
+    Route::get('kucing/{id}', [KucingAdminController::class, 'show'])->whereNumber('id');
+
+    Route::middleware('audit:kucing')->group(function () {
+        Route::post('kucing', [KucingAdminController::class, 'store']);
+        Route::put('kucing/{id}', [KucingAdminController::class, 'update'])->whereNumber('id');
+        Route::delete('kucing/{id}', [KucingAdminController::class, 'destroy'])->whereNumber('id');
+    });
+
+    // dev-backend-04: galeri foto. Parameter bernama {kucing}/{foto} (bukan {id}) agar audit log
+    // mencatat id foto dari respons, bukan id kucing.
+    Route::middleware('audit:foto_kucing')->group(function () {
+        Route::post('kucing/{kucing}/foto', [FotoKucingController::class, 'store'])->whereNumber('kucing');
+        Route::put('kucing/{kucing}/foto/{foto}/utama', [FotoKucingController::class, 'setUtama'])->whereNumber(['kucing', 'foto']);
+        Route::delete('kucing/{kucing}/foto/{foto}', [FotoKucingController::class, 'destroy'])->whereNumber(['kucing', 'foto']);
     });
 });

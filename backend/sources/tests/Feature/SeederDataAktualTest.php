@@ -47,6 +47,14 @@ class SeederDataAktualTest extends TestCase
         $this->assertSame(0, FotoKucing::where('is_utama', true)->groupBy('id_kucing')->havingRaw('COUNT(*) > 1')->count());
     }
 
+    public function test_setiap_kucing_yang_punya_foto_punya_tepat_satu_foto_utama(): void
+    {
+        $tanpaUtama = Kucing::whereHas('fotoKucing')->whereDoesntHave('fotoKucing', fn ($q) => $q->where('is_utama', true))->count();
+
+        $this->assertSame(0, $tanpaUtama);
+        $this->assertSame(67, FotoKucing::where('is_utama', true)->count());   // 1 foto per kucing berfoto
+    }
+
     public function test_deskripsi_publik_tidak_memuat_catatan_tempat_tinggal_orang(): void
     {
         $this->assertSame(0, Kucing::where('deskripsi', 'like', '%kos %')->orWhere('nama_kucing', 'like', '%(%')->count());

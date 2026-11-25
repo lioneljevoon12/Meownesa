@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Foto kucing hasil unggahan admin (berkas bawaan seeder tetap dilacak)
+/public/images/kucing/upload/

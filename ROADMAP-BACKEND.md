@@ -13,7 +13,7 @@
 | **dev-backend-01** | Inisialisasi Database, Skema Migrasi 14 Tabel, & Seeder Master Data | Bab 2.5 (Struktur Tabel 2.5.2) | ✅ **SELESAI** |
 | **dev-backend-02** | Autentikasi Pengguna Multi-Role, Manajemen Sesi & Middleware Audit Log | MEOW-F-41 s/d MEOW-F-44, MEOW-NF-01 s/d 03 | ✅ **SELESAI** |
 | **dev-backend-03** | Modul Wilayah & Master Lokasi Persebaran Kucing (Ketintang & Lidah Wetan) | MEOW-F-05, MEOW-F-38, DFD 1.0 & 8.0 | ✅ **SELESAI** |
-| **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | P1 (Core Domain) |
+| **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | ✅ **SELESAI** |
 | **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | P1 (Clinical History) |
 | **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | P1 (Daily Operation) |
 | **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | P1 (Adoption Flow) |
@@ -150,14 +150,27 @@
   - `POST /api/admin/kucing/{id}/foto` (Upload foto tambahan galeri).
   - `PUT /api/admin/kucing/{id}/foto/{foto_id}/utama` (Set foto profil utama).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Publik hanya melihat kucing yang statusnya publik (*Tersedia, Terdata*).
-  - [ ] File gambar tersimpan rapi di storage publik dengan kompresi/validasi mime type (`jpg, png, webp`).
-  - [ ] Setiap kucing memiliki tepat satu foto bertanda `is_utama = true`.
+  - [x] Publik hanya melihat kucing yang statusnya publik (*Tersedia, Terdata*).
+  - [x] File gambar tersimpan rapi di storage publik dengan kompresi/validasi mime type (`jpg, png, webp`).
+  - [x] Setiap kucing memiliki tepat satu foto bertanda `is_utama = true`.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/KucingController.php`
   - `app/Http/Controllers/FotoKucingController.php`
   - `app/Models/Kucing.php`, `app/Models/FotoKucing.php`
-  - `app/Http/Requests/StoreKucingRequest.php`
+  - `app/Http/Controllers/KucingAdminController.php` (admin: daftar semua status, tambah, ubah, hapus)
+  - `app/Http/Requests/StoreKucingRequest.php`, `UpdateKucingRequest.php`, `UploadFotoKucingRequest.php`, `FilterKucingRequest.php`, `FilterKucingAdminRequest.php`
+  - `app/Http/Resources/KucingResource.php` (publik), `KucingAdminResource.php`, `FotoKucingResource.php`
+  - `app/Services/FotoKucingService.php`, `KodeKucingGenerator.php`
+  - `tests/Feature/KucingApiTest.php`, `KucingAdminApiTest.php`, `FotoKucingApiTest.php` (41 tes)
+- **Catatan implementasi:**  
+  - Tambahan endpoint: `GET /api/admin/kucing` & `GET /api/admin/kucing/{id}` (admin melihat semua status), `DELETE /api/admin/kucing/{id}/foto/{foto_id}`.  
+  - **Katalog publik:** paginasi (`per_page` maks. 50, respons memuat `meta`), filter `q`, `id_kampus`, `id_lokasi`, `status`, `jenis_kelamin`, `kelompok_usia`, `status_steril`, `sort` (`nama`/`terbaru`). Status non-publik (Proses Screening, Diadopsi, Hilang, Almarhum) tidak tampil di daftar maupun detail (404).  
+  - **MEOW-BR-14:** status `Tersedia` hanya bila `status_steril = Sudah` **dan** admin mengirim `konfirmasi_sehat = true` saat menaikkan status (belum ada kolom kesehatan; konfirmasi ini bersifat pernyataan admin dan tercatat di audit log). Kucing Tersedia tidak boleh diubah jadi belum steril tanpa menurunkan statusnya dulu.  
+  - **Status manual:** admin hanya bisa mengisi `Terdata/Tersedia/Hilang/Almarhum`. `Proses Screening` dan `Diadopsi` diatur otomatis oleh alur adopsi (modul 07-09, MEOW-BR-07).  
+  - **Kode kucing** otomatis per kampus (`KTT-081`, `LWT-019`) bila tidak diisi; boleh manual (huruf besar, unik).  
+  - **Hapus kucing** ditolak **409** bila sudah punya riwayat kesehatan, pengajuan adopsi, atau feeding (FK CASCADE/SET NULL akan menghapus riwayat); gunakan status Almarhum/Hilang.  
+  - **Foto:** JPG/PNG/WebP maks. 5 MB, 200-6000 px, maks. 10 foto/kucing. Setiap unggahan di-encode ulang ke JPEG maks. 1280 px, orientasi EXIF diterapkan dan **seluruh metadata EXIF (termasuk GPS) dibuang**. Foto pertama otomatis jadi utama; hapus foto utama menaikkan foto tertua yang tersisa. Perubahan galeri memakai transaksi + kunci baris agar selalu tepat satu foto utama.  
+  - Unggahan disimpan di `public/images/kucing/upload/` (tanpa `storage:link`), diabaikan git. Foto bawaan seeder tidak pernah dihapus dari disk.
 
 ---
 
