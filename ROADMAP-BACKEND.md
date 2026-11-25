@@ -15,7 +15,7 @@
 | **dev-backend-03** | Modul Wilayah & Master Lokasi Persebaran Kucing (Ketintang & Lidah Wetan) | MEOW-F-05, MEOW-F-38, DFD 1.0 & 8.0 | ✅ **SELESAI** |
 | **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | ✅ **SELESAI** |
 | **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | ✅ **SELESAI** |
-| **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | P1 (Daily Operation) |
+| **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | ✅ **SELESAI** |
 | **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | P1 (Adoption Flow) |
 | **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | P1 (Screening Review) |
 | **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | P1 (Handover Legal) |
@@ -218,11 +218,25 @@
   - `PUT /api/admin/feeding/{id}` & `DELETE /api/admin/feeding/{id}`.
   - `GET /api/admin/feeding/rekap` (Ringkasan statistik feeding mingguan/bulanan).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Admin dapat mencatat feeding untuk satu titik lokasi atau kucing spesifik.
-  - [ ] Menampilkan riwayat log feeding dengan filtering tanggal yang responsif.
+  - [x] Admin dapat mencatat feeding untuk satu titik lokasi atau kucing spesifik.
+  - [x] Menampilkan riwayat log feeding dengan filtering tanggal yang responsif.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/PemberianMakanController.php`
   - `app/Models/PemberianMakan.php`
+  - `app/Services/FeedingService.php` (aturan bisnis + simpan idempoten, dipakai tunggal dan batch)
+  - `app/Http/Requests/StorePemberianMakanRequest.php`, `UpdatePemberianMakanRequest.php`, `FilterPemberianMakanRequest.php`, `RekapPemberianMakanRequest.php`
+  - `app/Http/Resources/PemberianMakanResource.php`
+  - `database/migrations/2026_11_25_000001_add_client_uuid_to_pemberian_makan_table.php`
+  - `tests/Feature/FeedingApiTest.php` (24 tes)
+- **Catatan implementasi:**
+  - Semua endpoint **admin saja** (data internal). Tambahan: `POST /api/admin/feeding/batch` (sinkronisasi massal dari HP).
+  - **Satu catatan = satu kunci** (tanggal, lokasi, kucing). Kucing opsional (kosong = catatan untuk seluruh titik lokasi, pola spreadsheet). Bila hanya kucing yang dikirim, lokasi diambil dari lokasi tetap kucing; kucing boleh diberi makan di lokasi lain. Kunci yang sama ditolak 422 (pesan memuat `id_pemberian` yang sudah ada).
+  - **Status:** `Tuntas` (= Done), `Belum` (= Not yet), `Terjadwal` (rencana). Tuntas/Belum tidak boleh bertanggal masa depan menurut **WIB**; Terjadwal harus hari ini atau setelahnya. Tanggal paling awal 2020-01-01. Waktu pemberian tidak dicatat (Bab 2.3.2).
+  - **Kucing berstatus Almarhum/Hilang/Diadopsi tidak bisa dicatat** pemberian makannya. Saat mengubah catatan lama, hanya bagian yang diubah yang diperiksa, sehingga catatan historis kucing yang kini almarhum tetap bisa dikoreksi.
+  - **Siap offline-first:** kolom baru `client_uuid` (nullable, unik). Pengiriman ulang UUID yang sama dibalas **200** dengan catatan asli (bukan duplikat/422) dan tidak masuk audit log sebagai CREATE. `batch` menerima maks. 100 catatan; tiap catatan diproses mandiri dengan hasil `dibuat | sudah_ada | ditolak` (disertai alasan). Baris lokasi dikunci selama menyimpan agar dua permintaan bersamaan tidak lolos pengecekan duplikat.
+  - **Rekap** `GET /api/admin/feeding/rekap?periode=mingguan|bulanan&tanggal=` (bawaan: pekan berjalan WIB): pekan = Senin-Minggu, bulan = bulan kalender. Berisi ringkasan (`tuntas`, `belum`, `terjadwal`, `total`, `persen_tuntas` = tuntas/(tuntas+belum)), rincian per lokasi, dan per hari (semua hari ditampilkan, nol bila kosong; siap untuk grafik). Filter `id_kampus` dan `id_lokasi`.
+  - Kolom `tanggal` memakai cast `date:Y-m-d` agar tersimpan identik di MySQL dan SQLite.
+  - **Riwayat presensi di spreadsheet belum diimpor** (hanya API-nya yang tersedia); butuh skrip impor tersendiri bila ingin memindahkan data historis.
 
 ---
 

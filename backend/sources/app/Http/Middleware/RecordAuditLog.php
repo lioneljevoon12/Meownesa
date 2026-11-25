@@ -20,6 +20,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RecordAuditLog
 {
+    /**
+     * Atribut request yang diset controller bila aksi yang sukses ternyata tidak mengubah data
+     * (mis. pengiriman ulang idempoten), supaya audit log tidak mencatat perubahan palsu.
+     */
+    public const LEWATI = 'audit.lewati';
+
     private const AKTIVITAS = [
         'POST'   => 'CREATE',
         'PUT'    => 'UPDATE',
@@ -31,7 +37,7 @@ class RecordAuditLog
     {
         $response = $next($request);
 
-        if (! isset(self::AKTIVITAS[$request->method()]) || $response->getStatusCode() >= 400) {
+        if (! isset(self::AKTIVITAS[$request->method()]) || $response->getStatusCode() >= 400 || $request->attributes->get(self::LEWATI)) {
             return $response;
         }
 

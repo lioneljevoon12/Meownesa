@@ -6,6 +6,7 @@ use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\PemberianMakanController;
 use App\Http\Controllers\RiwayatKesehatanAdminController;
 use App\Http\Controllers\RiwayatKesehatanController;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +72,16 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
     // respons; PUT/DELETE memakai {id} (= id_kesehatan).
+    // dev-backend-06: feeding log (pengganti spreadsheet presensi). Tidak ada endpoint publik.
+    Route::get('feeding', [PemberianMakanController::class, 'index']);
+    Route::get('feeding/rekap', [PemberianMakanController::class, 'rekap']);
+    Route::post('feeding/batch', [PemberianMakanController::class, 'batch'])->middleware('audit:pemberian_makan,BATCH_CREATE');
+    Route::middleware('audit:pemberian_makan')->group(function () {
+        Route::post('feeding', [PemberianMakanController::class, 'store']);
+        Route::put('feeding/{id}', [PemberianMakanController::class, 'update'])->whereNumber('id');
+        Route::delete('feeding/{id}', [PemberianMakanController::class, 'destroy'])->whereNumber('id');
+    });
+
     Route::get('kucing/{kucing}/kesehatan', [RiwayatKesehatanAdminController::class, 'index'])->whereNumber('kucing');
     Route::middleware('audit:riwayat_kesehatan')->group(function () {
         Route::post('kucing/{kucing}/kesehatan', [RiwayatKesehatanAdminController::class, 'store'])->whereNumber('kucing');

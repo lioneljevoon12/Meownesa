@@ -14,7 +14,8 @@ use Illuminate\Database\Seeder;
  * diringkas ke database/seeders/data/kucing_aktual.json. Foto ada di public/images/kucing.
  *
  * Riwayat kesehatan dan feeding log tidak di-seed di sini: spreadsheet hanya memuat
- * status steril, sedangkan presensi feeding diimpor pada modul dev-backend-06.
+ * status steril. Riwayat presensi feeding di spreadsheet BELUM diimpor (modul dev-backend-06 hanya
+ * menyediakan API-nya); data historis itu perlu skrip impor tersendiri bila ingin dipindahkan.
  */
 class KucingSeeder extends Seeder
 {

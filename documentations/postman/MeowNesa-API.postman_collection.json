@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 05)",
+    "name": "MeowNesa API (dev-backend-01 s/d 06)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -57,6 +57,38 @@
     },
     {
       "key": "id_kesehatan_vaksin",
+      "value": ""
+    },
+    {
+      "key": "id_pemberian",
+      "value": ""
+    },
+    {
+      "key": "id_pemberian_lokasi",
+      "value": ""
+    },
+    {
+      "key": "id_batch1",
+      "value": ""
+    },
+    {
+      "key": "id_batch2",
+      "value": ""
+    },
+    {
+      "key": "id_kucing_alm",
+      "value": ""
+    },
+    {
+      "key": "uuid_feeding",
+      "value": ""
+    },
+    {
+      "key": "uuid_batch1",
+      "value": ""
+    },
+    {
+      "key": "uuid_batch2",
       "value": ""
     }
   ],
@@ -2081,7 +2113,766 @@
       ]
     },
     {
-      "name": "8. Bersih-bersih",
+      "name": "8. Feeding Log",
+      "item": [
+        {
+          "name": "Catat feeding kucing uji (Belum)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"uuid_feeding\", pm.variables.replaceIn(\"{{$guid}}\"));",
+                  "pm.collectionVariables.set(\"uuid_batch1\", pm.variables.replaceIn(\"{{$guid}}\"));",
+                  "pm.collectionVariables.set(\"uuid_batch2\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_pemberian !== undefined) { pm.collectionVariables.set(\"id_pemberian\", j.data.id_pemberian); }",
+                  "pm.test(\"Lokasi diisi dari kucing\", function () { pm.expect(j.data.lokasi.nama_lokasi).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_uuid\": \"{{uuid_feeding}}\",\n  \"id_kucing\": \"{{id_kucing}}\",\n  \"tanggal\": \"2020-01-06\",\n  \"status_pemberian\": \"Belum\",\n  \"catatan\": \"Dari Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Tanggal sengaja 2020-01-06 (jauh di masa lalu) agar tidak bentrok dengan data feeding sungguhan. client_uuid dibuat otomatis oleh skrip."
+          }
+        },
+        {
+          "name": "Kirim ulang UUID yang sama (idempoten, 200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Tidak membuat data baru\", function () { pm.expect(j.data.id_pemberian).to.eql(Number(pm.collectionVariables.get(\"id_pemberian\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_uuid\": \"{{uuid_feeding}}\",\n  \"id_kucing\": \"{{id_kucing}}\",\n  \"tanggal\": \"2020-01-06\",\n  \"status_pemberian\": \"Belum\",\n  \"catatan\": \"Dari Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Meniru HP yang mengirim ulang karena sinyal putus: server membalas 200 dengan catatan yang sama, tanpa menggandakan."
+          }
+        },
+        {
+          "name": "Kunci sama dengan UUID berbeda (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kucing\": \"{{id_kucing}}\",\n  \"tanggal\": \"2020-01-06\",\n  \"status_pemberian\": \"Tuntas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Satu kucing hanya boleh satu catatan per tanggal dan lokasi."
+          }
+        },
+        {
+          "name": "Ubah status menjadi Tuntas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/{{id_pemberian}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "{{id_pemberian}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_pemberian\": \"Tuntas\",\n  \"catatan\": \"Sudah diberi 70gr\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Catat feeding titik lokasi (tanpa kucing)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_pemberian !== undefined) { pm.collectionVariables.set(\"id_pemberian_lokasi\", j.data.id_pemberian); }",
+                  "pm.test(\"Tanpa kucing\", function () { pm.expect(j.data.kucing).to.eql(null); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_lokasi\": 1,\n  \"tanggal\": \"2020-01-06\",\n  \"status_pemberian\": \"Tuntas\",\n  \"catatan\": \"Titik FISIPOL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tuntas bertanggal masa depan (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_lokasi\": 1,\n  \"tanggal\": \"2099-01-01\",\n  \"status_pemberian\": \"Tuntas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Buat kucing almarhum uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_kucing !== undefined) { pm.collectionVariables.set(\"id_kucing_alm\", j.data.id_kucing); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_lokasi\": 1,\n  \"nama_kucing\": \"Almarhum Uji Postman\",\n  \"jenis_kelamin\": \"Betina\",\n  \"status_kucing\": \"Almarhum\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Feeding kucing almarhum ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kucing\": \"{{id_kucing_alm}}\",\n  \"tanggal\": \"2020-01-06\",\n  \"status_pemberian\": \"Tuntas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Hapus kucing almarhum uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing_alm}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing_alm}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sinkronisasi massal (batch dari HP)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"1 sudah ada, 2 dibuat, 1 ditolak\", function () { pm.expect(j.data.ringkasan).to.eql({dibuat: 2, sudah_ada: 1, ditolak: 1}); });",
+                  "pm.collectionVariables.set(\"id_batch1\", j.data.hasil[1].id_pemberian);",
+                  "pm.collectionVariables.set(\"id_batch2\", j.data.hasil[2].id_pemberian);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/batch",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "batch"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entries\": [\n    {\n      \"client_uuid\": \"{{uuid_feeding}}\",\n      \"id_kucing\": \"{{id_kucing}}\",\n      \"tanggal\": \"2020-01-06\",\n      \"status_pemberian\": \"Belum\"\n    },\n    {\n      \"client_uuid\": \"{{uuid_batch1}}\",\n      \"id_lokasi\": 1,\n      \"tanggal\": \"2020-01-07\",\n      \"status_pemberian\": \"Tuntas\"\n    },\n    {\n      \"client_uuid\": \"{{uuid_batch2}}\",\n      \"id_kucing\": \"{{id_kucing}}\",\n      \"tanggal\": \"2020-01-07\",\n      \"status_pemberian\": \"Tuntas\"\n    },\n    {\n      \"id_lokasi\": 1,\n      \"tanggal\": \"2020-01-08\",\n      \"status_pemberian\": \"Mungkin\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Satu permintaan berisi banyak catatan; tiap catatan diproses mandiri. Hasil per catatan: dibuat, sudah_ada, atau ditolak (beserta alasannya)."
+          }
+        },
+        {
+          "name": "Daftar feeding kucing uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"2 catatan (satu dari batch)\", function () { pm.expect(j.meta.total).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding?id_kucing={{id_kucing}}&per_page=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding"
+              ],
+              "query": [
+                {
+                  "key": "id_kucing",
+                  "value": "{{id_kucing}}"
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Rekap mingguan (6-12 Jan 2020)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Pekan Senin-Minggu\", function () { pm.expect(j.data.dari).to.eql(\"2020-01-06\"); pm.expect(j.data.sampai).to.eql(\"2020-01-12\"); });",
+                  "pm.test(\"4 catatan Tuntas, 100%\", function () { pm.expect(j.data.ringkasan.total).to.eql(4); pm.expect(j.data.ringkasan.persen_tuntas).to.eql(100); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/rekap?periode=mingguan&tanggal=2020-01-07",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "rekap"
+              ],
+              "query": [
+                {
+                  "key": "periode",
+                  "value": "mingguan"
+                },
+                {
+                  "key": "tanggal",
+                  "value": "2020-01-07"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Rekap bulanan (Januari 2020)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"31 hari ditampilkan\", function () { pm.expect(j.data.per_hari.length).to.eql(31); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/rekap?periode=bulanan&tanggal=2020-01-07",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "rekap"
+              ],
+              "query": [
+                {
+                  "key": "periode",
+                  "value": "bulanan"
+                },
+                {
+                  "key": "tanggal",
+                  "value": "2020-01-07"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan feeding kucing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/{{id_pemberian}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "{{id_pemberian}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan feeding titik lokasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/{{id_pemberian_lokasi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "{{id_pemberian_lokasi}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus hasil batch 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/{{id_batch1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "{{id_batch1}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus hasil batch 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feeding/{{id_batch2}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feeding",
+                "{{id_batch2}}"
+              ]
+            },
+            "description": "Semua catatan uji dihapus agar kucing uji bisa dihapus di folder Bersih-bersih."
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",
