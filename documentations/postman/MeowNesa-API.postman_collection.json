@@ -1,0 +1,1579 @@
+{
+  "info": {
+    "name": "MeowNesa API (dev-backend-01 s/d 04)",
+    "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "email_admin",
+      "value": "admin@jagasatwa.unesa.ac.id"
+    },
+    {
+      "key": "email_super",
+      "value": "superadmin@unesa.ac.id"
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "token_super",
+      "value": ""
+    },
+    {
+      "key": "id_kucing",
+      "value": ""
+    },
+    {
+      "key": "id_foto",
+      "value": ""
+    },
+    {
+      "key": "id_lokasi",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Login (jalankan pertama)",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.token !== undefined) { pm.collectionVariables.set(\"token\", j.data.token); }",
+                  "pm.test(\"Role admin\", function () { pm.expect(j.data.user.role).to.eql(\"admin\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_admin}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Token otomatis disimpan ke variabel {{token}} dan dipakai semua request lain."
+          }
+        },
+        {
+          "name": "Login Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.token !== undefined) { pm.collectionVariables.set(\"token_super\", j.data.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_super}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Dipakai untuk membuktikan Super Admin DITOLAK (403) di endpoint admin."
+          }
+        },
+        {
+          "name": "Profil saya (me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada daftar akses\", function () { pm.expect(j.data.akses).to.be.an(\"array\").that.is.not.empty; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login salah password (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_admin}}\",\n  \"password\": \"salah-sekali\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Publik: Kampus & Lokasi",
+      "item": [
+        {
+          "name": "Daftar kampus",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"2 kampus\", function () { pm.expect(j.data.length).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kampus",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kampus"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Daftar lokasi (semua)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lokasi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lokasi"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Daftar lokasi per kampus",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lokasi?id_kampus=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lokasi"
+              ],
+              "query": [
+                {
+                  "key": "id_kampus",
+                  "value": "2"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Detail lokasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lokasi/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lokasi",
+                "1"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Filter kampus tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lokasi?id_kampus=999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lokasi"
+              ],
+              "query": [
+                {
+                  "key": "id_kampus",
+                  "value": "999"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Publik: Katalog Kucing",
+      "item": [
+        {
+          "name": "Daftar kucing (halaman 1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada meta paginasi\", function () { pm.expect(j.meta).to.have.property(\"total\"); });",
+                  "pm.test(\"Hanya status publik\", function () { j.data.forEach(c => pm.expect([\"Tersedia\",\"Terdata\"]).to.include(c.status_kucing)); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing?per_page=12&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "12"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Cari \"kismis\" di Lidah Wetan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing?q=kismis&id_kampus=2&jenis_kelamin=Betina&status_steril=Sudah&sort=terbaru",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "kismis"
+                },
+                {
+                  "key": "id_kampus",
+                  "value": "2"
+                },
+                {
+                  "key": "jenis_kelamin",
+                  "value": "Betina",
+                  "disabled": true
+                },
+                {
+                  "key": "status_steril",
+                  "value": "Sudah",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "terbaru",
+                  "disabled": true
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Detail kucing (galeri foto)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Punya galeri\", function () { pm.expect(j.data.galeri).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing",
+                "1"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Filter status non-publik (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing?status=Almarhum",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Almarhum"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Kucing tidak ada (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing/99999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing",
+                "99999"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Hak akses (RBAC)",
+      "item": [
+        {
+          "name": "Endpoint admin TANPA token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Endpoint admin dengan Super Admin (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Super Admin tidak berwenang atas data operasional. Jalankan \"Login Super Admin\" dulu."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Admin: Lokasi",
+      "item": [
+        {
+          "name": "Tambah lokasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_lokasi !== undefined) { pm.collectionVariables.set(\"id_lokasi\", j.data.id_lokasi); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/lokasi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "lokasi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kampus\": 1,\n  \"nama_lokasi\": \"Lokasi Uji Postman\",\n  \"koordinat_x\": -7.31111111,\n  \"koordinat_y\": 112.72222222\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tambah lokasi: validasi gagal (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/lokasi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "lokasi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kampus\": 99,\n  \"nama_lokasi\": \"\",\n  \"koordinat_x\": 200,\n  \"koordinat_y\": \"abc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Ubah koordinat lokasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/lokasi/{{id_lokasi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "lokasi",
+                "{{id_lokasi}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"koordinat_x\": -7.3122,\n  \"koordinat_y\": 112.7233\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Hapus lokasi yang masih dipakai kucing (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/lokasi/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "lokasi",
+                "1"
+              ]
+            },
+            "description": "Lokasi 1 (FISIPOL) masih dipakai kucing, jadi ditolak agar data kucing tidak ikut terhapus."
+          }
+        },
+        {
+          "name": "Hapus lokasi uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/lokasi/{{id_lokasi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "lokasi",
+                "{{id_lokasi}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Admin: Data Kucing",
+      "item": [
+        {
+          "name": "Daftar semua kucing (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Admin melihat semua status\", function () { pm.expect(j.meta.total).to.be.above(89); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing?per_page=20&status=Hilang",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "Hilang",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tambah kucing (kode otomatis)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_kucing !== undefined) { pm.collectionVariables.set(\"id_kucing\", j.data.id_kucing); }",
+                  "pm.test(\"Kode otomatis KTT-xxx\", function () { pm.expect(j.data.kode_kucing).to.match(/^KTT-\\d{3}$/); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_lokasi\": 1,\n  \"nama_kucing\": \"Kucing Uji Postman\",\n  \"jenis_kelamin\": \"Jantan\",\n  \"kelompok_usia\": \"Dewasa\",\n  \"deskripsi\": \"Dibuat dari Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "BR-14: Tersedia padahal belum steril (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_kucing\": \"Tersedia\",\n  \"konfirmasi_sehat\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Steril masih \"Tidak Diketahui\", jadi ditolak."
+          }
+        },
+        {
+          "name": "BR-14: Tersedia tanpa konfirmasi sehat (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_steril\": \"Sudah\",\n  \"status_kucing\": \"Tersedia\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "BR-14: Tersedia lengkap (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Status Tersedia\", function () { pm.expect(j.data.status_kucing).to.eql(\"Tersedia\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_steril\": \"Sudah\",\n  \"status_kucing\": \"Tersedia\",\n  \"konfirmasi_sehat\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Status Diadopsi manual (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_kucing\": \"Diadopsi\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Diadopsi hanya boleh diatur oleh alur adopsi."
+          }
+        },
+        {
+          "name": "Detail kucing (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Admin: Galeri Foto",
+      "item": [
+        {
+          "name": "Upload foto (pilih file di Body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_foto_kucing !== undefined) { pm.collectionVariables.set(\"id_foto\", j.data.id_foto_kucing); }",
+                  "pm.test(\"Foto pertama jadi utama\", function () { pm.expect(j.data.is_utama).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/foto",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "foto"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "description": "Buka tab Body > form-data, pada baris \"foto\" klik \"Select Files\" lalu pilih JPG/PNG/WebP (maks 5 MB). GPS/EXIF otomatis dibuang."
+          }
+        },
+        {
+          "name": "Upload PDF ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/foto",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "foto"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "description": "Pilih berkas non-gambar (mis. PDF) pada baris \"foto\" untuk melihat penolakan."
+          }
+        },
+        {
+          "name": "Jadikan foto utama",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/foto/{{id_foto}}/utama",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "foto",
+                "{{id_foto}}",
+                "utama"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus foto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/foto/{{id_foto}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "foto",
+                "{{id_foto}}"
+              ]
+            }
+          }
+        }
+      ],
+      "description": "Jalankan berurutan. Request \"Upload foto\" butuh file yang dipilih manual."
+    },
+    {
+      "name": "7. Bersih-bersih",
+      "item": [
+        {
+          "name": "Hapus kucing uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Setelah logout, token ditolak (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
