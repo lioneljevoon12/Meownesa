@@ -10,6 +10,8 @@ class ScreeningAdopsi extends Model
 {
     use HasFactory;
 
+    public const HASIL = ['Lolos', 'Ragu', 'Tidak Lolos'];
+
     protected $table = 'screening_adopsi';
     protected $primaryKey = 'id_screening';
 

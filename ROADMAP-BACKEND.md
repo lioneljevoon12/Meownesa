@@ -17,7 +17,7 @@
 | **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | ✅ **SELESAI** |
 | **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | ✅ **SELESAI** |
 | **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | ✅ **SELESAI** |
-| **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | P1 (Screening Review) |
+| **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | ✅ **SELESAI** |
 | **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | P1 (Handover Legal) |
 | **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | P2 (Monitoring) |
 | **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | P2 (Notification) |
@@ -291,13 +291,27 @@
   - `POST /api/admin/adopsi/{id}/screening` (Simpan evaluasi kriteria & catatan admin di tabel `screening_adopsi`).
   - `PUT /api/admin/adopsi/{id}/status` (Update status: `APPROVED`, `REJECTED`, atau `SCREENING`).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Setiap screening mencatat `id_user` admin penanggung jawab verifikasi.
-  - [ ] Data kriteria evaluasi tersimpan utuh di tabel `screening_adopsi`.
-  - [ ] Perubahan status memicu pembuatan record notifikasi untuk pelamar.
+  - [x] Setiap screening mencatat `id_user` admin penanggung jawab verifikasi.
+  - [x] Data kriteria evaluasi tersimpan utuh di tabel `screening_adopsi`.
+  - [x] Perubahan status memicu pembuatan record notifikasi untuk pelamar.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/ScreeningAdopsiController.php`
   - `app/Models/ScreeningAdopsi.php`
   - `app/Http/Requests/StoreScreeningRequest.php`
+  - `app/Http/Controllers/PengajuanAdopsiAdminController.php` (antrean, detail, unduh lampiran, ubah status)
+  - `app/Services/PengajuanStatusService.php` (mesin status), `NotifikasiPengajuanService.php`
+  - `app/Http/Requests/FilterPengajuanAdminRequest.php`, `UbahStatusPengajuanRequest.php`
+  - `app/Http/Resources/PengajuanAdminResource.php`, `PengajuanAdminDetailResource.php`, `ScreeningResource.php`
+  - `tests/Feature/PengajuanAdminApiTest.php` (9 tes), `ScreeningStatusApiTest.php` (20 tes)
+- **Catatan implementasi:**
+  - **Semua endpoint `role:admin` saja**: Super Admin mendapat 403 (BR-05, keputusan adopsi bukan wewenang teknis).
+  - **Antrean** `GET /api/admin/adopsi`: urut yang paling lama menunggu di atas (`sort=terbaru` tersedia); filter `status`, `id_kucing`, `q` (nomor, nama, email, WhatsApp, kode tracking), `dari`/`sampai`; paginasi; `meta.jumlah_per_status` (tidak terpengaruh filter) untuk lencana tab. **Detail** memuat alamat, kode tracking (membantu pemohon yang lupa), lampiran, screening lengkap beserta petugas, dan riwayat notifikasi.
+  - **Unduh lampiran** `GET /api/admin/adopsi/{id}/lampiran/{lampiran}`: hanya admin; gambar `inline`, PDF selalu `attachment`; header `nosniff` dan `no-store`; nama berkas aman (`ADP-…-ktp.jpg`). **Setiap akses dicatat di audit log** (`LIHAT_LAMPIRAN`) karena berisi data pribadi.
+  - **Screening** `POST /api/admin/adopsi/{pengajuan}/screening` (upsert: 201 membuat, 200 memperbarui; audit `CREATE`/`UPDATE`): hanya saat pengajuan `SCREENING`; hasil `Lolos|Ragu|Tidak Lolos`; **`Lolos` mewajibkan keempat kriteria terisi**; `id_user` = admin yang terakhir menyimpan; tanggal bawaan hari ini (WIB). Terkunci setelah diputuskan; untuk koreksi, kembalikan status ke `SCREENING`.
+  - **Mesin status** `PUT /api/admin/adopsi/{id}/status` (`SCREENING|DISETUJUI|DITOLAK`): `MENUNGGU→SCREENING|DITOLAK`, `SCREENING→DISETUJUI|DITOLAK`, `DISETUJUI→SCREENING|DITOLAK`; `DITOLAK` final; `SELESAI` hanya oleh serah terima (modul 09). `DISETUJUI` butuh hasil screening dan bukan `Tidak Lolos`.
+  - **Sinkron status kucing (NF-14):** mulai `SCREENING` → kucing `Tersedia` menjadi `Proses Screening` (hanya satu pengajuan yang boleh memegang satu kucing; yang lain tetap mengantre); `DITOLAK` setelah memegang → kucing kembali `Tersedia`; `DISETUJUI` → kucing tetap `Proses Screening` sampai serah terima (BR-07). Perubahan kucing dicatat audit `SINKRON_STATUS_KUCING`. Kucing yang sedang dipegang pengajuan **tidak bisa diubah statusnya dari edit data kucing** (guard baru di modul 04).
+  - **Notifikasi:** tiap perubahan status membuat 2 catatan `PENDING` (WhatsApp + Email, `id_user` kosong karena pemohon belum punya akun) berjenis `Status Adopsi`. Saat pengajuan masuk (modul 07) kini dibuat juga `Konfirmasi Pengajuan` berisi nomor pengajuan, **kode tracking**, dan tautan pelacakan (`FRONTEND_URL`). Pesan tidak memuat alasan keputusan, hasil screening, email, WhatsApp, atau alamat. Pengiriman nyata: modul 11.
+  - Mekanisme audit baru: `RecordAuditLog::AKTIVITAS_KHUSUS` untuk menimpa nama aktivitas pada endpoint upsert via POST.
 
 ---
 

@@ -9,6 +9,7 @@ use App\Models\Kucing;
 use App\Models\PemberianMakan;
 use App\Models\PengajuanAdopsi;
 use App\Services\LampiranService;
+use App\Services\NotifikasiPengajuanService;
 use App\Services\TrackingCodeGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -30,6 +31,7 @@ class PengajuanAdopsiController extends Controller
     public function __construct(
         private readonly TrackingCodeGenerator $kode,
         private readonly LampiranService $lampiran,
+        private readonly NotifikasiPengajuanService $notifikasi,
     ) {
     }
 
@@ -72,6 +74,9 @@ class PengajuanAdopsiController extends Controller
                 foreach ($berkas as $jenis => $file) {
                     $tersimpan[] = $this->lampiran->simpan($pengajuan, $jenis, $file)->url_file;
                 }
+
+                // Antrean konfirmasi (WhatsApp + email) berisi nomor dan kode tracking; pengiriman nyata di modul 11.
+                $this->notifikasi->konfirmasi($pengajuan);
 
                 return $pengajuan;
             });

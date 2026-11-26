@@ -26,6 +26,12 @@ class RecordAuditLog
      */
     public const LEWATI = 'audit.lewati';
 
+    /**
+     * Atribut request untuk menimpa nama aktivitas bawaan (dari metode HTTP). Dipakai endpoint "simpan"
+     * yang bisa membuat atau memperbarui (upsert) agar audit log tidak mencatat pembaruan sebagai CREATE.
+     */
+    public const AKTIVITAS_KHUSUS = 'audit.aktivitas';
+
     private const AKTIVITAS = [
         'POST'   => 'CREATE',
         'PUT'    => 'UPDATE',
@@ -48,7 +54,7 @@ class RecordAuditLog
 
         AuditLogger::record(
             $user,
-            $aktivitas ?? self::AKTIVITAS[$request->method()],
+            $aktivitas ?? $request->attributes->get(self::AKTIVITAS_KHUSUS) ?? self::AKTIVITAS[$request->method()],
             $tabel ?? $this->tabelDariUri($request),
             $this->idData($request, $response),
         );

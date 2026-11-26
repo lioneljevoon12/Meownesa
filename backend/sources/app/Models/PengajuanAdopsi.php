@@ -17,6 +17,21 @@ class PengajuanAdopsi extends Model
     /** Pengajuan yang masih berjalan: belum diputuskan admin. */
     public const STATUS_AKTIF = ['MENUNGGU', 'SCREENING'];
 
+    /**
+     * Perpindahan status yang boleh dilakukan admin. SELESAI hanya diset otomatis oleh pencatatan serah terima
+     * (modul 09). DITOLAK bersifat final; DISETUJUI boleh dikoreksi kembali ke SCREENING atau dibatalkan (DITOLAK).
+     */
+    public const TRANSISI = [
+        'MENUNGGU'  => ['SCREENING', 'DITOLAK'],
+        'SCREENING' => ['DISETUJUI', 'DITOLAK'],
+        'DISETUJUI' => ['SCREENING', 'DITOLAK'],
+        'DITOLAK'   => [],
+        'SELESAI'   => [],
+    ];
+
+    /** Status yang "memegang" seekor kucing: hanya satu pengajuan boleh berstatus ini per kucing. */
+    public const STATUS_MEMEGANG_KUCING = ['SCREENING', 'DISETUJUI'];
+
     /** Teks status untuk calon adopter di halaman pelacakan: [label, keterangan]. */
     public const TEKS_PUBLIK = [
         'MENUNGGU'  => ['Menunggu Pemeriksaan', 'Pengajuan Anda sudah kami terima dan menunggu diperiksa oleh pengurus Jaga Satwa.'],

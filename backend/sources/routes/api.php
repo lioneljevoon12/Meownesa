@@ -7,9 +7,11 @@ use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PemberianMakanController;
+use App\Http\Controllers\PengajuanAdopsiAdminController;
 use App\Http\Controllers\PengajuanAdopsiController;
 use App\Http\Controllers\RiwayatKesehatanAdminController;
 use App\Http\Controllers\RiwayatKesehatanController;
+use App\Http\Controllers\ScreeningAdopsiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,6 +79,14 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::put('kucing/{kucing}/foto/{foto}/utama', [FotoKucingController::class, 'setUtama'])->whereNumber(['kucing', 'foto']);
         Route::delete('kucing/{kucing}/foto/{foto}', [FotoKucingController::class, 'destroy'])->whereNumber(['kucing', 'foto']);
     });
+
+    // dev-backend-08: antrean, screening, dan keputusan pengajuan adopsi. Hanya Admin Jaga Satwa (BR-05).
+    // Screening memakai {pengajuan} (bukan {id}) agar audit log mencatat id_screening dari respons.
+    Route::get('adopsi', [PengajuanAdopsiAdminController::class, 'index']);
+    Route::get('adopsi/{id}', [PengajuanAdopsiAdminController::class, 'show'])->whereNumber('id');
+    Route::get('adopsi/{id}/lampiran/{lampiran}', [PengajuanAdopsiAdminController::class, 'lampiran'])->whereNumber(['id', 'lampiran']);
+    Route::put('adopsi/{id}/status', [PengajuanAdopsiAdminController::class, 'ubahStatus'])->whereNumber('id')->middleware('audit:pengajuan_adopsi,UBAH_STATUS');
+    Route::post('adopsi/{pengajuan}/screening', [ScreeningAdopsiController::class, 'store'])->whereNumber('pengajuan')->middleware('audit:screening_adopsi');
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
     // respons; PUT/DELETE memakai {id} (= id_kesehatan).

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Kucing;
+use App\Models\PengajuanAdopsi;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -44,6 +45,16 @@ abstract class KucingRequest extends FormRequest
     {
         $validator->after(function (Validator $v) {
             $saatIni = $this->kucingSaatIni();
+
+            // MEOW-NF-14: kucing yang sedang dipegang pengajuan adopsi (SCREENING/DISETUJUI) berstatus
+            // Proses Screening. Status itu hanya boleh berubah lewat alur adopsi, bukan edit data kucing.
+            if ($saatIni?->status_kucing === 'Proses Screening'
+                && $this->has('status_kucing')
+                && $this->input('status_kucing') !== 'Proses Screening'
+                && $saatIni->pengajuanAdopsi()->whereIn('status_pengajuan', PengajuanAdopsi::STATUS_MEMEGANG_KUCING)->exists()) {
+                $v->errors()->add('status_kucing', 'Kucing ini sedang diproses untuk sebuah pengajuan adopsi. Tolak atau selesaikan pengajuannya terlebih dahulu; status tidak dapat diubah dari sini.');
+            }
+
             $status = $this->input('status_kucing', $saatIni?->status_kucing ?? 'Terdata');
             $steril = $this->input('status_steril', $saatIni?->status_steril ?? 'Tidak Diketahui');
 

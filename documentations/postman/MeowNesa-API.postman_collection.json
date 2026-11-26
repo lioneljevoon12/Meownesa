@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 07)",
+    "name": "MeowNesa API (dev-backend-01 s/d 08)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -101,6 +101,14 @@
     },
     {
       "key": "nomor_pengajuan",
+      "value": ""
+    },
+    {
+      "key": "id_pengajuan_adopsi",
+      "value": ""
+    },
+    {
+      "key": "id_lampiran_adopsi",
       "value": ""
     }
   ],
@@ -3110,7 +3118,7 @@
                 }
               }
             },
-            "description": "PERHATIAN: folder ini membuat pengajuan adopsi sungguhan yang belum bisa dihapus lewat API (kucingnya pun jadi tidak bisa dihapus). Hapus centang folder ini bila menjalankan koleksi berulang-ulang, atau reset dengan php artisan migrate:fresh --seed."
+            "description": "PERHATIAN: folder ini membuat pengajuan adopsi sungguhan yang belum bisa dihapus lewat API (kucingnya pun jadi tidak bisa dihapus). Jalankan folder 11 sesudahnya untuk memproses dan merapikan pengajuan ini. Hapus centang folder 10 dan 11 bila menjalankan koleksi berulang-ulang, atau reset dengan php artisan migrate:fresh --seed."
           }
         },
         {
@@ -3402,6 +3410,688 @@
               "type": "noauth"
             }
           }
+        }
+      ]
+    },
+    {
+      "name": "11. Admin: Screening dan Keputusan (lanjutan folder 10)",
+      "item": [
+        {
+          "name": "Cari pengajuan uji di antrean (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Pengajuan ditemukan\", function () { pm.expect(j.data.length).to.eql(1); });",
+                  "pm.test(\"Ada jumlah per status untuk lencana antrean\", function () { pm.expect(j.meta.jumlah_per_status).to.have.property(\"MENUNGGU\"); });",
+                  "pm.collectionVariables.set(\"id_pengajuan_adopsi\", j.data[0].id_pengajuan);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi?q={{nomor_pengajuan}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{nomor_pengajuan}}"
+                }
+              ]
+            },
+            "description": "Antrean diurutkan dari yang paling lama menunggu. Pencarian q mencakup nomor pengajuan, nama, email, WhatsApp, dan kode tracking."
+          }
+        },
+        {
+          "name": "Detail pengajuan (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Admin melihat alamat dan kode tracking\", function () { pm.expect(j.data.alamat).to.be.a(\"string\"); pm.expect(j.data.kode_tracking).to.eql(pm.collectionVariables.get(\"kode_tracking\")); });",
+                  "pm.test(\"2 notifikasi konfirmasi (WhatsApp + Email) menunggu dikirim\", function () { pm.expect(j.data.notifikasi.length).to.eql(2); pm.expect(j.data.notifikasi[0].status_pengiriman).to.eql(\"PENDING\"); });",
+                  "if (j.data.lampiran.length) { pm.collectionVariables.set(\"id_lampiran_adopsi\", j.data.lampiran[0].id_lampiran); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unduh lampiran KTP (ada bila folder 10 mengunggah berkas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 atau 404\", function () { pm.expect([200, 404]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/lampiran/{{id_lampiran_adopsi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "lampiran",
+                "{{id_lampiran_adopsi}}"
+              ]
+            },
+            "description": "200 bila lampiran diunggah di folder 10, 404 bila langkah unggah dilewati. Akses ke berkas tercatat di audit log (LIHAT_LAMPIRAN)."
+          }
+        },
+        {
+          "name": "Super Admin tidak berwenang atas antrean (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "MEOW-BR-05: keputusan adopsi bukan wewenang Super Admin."
+          }
+        },
+        {
+          "name": "Isi screening sebelum pemeriksaan dimulai (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/screening",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "screening"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hasil_screening\": \"Ragu\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Mulai pemeriksaan (SCREENING)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Kucing ditahan: Proses Screening\", function () { pm.expect(j.data.kucing.status_kucing).to.eql(\"Proses Screening\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SCREENING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Status kucing otomatis menjadi Proses Screening dan dua notifikasi (WhatsApp + Email) masuk antrean."
+          }
+        },
+        {
+          "name": "Setujui tanpa hasil screening (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DISETUJUI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Screening Lolos tapi kriteria belum lengkap (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/screening",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "screening"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hasil_screening\": \"Lolos\",\n  \"kelayakan_hunian\": \"Rumah indoor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Simpan hasil screening: Lolos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Tercatat petugas penanggung jawab\", function () { pm.expect(j.data.petugas.nama).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/screening",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "screening"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kelayakan_hunian\": \"CATATAN-INTERNAL-POSTMAN: rumah indoor berjaring\",\n  \"kestabilan_ekonomi\": \"Karyawan tetap\",\n  \"pemahaman_perawatan\": \"Paham vaksin dan steril\",\n  \"sikap_proklinik\": \"Bersedia ke dokter hewan\",\n  \"hasil_screening\": \"Lolos\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Setujui pengajuan (DISETUJUI)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DISETUJUI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Pelacakan publik: Disetujui, tanpa catatan internal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Status DISETUJUI, tahap Keputusan selesai\", function () { pm.expect(j.data.status).to.eql(\"DISETUJUI\"); pm.expect(j.data.tahap[2].selesai).to.eql(true); });",
+                  "pm.test(\"Hasil screening tidak bocor ke publik (BR-08)\", function () { const t = pm.response.text(); pm.expect(t).to.not.include(\"CATATAN-INTERNAL\"); pm.expect(t).to.not.include(\"Lolos\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Lompat ke SELESAI ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SELESAI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "SELESAI hanya diatur otomatis saat serah terima dicatat (modul 09)."
+          }
+        },
+        {
+          "name": "Batalkan persetujuan: tolak (DITOLAK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DITOLAK\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Kucing uji kembali Tersedia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Kembali Tersedia setelah ditolak\", function () { pm.expect(j.data.status_kucing).to.eql(\"Tersedia\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing_adopsi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing_adopsi}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "DITOLAK bersifat final (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SCREENING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         },
         {
           "name": "Rapikan: kucing uji diturunkan ke Hilang (hilang dari katalog publik)",
@@ -3454,7 +4144,7 @@
       ]
     },
     {
-      "name": "11. Bersih-bersih",
+      "name": "12. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",
