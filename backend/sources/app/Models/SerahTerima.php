@@ -26,7 +26,7 @@ class SerahTerima extends Model
     ];
 
     protected $casts = [
-        'tanggal_serah_terima' => 'date',
+        'tanggal_serah_terima' => 'date:Y-m-d',
     ];
 
     public function pengajuanAdopsi(): BelongsTo

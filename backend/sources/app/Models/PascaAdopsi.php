@@ -10,6 +10,20 @@ class PascaAdopsi extends Model
 {
     use HasFactory;
 
+    /**
+     * Kondisi kucing setelah diadopsi. `Meninggal` mengakhiri pemantauan; `Hilang` tidak (kucing bisa
+     * ditemukan kembali, dan pemantauan justru perlu berlanjut).
+     */
+    public const STATUS = ['Sehat', 'Perawatan', 'Sakit', 'Hilang', 'Meninggal'];
+
+    public const STATUS_AKHIR = ['Meninggal'];
+
+    /** Pembaruan kondisi diharapkan tiap minggu (proposal 2.1.2 dan MEOW-F-28). */
+    public const INTERVAL_HARI = 7;
+
+    /** Masa pemantauan sejak serah terima; sesudahnya pemantauan dianggap selesai (tidak lagi jatuh tempo). */
+    public const MASA_BULAN = 6;
+
     protected $table = 'pasca_adopsi';
     protected $primaryKey = 'id_pasca_adopsi';
 
@@ -21,7 +35,8 @@ class PascaAdopsi extends Model
     ];
 
     protected $casts = [
-        'tanggal_update' => 'date',
+        // Format eksplisit: tersimpan 'Y-m-d' di semua basis data (lihat catatan di PemberianMakan).
+        'tanggal_update' => 'date:Y-m-d',
     ];
 
     public function serahTerima(): BelongsTo

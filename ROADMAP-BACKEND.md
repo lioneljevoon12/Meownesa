@@ -19,7 +19,7 @@
 | **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | ✅ **SELESAI** |
 | **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | ✅ **SELESAI** |
 | **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | ✅ **SELESAI** |
-| **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | P2 (Monitoring) |
+| **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | ✅ **SELESAI** |
 | **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | P2 (Notification) |
 | **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | P2 (Content CMS) |
 | **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | P2 (Analytics & Map) |
@@ -362,11 +362,24 @@
   - `POST /api/admin/pasca-adopsi` (Admin mencatat laporan kondisi baru di `pasca_adopsi`).
   - `GET /api/admin/pasca-adopsi/{id_serah_terima}/riwayat` (Histori kondisi per adopsi).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Riwayat kondisi kucing pasca-adopsi tersimpan runtut berdasarkan `tanggal_update`.
-  - [ ] Sistem mampu mengidentifikasi status kondisi terkini kucing teradopsi.
+  - [x] Riwayat kondisi kucing pasca-adopsi tersimpan runtut berdasarkan `tanggal_update`.
+  - [x] Sistem mampu mengidentifikasi status kondisi terkini kucing teradopsi.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/PascaAdopsiController.php`
   - `app/Models/PascaAdopsi.php`
+  - `app/Services/PemantauanPascaAdopsiService.php` (jadwal & status pemantauan; dipakai ulang modul 11)
+  - `app/Http/Requests/PascaAdopsiRequest.php`, `StorePascaAdopsiRequest.php`, `UpdatePascaAdopsiRequest.php`, `FilterPascaAdopsiRequest.php`
+  - `app/Http/Resources/PascaAdopsiResource.php`
+  - `tests/Feature/PascaAdopsiApiTest.php` (23 tes)
+- **Catatan implementasi:**
+  - **Hanya admin** (adopter memberi kabar lewat WhatsApp/CP, admin yang mencatat; BR-13). Tambahan endpoint: `PUT`/`DELETE /api/admin/pasca-adopsi/{id}` untuk koreksi salah catat.
+  - **Kondisi:** `Sehat`, `Perawatan`, `Sakit`, `Hilang`, `Meninggal`. Selain `Sehat` **wajib ada catatan**. `Meninggal` mengakhiri pemantauan (pembaruan baru ditolak; salah catat dikoreksi/dihapus); `Hilang` tidak mengakhiri karena kucing bisa ditemukan kembali. Status `kucing` **tidak diubah** oleh modul ini (kucing yang sudah diadopsi bukan bagian populasi kampus).
+  - **Tanggal pembaruan** `YYYY-MM-DD`: tidak boleh di masa depan (WIB) dan tidak sebelum tanggal serah terima; beberapa pembaruan pada hari yang sama diperbolehkan.
+  - **Jadwal (semua WIB):** jatuh tempo = pembaruan terakhir (atau tanggal serah terima bila belum ada) **+ 7 hari** (proposal: kabar mingguan, MEOW-F-28); **masa pemantauan 6 bulan** sejak serah terima. `status_pemantauan`: `berakhir` > `selesai` (masa lewat) > `terlambat` (lewat jatuh tempo; hari jatuh tempo itu sendiri belum terlambat) > `aktif`. Konstanta ada di `App\Models\PascaAdopsi`.
+  - **`GET /api/admin/pasca-adopsi`**: tiap baris = satu adopsi (kucing, kontak adopter untuk admin, pembaruan terakhir, `kondisi_terkini`, `jumlah_update`, `jatuh_tempo`, `terlambat_hari`, `masa_pemantauan_sampai`, `status_pemantauan`). Urutan bawaan `prioritas` (paling terlambat dulu, lalu yang segera jatuh tempo, lalu selesai/berakhir); `sort=terbaru|terlama`; filter `status`, `kondisi`, `q`; paginasi; `meta.jumlah_per_status` untuk lencana tab. Dihitung di aplikasi dari satu kueri (jumlah adopsi kecil).
+  - **`GET /api/admin/pasca-adopsi/{id_serah_terima}/riwayat`**: ringkasan pemantauan + riwayat terbaru di atas (tanggal sama: yang dicatat belakangan di atas). Respons `POST`/`PUT` menyertakan ringkasan terbaru (jatuh tempo berikutnya) untuk UI.
+  - **Bahan modul 11:** `PemantauanPascaAdopsiService::terlambat()` mengembalikan adopsi yang perlu diingatkan.
+  - Cast `tanggal_update` dan `tanggal_serah_terima` diseragamkan ke `date:Y-m-d`.
 
 ---
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\PascaAdopsiController;
 use App\Http\Controllers\PemberianMakanController;
 use App\Http\Controllers\PengajuanAdopsiAdminController;
 use App\Http\Controllers\PengajuanAdopsiController;
@@ -99,6 +100,15 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::get('serah-terima/{id}', [SerahTerimaController::class, 'show'])->whereNumber('id');
     Route::get('serah-terima/{id}/berkas/{jenis}', [SerahTerimaController::class, 'berkas'])->whereNumber('id')->whereIn('jenis', ['dokumen_perjanjian', 'foto_serah_terima']);
     Route::post('serah-terima/{id}/berkas', [SerahTerimaController::class, 'uploadBerkas'])->whereNumber('id')->middleware('audit:serah_terima,UNGGAH_BERKAS');
+
+    // dev-backend-10: pemantauan kondisi kucing setelah diadopsi (adopter memberi kabar via WhatsApp/CP, admin mencatat; BR-13).
+    Route::get('pasca-adopsi', [PascaAdopsiController::class, 'index']);
+    Route::get('pasca-adopsi/{idSerahTerima}/riwayat', [PascaAdopsiController::class, 'riwayat'])->whereNumber('idSerahTerima');
+    Route::middleware('audit:pasca_adopsi')->group(function () {
+        Route::post('pasca-adopsi', [PascaAdopsiController::class, 'store']);
+        Route::put('pasca-adopsi/{id}', [PascaAdopsiController::class, 'update'])->whereNumber('id');
+        Route::delete('pasca-adopsi/{id}', [PascaAdopsiController::class, 'destroy'])->whereNumber('id');
+    });
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
     // respons; PUT/DELETE memakai {id} (= id_kesehatan).

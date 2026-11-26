@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 09)",
+    "name": "MeowNesa API (dev-backend-01 s/d 10)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -117,6 +117,14 @@
     },
     {
       "key": "tanggal_hari_ini",
+      "value": ""
+    },
+    {
+      "key": "id_pasca_adopsi",
+      "value": ""
+    },
+    {
+      "key": "id_pasca_adopsi2",
       "value": ""
     }
   ],
@@ -4876,7 +4884,492 @@
       ]
     },
     {
-      "name": "13. Bersih-bersih",
+      "name": "13. Pemantauan Pasca-Adopsi (lanjutan folder 12)",
+      "item": [
+        {
+          "name": "Daftar pemantauan: adopsi uji masuk daftar",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"tanggal_hari_ini\", new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Adopsi uji ada dan statusnya aktif\", function () { const r = j.data.find(x => x.id_serah_terima === Number(pm.collectionVariables.get(\"id_serah_terima\"))); pm.expect(r).to.exist; pm.expect(r.status_pemantauan).to.eql(\"aktif\"); });",
+                  "pm.test(\"Ada jumlah per status\", function () { pm.expect(j.meta.jumlah_per_status).to.have.keys(\"aktif\", \"terlambat\", \"selesai\", \"berakhir\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi?q=Penguji&per_page=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Penguji"
+                },
+                {
+                  "key": "per_page",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Diurutkan dari yang paling terlambat memberi kabar. Jatuh tempo = pembaruan terakhir (atau tanggal serah terima) + 7 hari; masa pemantauan 6 bulan."
+          }
+        },
+        {
+          "name": "Catat kondisi: Sehat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_pasca_adopsi !== undefined) { pm.collectionVariables.set(\"id_pasca_adopsi\", j.data.id_pasca_adopsi); }",
+                  "pm.test(\"Jadwal berikutnya +7 hari\", function () { pm.expect(j.data.pemantauan.jatuh_tempo).to.be.a(\"string\"); pm.expect(j.data.pemantauan.status_pemantauan).to.eql(\"aktif\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_serah_terima\": \"{{id_serah_terima}}\",\n  \"tanggal_update\": \"{{tanggal_hari_ini}}\",\n  \"status_kondisi\": \"Sehat\",\n  \"catatan\": \"Adopter lapor lewat WhatsApp: lincah dan nafsu makan baik.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Adopter memberi kabar lewat WhatsApp/CP; admin yang mencatatnya di sini (MEOW-BR-13)."
+          }
+        },
+        {
+          "name": "Kondisi Sakit tanpa catatan (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_serah_terima\": \"{{id_serah_terima}}\",\n  \"tanggal_update\": \"{{tanggal_hari_ini}}\",\n  \"status_kondisi\": \"Sakit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Kondisi selain Sehat wajib dijelaskan di catatan."
+          }
+        },
+        {
+          "name": "Tanggal pembaruan di masa depan (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_serah_terima\": \"{{id_serah_terima}}\",\n  \"tanggal_update\": \"2099-01-01\",\n  \"status_kondisi\": \"Sehat\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Catat kondisi: Perawatan (hari yang sama diperbolehkan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_pasca_adopsi !== undefined) { pm.collectionVariables.set(\"id_pasca_adopsi2\", j.data.id_pasca_adopsi); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_serah_terima\": \"{{id_serah_terima}}\",\n  \"tanggal_update\": \"{{tanggal_hari_ini}}\",\n  \"status_kondisi\": \"Perawatan\",\n  \"catatan\": \"Flu ringan, sudah diperiksa dokter hewan.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Riwayat kondisi: terbaru di atas + kondisi terkini",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"2 catatan, yang terbaru (Perawatan) paling atas\", function () { pm.expect(j.data.riwayat.length).to.eql(2); pm.expect(j.data.riwayat[0].status_kondisi).to.eql(\"Perawatan\"); });",
+                  "pm.test(\"Kondisi terkini teridentifikasi\", function () { pm.expect(j.data.pemantauan.kondisi_terkini).to.eql(\"Perawatan\"); pm.expect(j.data.pemantauan.jumlah_update).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi/{{id_serah_terima}}/riwayat",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi",
+                "{{id_serah_terima}}",
+                "riwayat"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Koreksi catatan kondisi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi/{{id_pasca_adopsi2}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi",
+                "{{id_pasca_adopsi2}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan\": \"Flu ringan, diberi obat selama 5 hari.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Daftar difilter kondisi Perawatan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Adopsi uji ikut terfilter\", function () { pm.expect(j.data.some(x => x.id_serah_terima === Number(pm.collectionVariables.get(\"id_serah_terima\")))).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi?kondisi=Perawatan&per_page=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi"
+              ],
+              "query": [
+                {
+                  "key": "kondisi",
+                  "value": "Perawatan"
+                },
+                {
+                  "key": "per_page",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Riwayat adopsi yang tidak ada (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi/99999/riwayat",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi",
+                "99999",
+                "riwayat"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan kondisi uji 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi/{{id_pasca_adopsi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi",
+                "{{id_pasca_adopsi}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan kondisi uji 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/pasca-adopsi/{{id_pasca_adopsi2}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "pasca-adopsi",
+                "{{id_pasca_adopsi2}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",
