@@ -23,6 +23,10 @@ class PengajuanAdminDetailResource extends PengajuanAdminResource
                 // Endpoint unduh khusus admin (butuh token); berkas sendiri tidak punya URL publik.
                 'unduh'          => url("/api/admin/adopsi/{$this->id_pengajuan}/lampiran/{$l->id_lampiran}"),
             ])->values()),
+            'serah_terima'    => $this->whenLoaded('serahTerima', fn () => $this->serahTerima ? [
+                'id_serah_terima'      => $this->serahTerima->id_serah_terima,
+                'tanggal_serah_terima' => $this->serahTerima->tanggal_serah_terima->format('Y-m-d'),
+            ] : null),
             'screening'       => $this->whenLoaded('screeningAdopsi', fn () => $this->screeningAdopsi
                 ? (new ScreeningResource($this->screeningAdopsi))->resolve() : null),
             'notifikasi'      => $this->whenLoaded('notifikasi', fn () => $this->notifikasi->map(fn ($n) => [

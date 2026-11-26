@@ -18,6 +18,8 @@ class NotifikasiPengajuanService
 
     public const JENIS_KONFIRMASI = 'Konfirmasi Pengajuan';
     public const JENIS_STATUS = 'Status Adopsi';
+    public const JENIS_SERAH_TERIMA = 'Serah Terima';
+    public const JENIS_AKTIVASI = 'Aktivasi Akun';
 
     /** Konfirmasi saat pengajuan diterima: memuat nomor dan kode tracking (satu-satunya cara memeriksa status). */
     public function konfirmasi(PengajuanAdopsi $p): void
@@ -40,6 +42,45 @@ class NotifikasiPengajuanService
         $this->antrekan($p, self::JENIS_STATUS, sprintf(
             'Halo %s, status pengajuan adopsi %s (%s) kini: %s. %s Detail: %s',
             $this->namaDepan($p), $p->nomor_pengajuan, $p->kucing->nama_kucing, $label, $keterangan, $this->tautan($p),
+        ));
+    }
+
+    /**
+     * Serah terima dicatat. Bila akun adopter perlu diaktifkan, pesan memuat tautan aktivasi sekali pakai
+     * (satu-satunya tempat token berada; API tidak pernah mengembalikannya ke admin).
+     */
+    public function serahTerima(PengajuanAdopsi $p, ?string $tautanAktivasi): void
+    {
+        $p->loadMissing('kucing');
+
+        $this->antrekan($p, self::JENIS_SERAH_TERIMA, sprintf(
+            'Halo %s, serah terima %s sudah dicatat. Terima kasih telah mengadopsi! %s '
+            .'Pengurus Jaga Satwa akan mengingatkan Anda untuk memberi kabar kondisi kucing secara berkala.',
+            $this->namaDepan($p), $p->kucing->nama_kucing,
+            $tautanAktivasi
+                ? "Akun MeowNesa Anda sudah dibuat. Atur password Anda di: {$tautanAktivasi} (berlaku 7 hari)."
+                : 'Anda dapat masuk dengan akun MeowNesa yang sudah Anda miliki.',
+        ));
+    }
+
+    /** Tautan aktivasi baru atas permintaan admin (tautan sebelumnya kedaluwarsa atau hilang). */
+    public function aktivasiAkun(PengajuanAdopsi $p, string $tautanAktivasi): void
+    {
+        $this->antrekan($p, self::JENIS_AKTIVASI, sprintf(
+            'Halo %s, ini tautan baru untuk mengatur password akun MeowNesa Anda: %s (berlaku 7 hari). Tautan sebelumnya tidak berlaku lagi.',
+            $this->namaDepan($p), $tautanAktivasi,
+        ));
+    }
+
+    /** Pengajuan lain untuk kucing yang sama ditutup otomatis setelah kucing diadopsi pemohon lain. */
+    public function kucingSudahDiadopsi(PengajuanAdopsi $p): void
+    {
+        $p->loadMissing('kucing');
+
+        $this->antrekan($p, self::JENIS_STATUS, sprintf(
+            'Halo %s, mohon maaf, %s sudah diadopsi oleh pemohon lain sehingga pengajuan %s kami tutup. '
+            .'Terima kasih atas minat Anda. Masih banyak kucing kampus yang menanti rumah: %s/kucing',
+            $this->namaDepan($p), $p->kucing->nama_kucing, $p->nomor_pengajuan, rtrim((string) config('app.frontend_url'), '/'),
         ));
     }
 

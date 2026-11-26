@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FotoKucingController;
 use App\Http\Controllers\KampusController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\PengajuanAdopsiController;
 use App\Http\Controllers\RiwayatKesehatanAdminController;
 use App\Http\Controllers\RiwayatKesehatanController;
 use App\Http\Controllers\ScreeningAdopsiController;
+use App\Http\Controllers\SerahTerimaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 // ---- dev-backend-02: autentikasi ------------------------------------------------
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
+    // dev-backend-09: adopter mengatur password lewat tautan dari notifikasi serah terima (publik)
+    Route::post('aktivasi', [AktivasiAkunController::class, 'aktifkan'])->middleware('throttle:login');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
@@ -87,6 +91,14 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::get('adopsi/{id}/lampiran/{lampiran}', [PengajuanAdopsiAdminController::class, 'lampiran'])->whereNumber(['id', 'lampiran']);
     Route::put('adopsi/{id}/status', [PengajuanAdopsiAdminController::class, 'ubahStatus'])->whereNumber('id')->middleware('audit:pengajuan_adopsi,UBAH_STATUS');
     Route::post('adopsi/{pengajuan}/screening', [ScreeningAdopsiController::class, 'store'])->whereNumber('pengajuan')->middleware('audit:screening_adopsi');
+
+    // dev-backend-09: serah terima + akun adopter (dibuat otomatis di langkah serah terima, BR-06/BR-07).
+    // {pengajuan} pada POST agar audit mencatat id dari respons (id_serah_terima / id_pengajuan).
+    Route::post('adopsi/{pengajuan}/serah-terima', [SerahTerimaController::class, 'store'])->whereNumber('pengajuan')->middleware('audit:serah_terima');
+    Route::post('adopsi/{pengajuan}/kirim-ulang-aktivasi', [SerahTerimaController::class, 'kirimUlangAktivasi'])->whereNumber('pengajuan')->middleware('audit:pengajuan_adopsi,KIRIM_ULANG_AKTIVASI');
+    Route::get('serah-terima/{id}', [SerahTerimaController::class, 'show'])->whereNumber('id');
+    Route::get('serah-terima/{id}/berkas/{jenis}', [SerahTerimaController::class, 'berkas'])->whereNumber('id')->whereIn('jenis', ['dokumen_perjanjian', 'foto_serah_terima']);
+    Route::post('serah-terima/{id}/berkas', [SerahTerimaController::class, 'uploadBerkas'])->whereNumber('id')->middleware('audit:serah_terima,UNGGAH_BERKAS');
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
     // respons; PUT/DELETE memakai {id} (= id_kesehatan).

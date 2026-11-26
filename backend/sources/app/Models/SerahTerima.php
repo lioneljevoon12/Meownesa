@@ -11,6 +11,9 @@ class SerahTerima extends Model
 {
     use HasFactory;
 
+    /** Mencatat serah terima berarti proses selesai (MEOW-BR-07); satu-satunya nilai yang dipakai. */
+    public const STATUS_SELESAI = 'Selesai';
+
     protected $table = 'serah_terima';
     protected $primaryKey = 'id_serah_terima';
 

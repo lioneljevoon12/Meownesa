@@ -118,7 +118,7 @@ class PengajuanAdopsiAdminController extends Controller
     private function detail(int $id): PengajuanAdopsi
     {
         return PengajuanAdopsi::query()
-            ->with(['kucing.fotoUtama', 'lampiranPengajuan', 'screeningAdopsi.admin', 'notifikasi'])
+            ->with(['kucing.fotoUtama', 'lampiranPengajuan', 'screeningAdopsi.admin', 'notifikasi', 'serahTerima'])
             ->findOrFail($id);
     }
 }

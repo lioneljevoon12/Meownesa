@@ -18,7 +18,7 @@
 | **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | ✅ **SELESAI** |
 | **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | ✅ **SELESAI** |
 | **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | ✅ **SELESAI** |
-| **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | P1 (Handover Legal) |
+| **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | ✅ **SELESAI** |
 | **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | P2 (Monitoring) |
 | **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | P2 (Notification) |
 | **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | P2 (Content CMS) |
@@ -327,12 +327,26 @@
   - `POST /api/admin/adopsi/{id}/aktivasi-adopter` (Generate akun user dengan role `adopter` dan hubungkan ke tabel `adopter`).
   - `GET /api/admin/serah-terima/{id}` (Lihat detail legalitas serah terima).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Status kucing di tabel `kucing` otomatis terupdate menjadi `diadopsi`.
-  - [ ] Record baru terbentuk di tabel `serah_terima` dan tabel `adopter`.
-  - [ ] Akun `user` adopter terbuat dengan kredensial aman untuk menerima pemberitahuan.
+  - [x] Status kucing di tabel `kucing` otomatis terupdate menjadi `diadopsi`.
+  - [x] Record baru terbentuk di tabel `serah_terima` dan tabel `adopter`.
+  - [x] Akun `user` adopter terbuat dengan kredensial aman untuk menerima pemberitahuan.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/SerahTerimaController.php`
   - `app/Models/SerahTerima.php`, `app/Models/Adopter.php`
+  - `app/Http/Controllers/AktivasiAkunController.php`
+  - `app/Services/SerahTerimaService.php`, `AktivasiAkunService.php`, `SerahTerimaBerkasService.php`
+  - `app/Http/Requests/StoreSerahTerimaRequest.php`, `UploadBerkasSerahTerimaRequest.php`, `AktivasiAkunRequest.php`
+  - `app/Http/Resources/SerahTerimaResource.php`
+  - `tests/Feature/SerahTerimaApiTest.php` (23 tes), `AktivasiAkunApiTest.php` (11 tes)
+- **Catatan implementasi:**
+  - **Keputusan desain (atas arahan pemilik proyek): akun adopter dibuat OTOMATIS di langkah serah terima**, bukan lewat endpoint `aktivasi-adopter` terpisah seperti di draf roadmap. Endpoint itu diganti oleh: `POST /api/auth/aktivasi` (adopter mengatur password lewat tautan) dan `POST /api/admin/adopsi/{id}/kirim-ulang-aktivasi` (tautan baru bila kedaluwarsa/hilang). Akun **tidak** dibuat saat mengajukan (BR-06).
+  - **Serah terima** `POST /api/admin/adopsi/{pengajuan}/serah-terima` (hanya pengajuan `DISETUJUI` dan kucing `Proses Screening`; `tanggal_serah_terima` wajib, tidak di masa depan menurut WIB dan tidak sebelum tanggal pengajuan; `dokumen_perjanjian` dan `foto_serah_terima` opsional). Dalam **satu transaksi**: catatan serah terima, kucing -> `Diadopsi` (BR-07), pengajuan -> `SELESAI` + `id_adopter`, data/akun adopter, pengajuan lain yang masih `MENUNGGU` untuk kucing itu ditutup (`DITOLAK`, dengan notifikasi "sudah diadopsi oleh pemohon lain"), dan notifikasi. Gagal di mana pun = tidak ada yang berubah dan tidak ada berkas yatim.
+  - **Akun adopter:** `role=adopter`, `status_akun=menunggu_aktivasi` (tidak bisa login), password acak 64 karakter yang tidak diketahui siapa pun. Bila email sudah milik adopter (mengadopsi lagi) akun dipakai ulang (satu `adopter`, banyak pengajuan); bila email milik akun internal, ditolak (422) agar akun admin tidak tertukar.
+  - **Aktivasi:** token acak dari broker Laravel `aktivasi` (disimpan **ter-hash** di `password_reset_tokens`, sekali pakai, kedaluwarsa **7 hari**), dikirim hanya lewat pesan notifikasi (WhatsApp + Email, `PENDING`; pengiriman nyata di modul 11). **Token tidak pernah muncul di respons API admin**. Password min. 8 karakter berisi huruf dan angka, maks. 64, konfirmasi wajib. Semua kegagalan (token salah, kedaluwarsa, terpakai, email tak dikenal, akun internal/dinonaktifkan) menghasilkan pesan yang sama. Dibatasi `throttle:login` (5/menit per email+IP, dibagi dengan login).
+  - **Berkas** (BAST: PDF/JPG/PNG/WebP; foto: JPG/PNG/WebP; maks. 5 MB, dicek dari isi) disimpan di disk **privat** `serah_terima` dengan nama acak. Unduh `GET /api/admin/serah-terima/{id}/berkas/{dokumen_perjanjian|foto_serah_terima}` (PDF selalu `attachment`, `nosniff`, `no-store`) **diaudit** (`LIHAT_BERKAS_SERAH_TERIMA`). Unggah/ganti belakangan: `POST /api/admin/serah-terima/{id}/berkas` (berkas lama dihapus dari disk).
+  - `GET /api/admin/serah-terima/{id}` memuat pengajuan, kucing, adopter dan status akunnya; ringkasan serah terima juga muncul di detail pengajuan.
+  - Audit baru: `BUAT_AKUN_ADOPTER`, `AKTIVASI_AKUN`, `KIRIM_ULANG_AKTIVASI`, `UNGGAH_BERKAS`.
+  - Catatan: tautan aktivasi tersimpan di `notifikasi.isi_pesan` sampai terkirim; modul 11 sebaiknya menghapus/menyamarkan tokennya setelah status `TERKIRIM`.
 
 ---
 

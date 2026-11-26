@@ -68,6 +68,15 @@ return [
             'report' => false,
         ],
 
+        // Berkas serah terima (BAST/surat perjanjian dan foto penyerahan): memuat identitas adopter, SELALU privat.
+        'serah_terima' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/serah_terima'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

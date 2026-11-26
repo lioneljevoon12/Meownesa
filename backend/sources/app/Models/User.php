@@ -17,6 +17,9 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 'admin';
     public const ROLE_ADOPTER = 'adopter';
 
+    /** Akun adopter dibuat saat serah terima tetapi belum bisa dipakai sebelum adopter mengatur passwordnya. */
+    public const STATUS_MENUNGGU_AKTIVASI = 'menunggu_aktivasi';
+
     /** Hak akses (permission) per role, ditampilkan di GET /api/auth/me untuk frontend. */
     public const AKSES = [
         self::ROLE_SUPERADMIN => ['akun.kelola', 'role.kelola', 'audit.lihat', 'konfigurasi.kelola'],
