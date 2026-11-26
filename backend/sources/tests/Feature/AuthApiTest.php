@@ -81,7 +81,11 @@ class AuthApiTest extends TestCase
             $this->postJson('/api/auth/login', ['email' => 'admin@uji.test', 'password' => 'salah'])->assertStatus(401);
         }
 
-        $this->postJson('/api/auth/login', ['email' => 'admin@uji.test', 'password' => 'salah'])->assertStatus(429);
+        // 429 harus berbentuk JSON seragam berbahasa Indonesia (bukan pesan bawaan Laravel "Too Many Attempts.")
+        $this->postJson('/api/auth/login', ['email' => 'admin@uji.test', 'password' => 'salah'])
+            ->assertStatus(429)
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Terlalu banyak percobaan. Coba lagi beberapa saat lagi.');
     }
 
     public function test_password_disimpan_sebagai_hash_bukan_teks_biasa(): void

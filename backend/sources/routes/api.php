@@ -7,6 +7,7 @@ use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PemberianMakanController;
+use App\Http\Controllers\PengajuanAdopsiController;
 use App\Http\Controllers\RiwayatKesehatanAdminController;
 use App\Http\Controllers\RiwayatKesehatanController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,13 @@ Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id');
 
 // ---- dev-backend-05: riwayat kesehatan (publik) ----------------------------------
 Route::get('kucing/{id}/kesehatan', [RiwayatKesehatanController::class, 'index'])->whereNumber('id');
+
+// ---- dev-backend-07: pengajuan adopsi publik tanpa akun (dibatasi per IP) --------
+Route::prefix('adopsi')->group(function () {
+    Route::post('ajukan', [PengajuanAdopsiController::class, 'ajukan'])->middleware('throttle:adopsi-tulis');
+    Route::post('upload-lampiran', [PengajuanAdopsiController::class, 'uploadLampiran'])->middleware('throttle:adopsi-tulis');
+    Route::get('tracking/{kode}', [PengajuanAdopsiController::class, 'tracking'])->middleware('throttle:adopsi-tracking');
+});
 
 // ---- Admin Jaga Satwa ------------------------------------------------------------
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {

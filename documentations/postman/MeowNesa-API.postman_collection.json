@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 06)",
+    "name": "MeowNesa API (dev-backend-01 s/d 07)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -89,6 +89,18 @@
     },
     {
       "key": "uuid_batch2",
+      "value": ""
+    },
+    {
+      "key": "id_kucing_adopsi",
+      "value": ""
+    },
+    {
+      "key": "kode_tracking",
+      "value": ""
+    },
+    {
+      "key": "nomor_pengajuan",
       "value": ""
     }
   ],
@@ -2872,7 +2884,577 @@
       ]
     },
     {
-      "name": "9. Bersih-bersih",
+      "name": "9. Pengajuan Adopsi Publik (aman)",
+      "item": [
+        {
+          "name": "Ajukan: kucing belum tersedia (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/ajukan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "ajukan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kucing\": 1,\n  \"nama_pemohon\": \"Penguji Postman\",\n  \"nomor_whatsapp\": \"081200000000\",\n  \"email\": \"penguji@contoh.id\",\n  \"alamat\": \"Jl. Contoh No. 1, Surabaya\",\n  \"persetujuan_data\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Kucing id 1 berstatus Terdata, bukan Tersedia, jadi pengajuan ditolak (MEOW-BR-14). Tidak membuat data apa pun."
+          }
+        },
+        {
+          "name": "Ajukan: validasi gagal (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/ajukan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "ajukan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama_pemohon\": \"A1\",\n  \"nomor_whatsapp\": \"12345\",\n  \"email\": \"bukan-email\",\n  \"alamat\": \"pendek\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Tracking: kode tidak dikenal (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Pesan seragam, tidak membocorkan apa pun\", function () { pm.expect(j.success).to.eql(false); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/MN-XXXX-XXXX-XXXX",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "MN-XXXX-XXXX-XXXX"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Daftar pengajuan tidak tersedia untuk publik (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Alur Adopsi Sungguhan (MENINGGALKAN DATA UJI)",
+      "item": [
+        {
+          "name": "Siapkan kucing Tersedia (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_kucing !== undefined) { pm.collectionVariables.set(\"id_kucing_adopsi\", j.data.id_kucing); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_lokasi\": 1,\n  \"nama_kucing\": \"Kucing Uji Adopsi (Postman)\",\n  \"jenis_kelamin\": \"Betina\",\n  \"status_steril\": \"Sudah\",\n  \"status_kucing\": \"Tersedia\",\n  \"konfirmasi_sehat\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "PERHATIAN: folder ini membuat pengajuan adopsi sungguhan yang belum bisa dihapus lewat API (kucingnya pun jadi tidak bisa dihapus). Hapus centang folder ini bila menjalankan koleksi berulang-ulang, atau reset dengan php artisan migrate:fresh --seed."
+          }
+        },
+        {
+          "name": "Ajukan adopsi (tanpa akun)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.kode_tracking !== undefined) { pm.collectionVariables.set(\"kode_tracking\", j.data.kode_tracking); }",
+                  "pm.collectionVariables.set(\"nomor_pengajuan\", j.data.nomor_pengajuan);",
+                  "pm.test(\"Nomor ADP-tahun-urut\", function () { pm.expect(j.data.nomor_pengajuan).to.match(/^ADP-\\d{4}-\\d{3,}$/); });",
+                  "pm.test(\"Kode tracking berformat MN-XXXX-XXXX-XXXX\", function () { pm.expect(j.data.kode_tracking).to.match(/^MN-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/); });",
+                  "pm.test(\"Status awal MENUNGGU\", function () { pm.expect(j.data.status).to.eql(\"MENUNGGU\"); });",
+                  "pm.test(\"Respons tidak memuat data pribadi\", function () { const t = pm.response.text(); pm.expect(t).to.not.include(\"contoh.id\"); pm.expect(t).to.not.include(\"Jl. Contoh\"); pm.expect(t).to.not.include(\"628120000\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/ajukan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "ajukan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kucing\": \"{{id_kucing_adopsi}}\",\n  \"nama_pemohon\": \"Penguji Postman\",\n  \"nomor_whatsapp\": \"0812-0000-0000\",\n  \"email\": \"Penguji.Postman@Contoh.ID\",\n  \"alamat\": \"Jl. Contoh No. 1, Surabaya\",\n  \"persetujuan_data\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "WhatsApp dan email dinormalkan otomatis (0812-0000-0000 menjadi 6281200000000, email jadi huruf kecil). Nomor pengajuan dan kode tracking dikembalikan sekali di sini."
+          }
+        },
+        {
+          "name": "Ajukan lagi: pelamar sama, kucing sama (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/ajukan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "ajukan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_kucing\": \"{{id_kucing_adopsi}}\",\n  \"nama_pemohon\": \"Penguji Postman\",\n  \"nomor_whatsapp\": \"081200000000\",\n  \"email\": \"penguji.postman@contoh.id\",\n  \"alamat\": \"Jl. Contoh No. 1, Surabaya\",\n  \"persetujuan_data\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Unggah lampiran KTP (pilih file di Body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/upload-lampiran",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "upload-lampiran"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "kode_tracking",
+                  "value": "{{kode_tracking}}",
+                  "type": "text"
+                },
+                {
+                  "key": "jenis_lampiran",
+                  "value": "KTP",
+                  "type": "text"
+                },
+                {
+                  "key": "berkas",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Buka tab Body, pada baris \"berkas\" klik Select Files lalu pilih JPG/PNG/WebP/PDF (maks 5 MB). Berkas disimpan privat; tidak ada URL publik."
+          }
+        },
+        {
+          "name": "Cek status dengan kode tracking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Status MENUNGGU + 4 tahap\", function () { pm.expect(j.data.status).to.eql(\"MENUNGGU\"); pm.expect(j.data.tahap.length).to.eql(4); });",
+                  "pm.test(\"Hanya nama depan\", function () { pm.expect(j.data.nama_depan).to.eql(\"Penguji\"); });",
+                  "pm.test(\"Tidak ada data pribadi/internal\", function () { const t = pm.response.text(); [\"contoh.id\",\"Jl. Contoh\",\"628120000\",\"url_file\",\"screening\"].forEach(k => pm.expect(t).to.not.include(k)); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Cek status + nomor pengajuan (verifikasi tambahan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}?nomor_pengajuan={{nomor_pengajuan}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}"
+              ],
+              "query": [
+                {
+                  "key": "nomor_pengajuan",
+                  "value": "{{nomor_pengajuan}}"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Salah nomor pengajuan = sama dengan tidak ditemukan (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}?nomor_pengajuan=ADP-2000-999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}"
+              ],
+              "query": [
+                {
+                  "key": "nomor_pengajuan",
+                  "value": "ADP-2000-999"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Rapikan: kucing uji diturunkan ke Hilang (hilang dari katalog publik)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing_adopsi}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing_adopsi}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_kucing\": \"Hilang\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Supaya kucing uji tidak muncul sebagai \"Siap Diadopsi\" di katalog publik. Pengajuannya tetap tersimpan."
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

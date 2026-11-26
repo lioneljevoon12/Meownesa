@@ -16,7 +16,7 @@
 | **dev-backend-04** | Modul Manajemen Data Kucing & Galeri Multi-Foto (Publik & Admin) | MEOW-F-01 s/d 06, MEOW-BR-01 & 14 | ✅ **SELESAI** |
 | **dev-backend-05** | Modul Rekam Medis & Riwayat Kesehatan Kucing (Vaksin, Steril, Vitamin) | MEOW-F-10 s/d 13, DFD 3.0 | ✅ **SELESAI** |
 | **dev-backend-06** | Modul Feeding Log (Pencatatan Pemberian Makan Harian Sesuai Spreadsheet) | MEOW-F-07 s/d 09, DFD 2.0 | ✅ **SELESAI** |
-| **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | P1 (Adoption Flow) |
+| **dev-backend-07** | Modul Pengajuan Adopsi Publik & Generator Kode Tracking Unik (Tanpa Akun) | MEOW-F-14, 15, 20, MEOW-BR-03, 04 | ✅ **SELESAI** |
 | **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | P1 (Screening Review) |
 | **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | P1 (Handover Legal) |
 | **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | P2 (Monitoring) |
@@ -254,13 +254,27 @@
   - `GET /api/adopsi/tracking/{kode_tracking}` (Publik mengecek progres pengajuan menggunakan kode tracking).
   - `POST /api/adopsi/upload-lampiran` (Penyimpanan file bukti syarat ke `lampiran_pengajuan`).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Sistem berhasil membuat record di `pengajuan_adopsi` dan relasi file di `lampiran_pengajuan`.
-  - [ ] Mengembalikan kode tracking unik yang langsung bisa dicek di halaman tracking.
-  - [ ] Status awal pengajuan otomatis `SUBMITTED / MENUNGGU_REVIEW`.
+  - [x] Sistem berhasil membuat record di `pengajuan_adopsi` dan relasi file di `lampiran_pengajuan`.
+  - [x] Mengembalikan kode tracking unik yang langsung bisa dicek di halaman tracking.
+  - [x] Status awal pengajuan otomatis `SUBMITTED / MENUNGGU_REVIEW` (di basis data: `MENUNGGU`).
 - **Target File / Komponen:**  
   - `app/Http/Controllers/PengajuanAdopsiController.php`
   - `app/Models/PengajuanAdopsi.php`, `app/Models/LampiranPengajuan.php`
   - `app/Services/TrackingCodeGenerator.php`
+  - `app/Services/LampiranService.php`
+  - `app/Http/Requests/AjukanAdopsiRequest.php`, `UploadLampiranRequest.php`
+  - `app/Http/Resources/PengajuanPublikResource.php`
+  - `tests/Feature/PengajuanAdopsiApiTest.php` (26 tes)
+- **Catatan implementasi:**
+  - **Kode tracking** acak 12 karakter (`MN-XXXX-XXXX-XXXX`, alfabet tanpa I/O/0/1, dari `random_int`, ~60 bit) — inilah satu-satunya kunci akses ke sebuah pengajuan. **Nomor pengajuan** `ADP-YYYY-NNN` berurutan per tahun (tahun menurut WIB). Keunikan dijaga constraint UNIQUE; bila terjadi tabrakan balapan, pembuatan diulang.
+  - **Status:** `MENUNGGU` (awal), `SCREENING`, `DISETUJUI`, `DITOLAK`, `SELESAI`; aktif = `MENUNGGU`/`SCREENING`. Respons publik memuat label, keterangan, dan 4 tahap kemajuan untuk linimasa UI.
+  - **MEOW-BR-14:** pengajuan hanya untuk kucing berstatus `Tersedia`; dicek ulang di dalam transaksi dengan baris kucing terkunci. Pelamar yang sama (email **atau** WhatsApp) tidak boleh punya dua pengajuan aktif untuk kucing yang sama; setelah diputuskan boleh mengajukan lagi. Pesan duplikat tidak membocorkan nomor pengajuan.
+  - **Formulir:** `nama_pemohon`, `nomor_whatsapp` (dinormalkan ke `628…`), `email` (huruf kecil), `alamat`, serta `persetujuan_data` (wajib dicentang; bukan kolom tersimpan, hanya gerbang persetujuan pengolahan data pribadi). Hanya kolom yang ada di tabel proposal; penilaian kelayakan oleh admin di modul 08.
+  - **Lampiran** (opsional saat mengajukan: `ktp`, `foto_rumah`, `dokumen_pendukung`; atau ditambah lewat `POST /api/adopsi/upload-lampiran` dengan `kode_tracking`): JPG/PNG/WebP/PDF dicek dari **isi berkas** (skrip PHP berekstensi .jpg ditolak), maks. 5 MB, maks. 5 per pengajuan, hanya selagi pengajuan masih aktif. Disimpan di disk **privat** `lampiran` (`storage/app/private/lampiran/{id_pengajuan}/{40 karakter acak}.ext`), bukan di `public/`, dengan nama acak buatan server; tidak bisa dibuka lewat URL mana pun. Berkas disimpan apa adanya (KTP tetap terbaca, metadata foto rumah tetap bisa diperiksa admin). Bila ada lampiran gagal, seluruh pengajuan dibatalkan dan tidak ada berkas yatim.
+  - **Pelacakan** `GET /api/adopsi/tracking/{kode}` (tidak peka huruf besar/kecil; `?nomor_pengajuan=` opsional untuk verifikasi tambahan sesuai proposal 2.1.2): hanya memuat status, kemajuan, **nama depan**, kucing, dan jenis lampiran. **Tidak pernah** memuat email, WhatsApp, alamat, nama lengkap, jalur berkas, hasil screening, atau catatan admin. Kode salah, kode tak dikenal, dan salah nomor menghasilkan 404 yang identik.
+  - **Rate limit per IP:** pengajuan dan unggah lampiran 30/jam, pelacakan 30/menit (429 JSON berbahasa Indonesia).
+  - Bug dari modul 02 ikut diperbaiki: respons 429 sebelumnya berbahasa Inggris karena nama kelas `ThrottleRequestsException` salah di `bootstrap/app.php`.
+  - **Belum ada** (modul berikutnya): daftar/detail pengajuan dan unduh lampiran untuk admin (08), notifikasi konfirmasi email/WhatsApp berisi kode tracking (11). Sementara itu kode tracking hanya ditampilkan satu kali di respons pengajuan.
 
 ---
 

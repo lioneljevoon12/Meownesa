@@ -10,6 +10,8 @@ class LampiranPengajuan extends Model
 {
     use HasFactory;
 
+    public const JENIS = ['KTP', 'Foto Rumah', 'Dokumen Pendukung'];
+
     protected $table = 'lampiran_pengajuan';
     protected $primaryKey = 'id_lampiran';
 

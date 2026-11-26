@@ -58,6 +58,16 @@ return [
             'report' => false,
         ],
 
+        // Lampiran pengajuan adopsi (KTP, foto rumah): data pribadi, SELALU privat. Tidak ada `url` dan
+        // tidak di bawah public/, jadi tidak dapat dibuka lewat alamat web; hanya dibaca server untuk admin.
+        'lampiran' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/lampiran'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

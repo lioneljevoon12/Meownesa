@@ -12,6 +12,20 @@ class PengajuanAdopsi extends Model
 {
     use HasFactory;
 
+    public const STATUS = ['MENUNGGU', 'SCREENING', 'DISETUJUI', 'DITOLAK', 'SELESAI'];
+
+    /** Pengajuan yang masih berjalan: belum diputuskan admin. */
+    public const STATUS_AKTIF = ['MENUNGGU', 'SCREENING'];
+
+    /** Teks status untuk calon adopter di halaman pelacakan: [label, keterangan]. */
+    public const TEKS_PUBLIK = [
+        'MENUNGGU'  => ['Menunggu Pemeriksaan', 'Pengajuan Anda sudah kami terima dan menunggu diperiksa oleh pengurus Jaga Satwa.'],
+        'SCREENING' => ['Sedang Diperiksa', 'Pengurus Jaga Satwa sedang memeriksa pengajuan Anda. Mohon tetap aktif di WhatsApp dan email.'],
+        'DISETUJUI' => ['Disetujui', 'Selamat! Pengajuan Anda disetujui. Pengurus akan menghubungi Anda untuk proses serah terima.'],
+        'DITOLAK'   => ['Tidak Disetujui', 'Mohon maaf, pengajuan Anda belum dapat kami setujui. Terima kasih atas minat dan kepedulian Anda.'],
+        'SELESAI'   => ['Adopsi Selesai', 'Serah terima telah dicatat. Terima kasih sudah memberi rumah baru bagi kucing kampus!'],
+    ];
+
     protected $table = 'pengajuan_adopsi';
     protected $primaryKey = 'id_pengajuan';
 
