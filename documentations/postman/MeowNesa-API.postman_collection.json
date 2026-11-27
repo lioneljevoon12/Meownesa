@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 16)",
+    "name": "MeowNesa API (dev-backend-01 s/d 17)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -185,6 +185,18 @@
     },
     {
       "key": "id_sesi_uji",
+      "value": ""
+    },
+    {
+      "key": "token_adopter",
+      "value": ""
+    },
+    {
+      "key": "id_laporan_uji",
+      "value": ""
+    },
+    {
+      "key": "id_catatan_uji",
       "value": ""
     }
   ],
@@ -9350,7 +9362,705 @@
       ]
     },
     {
-      "name": "20. Bersih-bersih",
+      "name": "20. Portal Adopter, Pelamar, dan Catatan Internal (lanjutan folder 12)",
+      "item": [
+        {
+          "name": "Portal adopter ditolak untuk Admin (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopter/kucing-saya",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopter",
+                "kucing-saya"
+              ]
+            },
+            "description": "Memakai token Admin. Portal adopter hanya untuk role adopter."
+          }
+        },
+        {
+          "name": "Kucing saya (butuh token adopter)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 atau 401\", function () { pm.expect([200, 401]).to.include(pm.response.code); });",
+                  "if (pm.response.code === 200) { const j = pm.response.json(); pm.test(\"Tanpa data pribadi\", function () { const t = pm.response.text(); pm.expect(t).to.not.include(\"alamat\"); pm.expect(t).to.not.include(\"nomor_whatsapp\"); }); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopter/kucing-saya",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopter",
+                "kucing-saya"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_adopter}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Isi variabel koleksi `token_adopter` dulu: aktifkan akun adopter uji (folder 12) dengan tautan dari isi_pesan di tabel notifikasi, lalu login sebagai adopter dan salin tokennya. Tanpa itu request ini menjawab 401 (dianggap wajar)."
+          }
+        },
+        {
+          "name": "Kirim laporan kondisi kucing (adopter)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201 atau 401 atau 404 atau 422\", function () { pm.expect([201, 401, 404, 422]).to.include(pm.response.code); });",
+                  "if (pm.response.code === 201) { const j = pm.response.json(); pm.collectionVariables.set(\"id_laporan_uji\", j.data.id_laporan); pm.test(\"Masuk kotak masuk, belum jadi catatan resmi\", function () { pm.expect(j.data.status).to.eql(\"MENUNGGU\"); }); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopter/kucing-saya/{{id_serah_terima}}/laporan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopter",
+                "kucing-saya",
+                "{{id_serah_terima}}",
+                "laporan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_kondisi\": \"Sehat\",\n  \"catatan\": \"Lincah dan makan lahap (dari Postman).\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_adopter}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Adopter hanya bisa melapor untuk adopsinya sendiri (milik orang lain = 404). Laporan MENUNGGU dulu; admin yang mencatatnya ke riwayat resmi (BR-13). Maks 3 laporan menunggu per adopsi dan 10/hari."
+          }
+        },
+        {
+          "name": "Kotak masuk laporan adopter (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada ringkasan per status\", function () { pm.expect(j.meta.jumlah_per_status).to.have.keys(\"MENUNGGU\", \"DICATAT\", \"DITOLAK\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/laporan-adopter?status=MENUNGGU",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "laporan-adopter"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "MENUNGGU"
+                }
+              ]
+            },
+            "description": "Antrean laporan yang belum ditinjau (terlama dulu), lengkap dengan kontak adopter."
+          }
+        },
+        {
+          "name": "Catat laporan sebagai pembaruan pemantauan resmi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 atau 404 atau 422\", function () { pm.expect([200, 404, 422]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/laporan-adopter/{{id_laporan_uji}}/catat",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "laporan-adopter",
+                "{{id_laporan_uji}}",
+                "catat"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan_admin\": \"Dicatat dari Postman.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Menjadi baris pasca_adopsi (tanggal = tanggal laporan) dan menggeser jadwal kabar berikutnya. 404 bila belum ada laporan uji dari langkah sebelumnya."
+          }
+        },
+        {
+          "name": "Tolak laporan butuh alasan (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404 atau 422\", function () { pm.expect([404, 422]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/laporan-adopter/{{id_laporan_uji}}/tolak",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "laporan-adopter",
+                "{{id_laporan_uji}}",
+                "tolak"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Catatan internal pada pengajuan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_catatan !== undefined) { pm.collectionVariables.set(\"id_catatan_uji\", j.data.id_catatan); }",
+                  "pm.test(\"Jenis bawaan Catatan\", function () { pm.expect(j.data.jenis).to.eql(\"Catatan\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/catatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "catatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isi\": \"Pelamar ramah, rumah rapi (catatan uji Postman).\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Hanya admin. Tidak pernah muncul di pelacakan publik maupun portal adopter."
+          }
+        },
+        {
+          "name": "Catat kunjungan rumah dengan tanggal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/catatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "catatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis\": \"Kunjungan Rumah\",\n  \"isi\": \"Kunjungan dijadwalkan (catatan uji Postman).\",\n  \"tanggal_kunjungan\": \"{{tanggal_hari_ini}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tanggal kunjungan pada catatan biasa ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/catatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "catatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isi\": \"Catatan biasa\",\n  \"tanggal_kunjungan\": \"{{tanggal_hari_ini}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Daftar catatan (terbaru di atas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada catatan uji\", function () { pm.expect(j.data.length).to.be.above(1); pm.expect(j.data[0]).to.have.property(\"penulis\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/catatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "catatan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan uji (hanya penulisnya)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/adopsi/{{id_pengajuan_adopsi}}/catatan/{{id_catatan_uji}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "adopsi",
+                "{{id_pengajuan_adopsi}}",
+                "catatan",
+                "{{id_catatan_uji}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Lembar BAST siap cetak (HTML)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Berupa HTML\", function () { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\"); pm.expect(pm.response.text()).to.include(\"Berita Acara Serah Terima\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/serah-terima/{{id_serah_terima}}/bast",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "serah-terima",
+                "{{id_serah_terima}}",
+                "bast"
+              ]
+            },
+            "description": "Buka tab Visualize/Preview atau salin ke browser lalu cetak (Ctrl+P, Simpan sebagai PDF). Memuat data pribadi adopter: tidak di-cache dan setiap pembukaan tercatat di audit log. Isi butir kesediaan adalah templat; sesuaikan dengan ketentuan Jaga Satwa."
+          }
+        },
+        {
+          "name": "Pelamar menarik pengajuan yang sudah selesai (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}/tarik",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}",
+                "tarik"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomor_pengajuan\": \"{{nomor_pengajuan}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Pengajuan dapat ditarik sendiri oleh pelamar selama MENUNGGU/SCREENING/DISETUJUI (kucing dikembalikan ke Tersedia). Butuh kode tracking + nomor pengajuan sebagai dua faktor. Pengajuan uji ini sudah SELESAI sehingga ditolak."
+          }
+        },
+        {
+          "name": "Tarik dengan nomor pengajuan salah (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}/tarik",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}",
+                "tarik"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomor_pengajuan\": \"ADP-0000-000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Salah nomor diperlakukan sama dengan kode tidak dikenal."
+          }
+        },
+        {
+          "name": "Hapus lampiran dengan nomor salah (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/adopsi/tracking/{{kode_tracking}}/lampiran/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "adopsi",
+                "tracking",
+                "{{kode_tracking}}",
+                "lampiran",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomor_pengajuan\": \"ADP-0000-000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Pelamar dapat menghapus lampirannya sendiri (mis. salah unggah) selagi pengajuan belum diputuskan, lalu mengunggah ulang."
+          }
+        }
+      ]
+    },
+    {
+      "name": "21. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

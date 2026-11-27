@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\AdopterController;
 use App\Http\Controllers\AkunSayaController;
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\ArtikelAdminController;
 use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\BastController;
+use App\Http\Controllers\CatatanPengajuanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FotoKucingController;
@@ -12,6 +15,7 @@ use App\Http\Controllers\InfoPublikController;
 use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
+use App\Http\Controllers\LaporanAdopterAdminController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\NotifikasiController;
@@ -89,6 +93,9 @@ Route::get('info-publik', [InfoPublikController::class, 'index'])->middleware('c
 Route::prefix('adopsi')->group(function () {
     Route::post('ajukan', [PengajuanAdopsiController::class, 'ajukan'])->middleware('throttle:adopsi-tulis');
     Route::post('upload-lampiran', [PengajuanAdopsiController::class, 'uploadLampiran'])->middleware('throttle:adopsi-tulis');
+    // dev-backend-17: pelamar menarik pengajuan / mengganti lampiran (kode tracking + nomor pengajuan sebagai dua faktor)
+    Route::post('tracking/{kode}/tarik', [PengajuanAdopsiController::class, 'tarik'])->middleware('throttle:adopsi-tulis');
+    Route::delete('tracking/{kode}/lampiran/{lampiran}', [PengajuanAdopsiController::class, 'hapusLampiran'])->whereNumber('lampiran')->middleware('throttle:adopsi-tulis');
     Route::get('tracking/{kode}', [PengajuanAdopsiController::class, 'tracking'])->middleware('throttle:adopsi-tracking');
 });
 
@@ -134,6 +141,15 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::get('serah-terima/{id}', [SerahTerimaController::class, 'show'])->whereNumber('id');
     Route::get('serah-terima/{id}/berkas/{jenis}', [SerahTerimaController::class, 'berkas'])->whereNumber('id')->whereIn('jenis', ['dokumen_perjanjian', 'foto_serah_terima']);
     Route::post('serah-terima/{id}/berkas', [SerahTerimaController::class, 'uploadBerkas'])->whereNumber('id')->middleware('audit:serah_terima,UNGGAH_BERKAS');
+
+    // dev-backend-17: kotak masuk laporan adopter (admin yang mencatat, BR-13), catatan internal pengajuan, dan lembar BAST.
+    Route::get('laporan-adopter', [LaporanAdopterAdminController::class, 'index']);
+    Route::post('laporan-adopter/{id}/catat', [LaporanAdopterAdminController::class, 'catat'])->whereNumber('id')->middleware('audit:laporan_adopter,CATAT');
+    Route::post('laporan-adopter/{id}/tolak', [LaporanAdopterAdminController::class, 'tolak'])->whereNumber('id')->middleware('audit:laporan_adopter,TOLAK');
+    Route::get('adopsi/{pengajuan}/catatan', [CatatanPengajuanController::class, 'index'])->whereNumber('pengajuan');
+    Route::post('adopsi/{pengajuan}/catatan', [CatatanPengajuanController::class, 'store'])->whereNumber('pengajuan')->middleware('audit:catatan_pengajuan');
+    Route::delete('adopsi/{pengajuan}/catatan/{catatan}', [CatatanPengajuanController::class, 'destroy'])->whereNumber(['pengajuan', 'catatan'])->middleware('audit:catatan_pengajuan');
+    Route::get('serah-terima/{id}/bast', [BastController::class, 'tampilkan'])->whereNumber('id');
 
     // dev-backend-10: pemantauan kondisi kucing setelah diadopsi (adopter memberi kabar via WhatsApp/CP, admin mencatat; BR-13).
     Route::get('pasca-adopsi', [PascaAdopsiController::class, 'index']);
@@ -206,4 +222,13 @@ Route::prefix('superadmin')->middleware(['auth:sanctum', 'role:superadmin'])->gr
     // Audit log: HANYA baca (tidak ada rute ubah/hapus).
     Route::get('audit-logs/opsi', [AuditLogController::class, 'opsi']);
     Route::get('audit-logs', [AuditLogController::class, 'index']);
+});
+
+// ---- Adopter (dev-backend-17) -----------------------------------------------------
+// Portal pemilik akun setelah serah terima. Hanya melihat/berbuat atas adopsi MILIKNYA (404 untuk milik orang lain).
+Route::prefix('adopter')->middleware(['auth:sanctum', 'role:adopter'])->group(function () {
+    Route::get('kucing-saya', [AdopterController::class, 'index']);
+    Route::get('kucing-saya/{id}', [AdopterController::class, 'show'])->whereNumber('id');
+    // {serahTerima} (bukan {id}) agar audit log mencatat id_laporan dari respons, bukan id serah terima.
+    Route::post('kucing-saya/{serahTerima}/laporan', [AdopterController::class, 'kirimLaporan'])->whereNumber('serahTerima')->middleware(['throttle:laporan-adopter', 'audit:laporan_adopter,KIRIM_LAPORAN']);
 });

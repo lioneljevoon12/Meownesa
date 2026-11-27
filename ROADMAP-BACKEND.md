@@ -26,6 +26,7 @@
 | **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | ✅ **SELESAI** |
 | **dev-backend-15** | Modul Dukungan Offline untuk PWA (Sinkronisasi Delta, Tulis Idempoten, Rotasi Token, Cache Data Publik) | Tujuan proyek: mobilitas petugas lapangan (di luar proposal) | ✅ **SELESAI** |
 | **dev-backend-16** | Modul Akun Mandiri (Ubah Password, Lupa/Reset Password, Profil, & Manajemen Sesi Login) | Kebutuhan produksi (di luar proposal) | ✅ **SELESAI** |
+| **dev-backend-17** | Modul Portal Adopter, Laporan Kondisi, Tarik Pengajuan, Catatan Internal, & Lembar BAST | MEOW-BR-13 (diperluas; di luar proposal) | ✅ **SELESAI** |
 
 ---
 
@@ -585,6 +586,37 @@
   - **Sesi:** daftar hanya memuat sesi milik sendiri yang belum kedaluwarsa dan tidak pernah memuat token. Mengeluarkan sesi milik akun lain dijawab 404 (tidak membocorkan keberadaannya, tanpa IDOR). `perpanjang` (modul 15) mempertahankan nama perangkat.
   - **Super Admin juga boleh memakai jalur lupa password** (akunnya tidak bisa direset lewat API Super Admin). Profil hanya mengubah nama; email dan role tidak bisa diubah sendiri.
   - **Perbaikan di jalan:** pembatas laju login melempar 500 bila `email` dikirim sebagai array (`email[]=x`); kini diperlakukan sebagai kosong sehingga jatuh ke validasi 422. Ada tes regresi untuk login, lupa-password, reset-password, dan aktivasi.
+
+---
+
+### dev-backend-17: Modul Portal Adopter, Laporan Kondisi, Tarik Pengajuan, Catatan Internal, & Lembar BAST
+
+- **Deskripsi & Tujuan:**
+  Akun adopter dibuat saat serah terima tetapi sebelumnya hampir tidak punya endpoint, pelamar tidak bisa menarik pengajuan atau mengganti lampiran, dan admin tidak punya tempat mencatat hasil pemeriksaan/kunjungan. Modul ini menutup celah itu. *Di luar proposal; BR-13 ("admin yang mencatat kondisi") tetap berlaku.*
+- **Fitur & Endpoint API / Controller:**
+  - **Adopter** (`role:adopter`): `GET /api/adopter/kucing-saya` (+ `/{id}`) dan `POST /api/adopter/kucing-saya/{id}/laporan`.
+  - **Admin:** `GET /api/admin/laporan-adopter`, `POST .../{id}/catat`, `POST .../{id}/tolak` (kotak masuk laporan); `GET/POST/DELETE /api/admin/adopsi/{id}/catatan` (catatan internal + kunjungan rumah); `GET /api/admin/serah-terima/{id}/bast` (lembar BAST siap cetak).
+  - **Pelamar (publik, kode tracking + nomor pengajuan):** `POST /api/adopsi/tracking/{kode}/tarik` dan `DELETE /api/adopsi/tracking/{kode}/lampiran/{id}`.
+- **Kriteria Keberhasilan (Acceptance Criteria):**
+  - [x] Adopter melihat kucingnya, jadwal kabar berikutnya, dan riwayat kondisi tanpa melihat adopsi orang lain.
+  - [x] Adopter dapat mengirim kabar sendiri tanpa melanggar BR-13 (admin yang mencatat ke riwayat resmi).
+  - [x] Pelamar dapat menarik pengajuan (kucing kembali Tersedia) dan mengganti lampiran yang salah.
+  - [x] Admin dapat menyimpan catatan internal/kunjungan rumah dan mencetak BAST dari data yang ada.
+- **Target File / Komponen:**
+  - `app/Services/PortalAdopterService.php`, `LaporanAdopterService.php`; `PengajuanStatusService::tarikOlehPelamar()`
+  - `app/Http/Controllers/{Adopter,LaporanAdopterAdmin,CatatanPengajuan,Bast}Controller.php`; tambahan di `PengajuanAdopsiController`
+  - `app/Models/LaporanAdopter.php`, `CatatanPengajuan.php`; `resources/views/bast.blade.php`
+  - Migrasi `2026_12_01_000001_create_laporan_adopter_and_catatan_pengajuan_tables.php`
+  - `tests/Feature/PortalAdopterApiTest.php` (15 tes), `PengajuanPelamarDanCatatanApiTest.php` (16 tes)
+- **Catatan implementasi:**
+  - **Laporan adopter = kotak masuk, bukan catatan resmi.** Laporan masuk berstatus `MENUNGGU`; admin `catat` (menjadi baris `pasca_adopsi` bertanggal hari laporan dikirim, jadwal kabar berikutnya ikut bergeser) atau `tolak` dengan alasan yang terlihat adopter. Dengan begitu BR-13 tetap berlaku dan data pemantauan tetap terkendali. Maks 3 laporan menunggu per adopsi dan 10/hari per akun; ditolak bila pemantauan sudah berakhir (kucing tercatat meninggal). Sudah ditinjau = tidak bisa ditinjau lagi (baris dikunci, aman dari dua admin bersamaan).
+  - **Dampak:** adopter yang laporannya masih menunggu **tidak ditagih pengingat** (modul 11); dashboard menambah peringatan `laporan_adopter_menunggu`.
+  - **Kepemilikan (anti-IDOR):** semua kueri portal dibatasi ke adopsi milik akun (`pengajuan.id_adopter`); adopsi orang lain dijawab 404, bukan 403. Respons portal tidak pernah memuat nama lengkap, kontak, alamat, atau dokumen pengajuan.
+  - **Tarik pengajuan:** status baru `DIBATALKAN` (final, tidak bisa diatur admin). Boleh dari `MENUNGGU`/`SCREENING`/`DISETUJUI`; bila memegang kucing, kucing kembali `Tersedia` (kunci kucing lalu pengajuan, urutan sama dengan jalur lain). Butuh DUA faktor: kode tracking (path) + nomor pengajuan (body); salah salah satunya = 404 yang sama dengan kode tak dikenal. Dibatasi 30/jam per IP. Daftar status admin kini memuat `DIBATALKAN` (tambahan kontrak).
+  - **Ganti lampiran:** pelamar menghapus lampirannya sendiri (berkas fisik ikut terhapus) selagi pengajuan `MENUNGGU`/`SCREENING`, lalu mengunggah ulang lewat endpoint yang sudah ada. Lampiran milik pengajuan lain = 404.
+  - **Catatan internal:** jenis `Catatan` atau `Kunjungan Rumah` (hanya jenis ini boleh bertanggal kunjungan; maks 1 tahun ke depan). Hanya penulisnya yang boleh menghapus. Tidak pernah muncul di pelacakan publik maupun portal adopter. Penjadwalan kunjungan berupa catatan bertanggal, belum ada alur persetujuan tersendiri.
+  - **BAST:** HTML siap cetak (Ctrl+P, Simpan sebagai PDF) tanpa dependensi pembuat PDF; semua data di-escape; tidak pernah di-cache (`no-store`, `noindex`); tiap pembukaan tercatat `CETAK_BAST` di audit log. **Butir kesediaan adalah templat** yang perlu disesuaikan dengan ketentuan resmi Jaga Satwa sebelum dipakai.
+  - **Belum ada (sengaja):** foto pada laporan adopter, notifikasi ke adopter saat laporannya ditinjau, dan penjadwalan kunjungan dengan persetujuan.
 
 ---
 

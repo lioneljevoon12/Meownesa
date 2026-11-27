@@ -12,7 +12,8 @@ class PengajuanAdopsi extends Model
 {
     use HasFactory;
 
-    public const STATUS = ['MENUNGGU', 'SCREENING', 'DISETUJUI', 'DITOLAK', 'SELESAI'];
+    /** DIBATALKAN = ditarik sendiri oleh pelamar (dev-backend-17); final, tidak bisa diatur admin lewat endpoint status. */
+    public const STATUS = ['MENUNGGU', 'SCREENING', 'DISETUJUI', 'DITOLAK', 'SELESAI', 'DIBATALKAN'];
 
     /** Pengajuan yang masih berjalan: belum diputuskan admin. */
     public const STATUS_AKTIF = ['MENUNGGU', 'SCREENING'];
@@ -27,6 +28,7 @@ class PengajuanAdopsi extends Model
         'DISETUJUI' => ['SCREENING', 'DITOLAK'],
         'DITOLAK'   => [],
         'SELESAI'   => [],
+        'DIBATALKAN' => [],
     ];
 
     /** Status yang "memegang" seekor kucing: hanya satu pengajuan boleh berstatus ini per kucing. */
@@ -38,6 +40,7 @@ class PengajuanAdopsi extends Model
         'SCREENING' => ['Sedang Diperiksa', 'Pengurus Jaga Satwa sedang memeriksa pengajuan Anda. Mohon tetap aktif di WhatsApp dan email.'],
         'DISETUJUI' => ['Disetujui', 'Selamat! Pengajuan Anda disetujui. Pengurus akan menghubungi Anda untuk proses serah terima.'],
         'DITOLAK'   => ['Tidak Disetujui', 'Mohon maaf, pengajuan Anda belum dapat kami setujui. Terima kasih atas minat dan kepedulian Anda.'],
+        'DIBATALKAN' => ['Dibatalkan', 'Pengajuan ini sudah Anda tarik kembali. Anda dapat mengajukan lagi kapan saja bila kucingnya masih tersedia.'],
         'SELESAI'   => ['Adopsi Selesai', 'Serah terima telah dicatat. Terima kasih sudah memberi rumah baru bagi kucing kampus!'],
     ];
 
@@ -81,6 +84,11 @@ class PengajuanAdopsi extends Model
     public function lampiranPengajuan(): HasMany
     {
         return $this->hasMany(LampiranPengajuan::class, 'id_pengajuan', 'id_pengajuan');
+    }
+
+    public function catatanPengajuan(): HasMany
+    {
+        return $this->hasMany(CatatanPengajuan::class, 'id_pengajuan', 'id_pengajuan');
     }
 
     public function serahTerima(): HasOne

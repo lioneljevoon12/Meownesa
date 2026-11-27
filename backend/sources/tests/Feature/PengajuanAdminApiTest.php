@@ -105,7 +105,7 @@ class PengajuanAdminApiTest extends TestCase
 
         // jumlah per status tidak terpengaruh filter
         $meta = $this->getJson('/api/admin/adopsi?status=DITOLAK', $h)->json('meta');
-        $this->assertSame(['MENUNGGU' => 1, 'SCREENING' => 1, 'DISETUJUI' => 0, 'DITOLAK' => 1, 'SELESAI' => 0], $meta['jumlah_per_status']);
+        $this->assertSame(['MENUNGGU' => 1, 'SCREENING' => 1, 'DISETUJUI' => 0, 'DITOLAK' => 1, 'SELESAI' => 0, 'DIBATALKAN' => 0], $meta['jumlah_per_status']);
         $this->assertSame(1, $meta['total']);
     }
 

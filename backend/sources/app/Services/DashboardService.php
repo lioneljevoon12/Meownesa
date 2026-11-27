@@ -179,6 +179,7 @@ class DashboardService
         $serahTerimaTertunda = PengajuanAdopsi::where('status_pengajuan', 'DISETUJUI')
             ->where('updated_at', '<=', $sekarang->copy()->subDays(self::BATAS_HARI_SERAH_TERIMA)->setTimezone($zonaApp))->count();
         $emailGagal = Notifikasi::untukAdmin()->where('kanal', Notifikasi::KANAL_EMAIL)->where('status_pengiriman', Notifikasi::STATUS_GAGAL)->count();
+        $laporanMenunggu = \App\Models\LaporanAdopter::where('status_laporan', \App\Models\LaporanAdopter::MENUNGGU)->count();
         $waMenunggu = Notifikasi::untukAdmin()->where('kanal', Notifikasi::KANAL_WHATSAPP)->where('status_pengiriman', Notifikasi::STATUS_PENDING)->count();
 
         $daftar = [
@@ -187,6 +188,7 @@ class DashboardService
             ['pengingat_terlambat', 'peringatan', "{$terlambat} adopter terlambat memberi kabar kondisi kucing.", $terlambat, 'admin/pasca-adopsi?status=terlambat'],
             ['feeding_belum_diberi', 'peringatan', "{$feedingBelum} kucing belum diberi makan hari ini.", $feedingBelum, 'admin/feeding?status=Belum&tanggal='.$sekarang->toDateString()],
             ['serah_terima_tertunda', 'info', "{$serahTerimaTertunda} adopsi disetujui lebih dari ".self::BATAS_HARI_SERAH_TERIMA.' hari tetapi belum diserahterimakan.', $serahTerimaTertunda, 'admin/adopsi?status=DISETUJUI'],
+            ['laporan_adopter_menunggu', 'info', "{$laporanMenunggu} laporan kondisi dari adopter menunggu dicatat.", $laporanMenunggu, 'admin/laporan-adopter?status=MENUNGGU'],
             ['whatsapp_menunggu', 'info', "{$waMenunggu} pesan WhatsApp menunggu dikirim manual.", $waMenunggu, 'admin/notifikasi?kanal=WhatsApp&status=PENDING'],
         ];
 

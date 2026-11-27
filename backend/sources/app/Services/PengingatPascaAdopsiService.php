@@ -41,6 +41,10 @@ class PengingatPascaAdopsiService
         $baris = $this->pemantauan->semua($hariIni)
             ->filter(fn (array $r) => in_array($r['status_pemantauan'], ['aktif', 'terlambat'], true));
 
+        // Adopter yang sudah mengirim laporan (belum ditinjau admin) tidak ditagih kabar lagi.
+        $sudahLapor = \App\Models\LaporanAdopter::where('status_laporan', \App\Models\LaporanAdopter::MENUNGGU)->pluck('id_serah_terima')->flip();
+        $baris = $baris->reject(fn (array $r) => $sudahLapor->has($r['id_serah_terima']));
+
         $idPengajuan = SerahTerima::whereIn('id_serah_terima', $baris->pluck('id_serah_terima'))
             ->pluck('id_pengajuan', 'id_serah_terima');
 

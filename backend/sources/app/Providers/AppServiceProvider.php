@@ -43,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
             Limit::perHour(10)->by($request->ip()),
         ]);
 
+        // Laporan kondisi dari adopter: cukup longgar untuk kabar mingguan, cukup ketat untuk mencegah banjir ke admin.
+        RateLimiter::for('laporan-adopter', fn (Request $request) => Limit::perDay(10)->by((string) ($request->user()?->id_user ?? $request->ip())));
+
         // Perpanjang token (HP lapangan): longgar karena dipanggil berkala, tetapi tetap dibatasi per akun.
         RateLimiter::for('perpanjang', fn (Request $request) => Limit::perMinute(20)->by((string) ($request->user()?->id_user ?? $request->ip())));
 

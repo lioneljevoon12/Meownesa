@@ -87,6 +87,37 @@ class PengajuanStatusService
         });
     }
 
+    /**
+     * Pelamar menarik pengajuannya sendiri (lewat kode tracking + nomor pengajuan). Boleh selama belum SELESAI/DITOLAK.
+     * Bila pengajuan sedang memegang kucing (SCREENING/DISETUJUI), kucing dikembalikan ke Tersedia agar bisa diajukan lagi.
+     */
+    public function tarikOlehPelamar(int $idPengajuan): PengajuanAdopsi
+    {
+        return DB::transaction(function () use ($idPengajuan) {
+            $awal = PengajuanAdopsi::findOrFail($idPengajuan);
+            // Urutan kunci sama dengan jalur lain: kucing dulu, baru pengajuan.
+            $kucing = Kucing::whereKey($awal->id_kucing)->lockForUpdate()->firstOrFail();
+            $pengajuan = PengajuanAdopsi::whereKey($idPengajuan)->lockForUpdate()->firstOrFail();
+            $dari = $pengajuan->status_pengajuan;
+
+            if (! in_array($dari, ['MENUNGGU', 'SCREENING', 'DISETUJUI'], true)) {
+                $this->tolak("Pengajuan yang berstatus {$dari} tidak dapat ditarik.");
+            }
+
+            $pengajuan->update(['status_pengajuan' => 'DIBATALKAN']);
+
+            if (in_array($dari, PengajuanAdopsi::STATUS_MEMEGANG_KUCING, true) && $kucing->status_kucing === 'Proses Screening') {
+                $kucing->update(['status_kucing' => 'Tersedia']);
+                AuditLogger::record(null, 'SINKRON_STATUS_KUCING', 'kucing', $kucing->id_kucing);
+            }
+
+            AuditLogger::record(null, 'TARIK_PENGAJUAN', 'pengajuan_adopsi', $pengajuan->id_pengajuan);
+            $this->notifikasi->statusBerubah($pengajuan);
+
+            return $pengajuan;
+        });
+    }
+
     private function tolak(string $pesan): never
     {
         throw ValidationException::withMessages(['status' => $pesan]);

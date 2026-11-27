@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AjukanAdopsiRequest;
+use App\Http\Requests\KonfirmasiPengajuanRequest;
 use App\Http\Requests\UploadLampiranRequest;
 use App\Http\Resources\PengajuanPublikResource;
 use App\Models\Kucing;
@@ -10,6 +11,7 @@ use App\Models\PemberianMakan;
 use App\Models\PengajuanAdopsi;
 use App\Services\LampiranService;
 use App\Services\NotifikasiPengajuanService;
+use App\Services\PengajuanStatusService;
 use App\Services\TrackingCodeGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -32,6 +34,7 @@ class PengajuanAdopsiController extends Controller
         private readonly TrackingCodeGenerator $kode,
         private readonly LampiranService $lampiran,
         private readonly NotifikasiPengajuanService $notifikasi,
+        private readonly PengajuanStatusService $status,
     ) {
     }
 
@@ -167,6 +170,57 @@ class PengajuanAdopsiController extends Controller
     }
 
     /**
+     * Pelamar menarik pengajuannya sendiri. Butuh kode tracking (path) DAN nomor pengajuan (body) sebagai dua faktor.
+     * Kucing yang sedang dipegang pengajuan ini dikembalikan ke Tersedia.
+     */
+    public function tarik(KonfirmasiPengajuanRequest $request, string $kode): JsonResponse
+    {
+        $pengajuan = $this->cariDenganNomor($kode, $request->validated('nomor_pengajuan'));
+        if (! $pengajuan) {
+            return $this->tidakDitemukan();
+        }
+
+        $pengajuan = $this->status->tarikOlehPelamar($pengajuan->id_pengajuan)->load(['kucing.fotoUtama', 'lampiranPengajuan']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan berhasil ditarik. Anda dapat mengajukan lagi kapan saja bila kucingnya masih tersedia.',
+            'data'    => new PengajuanPublikResource($pengajuan),
+        ]);
+    }
+
+    /** Hapus satu lampiran milik pengajuan sendiri (mis. salah unggah) agar bisa diunggah ulang. Hanya selagi belum diputuskan. */
+    public function hapusLampiran(KonfirmasiPengajuanRequest $request, string $kode, int $lampiran): JsonResponse
+    {
+        $pengajuan = $this->cariDenganNomor($kode, $request->validated('nomor_pengajuan'));
+        if (! $pengajuan) {
+            return $this->tidakDitemukan();
+        }
+
+        $path = DB::transaction(function () use ($pengajuan, $lampiran) {
+            $p = PengajuanAdopsi::whereKey($pengajuan->id_pengajuan)->lockForUpdate()->firstOrFail();
+
+            if (! in_array($p->status_pengajuan, PengajuanAdopsi::STATUS_AKTIF, true)) {
+                throw ValidationException::withMessages(['kode_tracking' => 'Pengajuan ini sudah diputuskan, sehingga lampiran tidak dapat diubah lagi.']);
+            }
+
+            $berkas = $p->lampiranPengajuan()->whereKey($lampiran)->firstOrFail();   // bukan milik pengajuan ini: 404
+            $url = $berkas->url_file;
+            $berkas->delete();
+
+            return $url;
+        });
+
+        $this->lampiran->hapusBerkas($path);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lampiran dihapus. Anda dapat mengunggah berkas yang benar.',
+            'data'    => ['id_lampiran' => $lampiran, 'jumlah_lampiran' => $pengajuan->lampiranPengajuan()->count()],
+        ]);
+    }
+
+    /**
      * Buat baris pengajuan dengan nomor dan kode baru. Keunikan dijaga constraint UNIQUE; bila dua
      * pengajuan bersamaan mengambil nomor yang sama, ulangi dengan nomor berikutnya.
      *
@@ -188,6 +242,14 @@ class PengajuanAdopsiController extends Controller
                 }
             }
         }
+    }
+
+    /** Kode tracking + nomor pengajuan harus cocok; salah salah satunya diperlakukan sama dengan tidak ditemukan. */
+    private function cariDenganNomor(string $kode, string $nomor): ?PengajuanAdopsi
+    {
+        $pengajuan = $this->cari($kode);
+
+        return $pengajuan && hash_equals($pengajuan->nomor_pengajuan, strtoupper(trim($nomor))) ? $pengajuan : null;
     }
 
     private function cari(string $kode): ?PengajuanAdopsi
