@@ -20,6 +20,8 @@ class AuthController extends Controller
         $data = $request->validate([
             'email'    => ['required', 'string', 'email', 'max:150'],
             'password' => ['required', 'string', 'max:255'],
+            // Nama perangkat (mis. "HP Relawan Ketintang") agar daftar sesi mudah dikenali.
+            'perangkat' => ['nullable', 'string', 'max:60'],
         ]);
 
         $user = User::where('email', $data['email'])->first();
@@ -52,7 +54,7 @@ class AuthController extends Controller
             $user->forceFill(['password_hash' => $data['password']])->save();
         }
 
-        [$plain, $expiresAt] = $this->terbitkanToken($user);
+        [$plain, $expiresAt] = $this->terbitkanToken($user, trim((string) ($data['perangkat'] ?? '')) ?: 'api');
 
         AuditLogger::record($user, 'LOGIN', 'users', $user->id_user);
 
@@ -77,7 +79,7 @@ class AuthController extends Controller
         }
 
         $lama = $user->currentAccessToken();
-        [$plain, $expiresAt] = $this->terbitkanToken($user);
+        [$plain, $expiresAt] = $this->terbitkanToken($user, $lama instanceof SanctumToken ? $lama->name : 'api');
 
         if ($lama instanceof SanctumToken) {
             $lama->delete();
@@ -127,11 +129,11 @@ class AuthController extends Controller
     }
 
     /** @return array{0: string, 1: \Carbon\Carbon|null} token mentah dan waktu kedaluwarsanya */
-    private function terbitkanToken(User $user): array
+    private function terbitkanToken(User $user, string $nama = 'api'): array
     {
         $expiresAt = config('sanctum.expiration') ? now()->addMinutes((int) config('sanctum.expiration')) : null;
 
-        return [$user->createToken('api', ['*'], $expiresAt)->plainTextToken, $expiresAt];
+        return [$user->createToken($nama, ['*'], $expiresAt)->plainTextToken, $expiresAt];
     }
 
     /** @return array<string, mixed> */

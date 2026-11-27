@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 15)",
+    "name": "MeowNesa API (dev-backend-01 s/d 16)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -177,6 +177,14 @@
     },
     {
       "key": "etag_kucing",
+      "value": ""
+    },
+    {
+      "key": "token_perangkat",
+      "value": ""
+    },
+    {
+      "key": "id_sesi_uji",
       "value": ""
     }
   ],
@@ -8806,7 +8814,543 @@
       ]
     },
     {
-      "name": "19. Bersih-bersih",
+      "name": "19. Akun Mandiri: Password, Profil, dan Sesi",
+      "item": [
+        {
+          "name": "Daftar sesi login saya",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada sesi, tepat satu bertanda saat ini, tanpa token\", function () { pm.expect(j.data.length).to.be.above(0); pm.expect(j.data.filter(x => x.saat_ini).length).to.eql(1); pm.expect(pm.response.text()).to.not.include(\"token\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/sesi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "sesi"
+              ]
+            },
+            "description": "Hanya sesi milik sendiri yang belum kedaluwarsa. perangkat = nama yang dikirim saat login (field `perangkat`)."
+          }
+        },
+        {
+          "name": "Login dengan nama perangkat (sesi kedua)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.token !== undefined) { pm.collectionVariables.set(\"token_perangkat\", j.data.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_admin}}\",\n  \"password\": \"{{password}}\",\n  \"perangkat\": \"Postman uji\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Menambah sesi baru bernama \"Postman uji\" tanpa mengganti token utama koleksi."
+          }
+        },
+        {
+          "name": "Sesi baru muncul di daftar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "const s = j.data.find(x => x.perangkat === \"Postman uji\"); pm.test(\"Sesi Postman uji ada\", function () { pm.expect(s).to.exist; });",
+                  "if (s) { pm.collectionVariables.set(\"id_sesi_uji\", s.id_sesi); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/sesi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "sesi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Keluarkan sesi uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/sesi/{{id_sesi_uji}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "sesi",
+                "{{id_sesi_uji}}"
+              ]
+            },
+            "description": "Hanya sesi milik sendiri; sesi milik akun lain dijawab 404."
+          }
+        },
+        {
+          "name": "Token sesi yang dikeluarkan tidak berlaku (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_perangkat}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ubah nama sendiri",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Email dan role tidak berubah\", function () { pm.expect(j.data.email).to.be.a(\"string\"); pm.expect(j.data.role).to.eql(\"admin\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/profil",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "profil"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Admin Jaga Satwa UNESA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Hanya nama yang bisa diubah sendiri. Email dan role tidak bisa (email diganti lewat Super Admin). Nama dikembalikan ke nama seed agar data tidak berubah."
+          }
+        },
+        {
+          "name": "Ubah password: password lama salah (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/ubah-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "ubah-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password_lama\": \"password-yang-salah-1\",\n  \"password\": \"PasswordBaru123\",\n  \"password_confirmation\": \"PasswordBaru123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Mengubah password butuh password lama. Request keberhasilan sengaja tidak disertakan agar password akun uji tidak berubah; hasilnya: semua sesi LAIN dikeluarkan, sesi ini tetap hidup. Dibatasi 5x/menit."
+          }
+        },
+        {
+          "name": "Ubah password: password baru lemah (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/ubah-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "ubah-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password_lama\": \"{{password}}\",\n  \"password\": \"lemah\",\n  \"password_confirmation\": \"lemah\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lupa password (publik): respons sama untuk email apa pun",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Pesan generik, tidak membocorkan apakah email terdaftar\", function () { pm.expect(j.message).to.include(\"Jika email itu terdaftar\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/lupa-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "lupa-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tidak.terdaftar.postman@contoh.id\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Untuk email terdaftar dan aktif, tautan reset (berlaku 60 menit, sekali pakai) dikirim ke emailnya; untuk email lain respons PERSIS sama dan tidak ada yang terkirim. Dibatasi 3x/menit per email+IP dan 10x/jam per IP. Dengan MAIL_MAILER=log tautan ada di storage/logs/laravel.log."
+          }
+        },
+        {
+          "name": "Lupa password: format email salah (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/lupa-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "lupa-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"bukan-email\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Reset password dengan token salah (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_admin}}\",\n  \"token\": \"token-salah\",\n  \"password\": \"PasswordBaru123\",\n  \"password_confirmation\": \"PasswordBaru123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Satu pesan untuk semua kegagalan (token salah, kedaluwarsa, sudah dipakai, email tak dikenal, akun tidak aktif)."
+          }
+        },
+        {
+          "name": "Keluarkan semua sesi lain",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Jumlah sesi lain dilaporkan\", function () { pm.expect(j.data.jumlah).to.be.a(\"number\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/keluar-semua-lain",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "keluar-semua-lain"
+              ]
+            },
+            "description": "Untuk HP yang hilang: semua sesi lain dicabut, sesi ini tetap hidup. Perhatian: ikut mengeluarkan sesi akun admin ini di perangkat lain."
+          }
+        }
+      ]
+    },
+    {
+      "name": "20. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

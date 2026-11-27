@@ -25,6 +25,7 @@
 | **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | ✅ **SELESAI** |
 | **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | ✅ **SELESAI** |
 | **dev-backend-15** | Modul Dukungan Offline untuk PWA (Sinkronisasi Delta, Tulis Idempoten, Rotasi Token, Cache Data Publik) | Tujuan proyek: mobilitas petugas lapangan (di luar proposal) | ✅ **SELESAI** |
+| **dev-backend-16** | Modul Akun Mandiri (Ubah Password, Lupa/Reset Password, Profil, & Manajemen Sesi Login) | Kebutuhan produksi (di luar proposal) | ✅ **SELESAI** |
 
 ---
 
@@ -557,6 +558,33 @@
   - **Cache publik** memakai middleware sendiri `cache.publik` (bukan `cache.headers` bawaan) agar hanya respons 200 yang di-cache: error 404/422 tidak pernah disimpan. Data admin, tracking adopsi, dan penarikan sinkron tidak di-cache (`no-store`). Jeda 60 detik berarti perubahan admin bisa terlambat sampai semenit di katalog publik.
   - **Indeks** `updated_at` ditambahkan pada kucing, lokasi, kesehatan, dan feeding karena penarikan delta selalu memfilter dan mengurutkan menurut kolom itu.
   - **Belum ada (sengaja):** penulisan offline untuk edit data, unggah foto bertahap (resumable), dan push notification; semuanya bisa menyusul bila dibutuhkan.
+
+---
+
+### dev-backend-16: Modul Akun Mandiri (Ubah Password, Lupa/Reset Password, Profil, & Manajemen Sesi Login)
+
+- **Deskripsi & Tujuan:**
+  Sebelumnya pengguna tidak bisa mengganti password sendiri dan admin yang lupa password harus meminta Super Admin mereset. Modul ini memberi semua role pengelolaan akun mandiri yang aman. *Di luar proposal.*
+- **Fitur & Endpoint API / Controller:**
+  - `POST /api/auth/ubah-password` (butuh password lama; semua sesi lain dikeluarkan, sesi ini tetap hidup).
+  - `POST /api/auth/lupa-password` (publik) dan `POST /api/auth/reset-password` (publik, memakai tautan di email).
+  - `PUT /api/auth/profil` (ubah nama sendiri).
+  - `GET /api/auth/sesi`, `DELETE /api/auth/sesi/{id}`, `POST /api/auth/keluar-semua-lain` (kelola perangkat yang sedang login). `POST /api/auth/login` kini menerima `perangkat` (nama perangkat, maks 60).
+- **Kriteria Keberhasilan (Acceptance Criteria):**
+  - [x] Pengguna dapat mengganti password sendiri dan memulihkan akun yang lupa password tanpa Super Admin.
+  - [x] Lupa password tidak membocorkan apakah sebuah email terdaftar.
+  - [x] Pengguna dapat melihat dan mengeluarkan perangkat yang sedang login (mis. HP hilang).
+- **Target File / Komponen:**
+  - `app/Services/KredensialService.php`, `app/Http/Controllers/AkunSayaController.php`, `LupaPasswordController.php`
+  - `app/Http/Requests/{UbahPassword,LupaPassword,ResetPassword,UbahProfil}Request.php`
+  - `tests/Feature/AkunMandiriApiTest.php` (19 tes)
+- **Catatan implementasi:**
+  - **Tidak membocorkan akun:** `lupa-password` selalu menjawab 200 dengan pesan yang sama untuk email terdaftar, tidak terdaftar, belum aktif, atau ditangguhkan; pekerjaannya dijalankan setelah respons terkirim (`defer`) sehingga waktu respons pun sama. Hanya akun `aktif` yang mendapat email. `reset-password` menolak semua kegagalan dengan satu pesan (token salah, kedaluwarsa, dipakai, email tak dikenal, akun tidak aktif).
+  - **Tautan reset:** berlaku 60 menit, sekali pakai (broker `users`), hanya ada di isi email (tidak pernah di respons API), disamarkan di basis data setelah terkirim, dan tidak terbaca admin biasa (notifikasi akun pengguna disembunyikan, lihat modul 14). Permintaan ulang dalam 60 detik untuk akun yang sama tidak mengirim email lagi (cegah banjir kotak masuk). Dibatasi 3x/menit per email+IP dan 10x/jam per IP.
+  - **Ubah password** wajib menyebut password lama (token curian saja tidak cukup mengambil alih akun), dibatasi 5x/menit per akun, password baru tidak boleh sama dengan yang lama atau emailnya, minimal 8 karakter berisi huruf dan angka, maksimal 64 (batas bcrypt 72 byte). Reset dan ubah password sama-sama mencabut sesi (reset: semua; ubah: semua kecuali yang sedang dipakai).
+  - **Sesi:** daftar hanya memuat sesi milik sendiri yang belum kedaluwarsa dan tidak pernah memuat token. Mengeluarkan sesi milik akun lain dijawab 404 (tidak membocorkan keberadaannya, tanpa IDOR). `perpanjang` (modul 15) mempertahankan nama perangkat.
+  - **Super Admin juga boleh memakai jalur lupa password** (akunnya tidak bisa direset lewat API Super Admin). Profil hanya mengubah nama; email dan role tidak bisa diubah sendiri.
+  - **Perbaikan di jalan:** pembatas laju login melempar 500 bila `email` dikirim sebagai array (`email[]=x`); kini diperlakukan sebagai kosong sehingga jatuh ke validasi 422. Ada tes regresi untuk login, lupa-password, reset-password, dan aktivasi.
 
 ---
 

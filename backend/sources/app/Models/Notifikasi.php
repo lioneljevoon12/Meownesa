@@ -23,6 +23,7 @@ class Notifikasi extends Model
     public const JENIS_REMINDER = 'Reminder Monitoring';
     public const JENIS_UNDANGAN_PENGURUS = 'Undangan Pengurus';
     public const JENIS_RESET_PASSWORD = 'Reset Password';
+    public const JENIS_LUPA_PASSWORD = 'Lupa Password';
 
     protected $table = 'notifikasi';
     protected $primaryKey = 'id_notifikasi';

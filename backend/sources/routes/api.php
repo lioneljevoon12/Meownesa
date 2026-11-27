@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AkunSayaController;
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\ArtikelAdminController;
 use App\Http\Controllers\ArtikelController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PascaAdopsiController;
 use App\Http\Controllers\PemberianMakanController;
@@ -41,12 +43,22 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
     // dev-backend-09: adopter mengatur password lewat tautan dari notifikasi serah terima (publik)
     Route::post('aktivasi', [AktivasiAkunController::class, 'aktifkan'])->middleware('throttle:login');
+    // dev-backend-16: lupa/reset password mandiri lewat email (publik; respons tidak membocorkan email terdaftar)
+    Route::post('lupa-password', [LupaPasswordController::class, 'minta'])->middleware('throttle:lupa-password');
+    Route::post('reset-password', [LupaPasswordController::class, 'reset'])->middleware('throttle:login');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
         // dev-backend-15: tukar token yang masih berlaku dengan yang baru (PWA/HP lapangan).
         Route::post('perpanjang', [AuthController::class, 'perpanjang'])->middleware('throttle:perpanjang');
+
+        // dev-backend-16: akun sendiri (semua role). Hanya menyentuh akun/sesi milik pemanggil.
+        Route::post('ubah-password', [AkunSayaController::class, 'ubahPassword'])->middleware('throttle:ubah-password');
+        Route::put('profil', [AkunSayaController::class, 'ubahProfil'])->middleware('audit:users');
+        Route::get('sesi', [AkunSayaController::class, 'daftarSesi']);
+        Route::delete('sesi/{id}', [AkunSayaController::class, 'cabutSesi'])->whereNumber('id');
+        Route::post('keluar-semua-lain', [AkunSayaController::class, 'keluarSemuaLain']);
     });
 });
 
