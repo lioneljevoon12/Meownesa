@@ -35,6 +35,16 @@ abstract class RiwayatKesehatanRequest extends FormRequest
     /** @return array<string, mixed> */
     protected function aturanDasar(bool $sebagian): array
     {
+        return self::aturanIsian($sebagian) + ['client_uuid' => ['nullable', 'uuid']];
+    }
+
+    /**
+     * Aturan isian catatan (tanpa id kucing). Statis agar juga dipakai pencatatan batch dari HP.
+     *
+     * @return array<string, mixed>
+     */
+    public static function aturanIsian(bool $sebagian): array
+    {
         $wajib = $sebagian ? ['sometimes', 'required'] : ['required'];
         // Tanggal tindakan tidak boleh di masa depan (menurut WIB); riwayat = yang sudah terjadi.
         $hariIni = Carbon::now(RiwayatKesehatan::ZONA_WAKTU)->toDateString();
@@ -54,6 +64,12 @@ abstract class RiwayatKesehatanRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $v) {
+            // Kirim ulang catatan yang sama (UUID sudah tersimpan) idempoten: jangan ditolak sebagai duplikat sterilisasi.
+            $uuid = $this->input('client_uuid');
+            if ($uuid && RiwayatKesehatan::where('client_uuid', $uuid)->exists()) {
+                return;
+            }
+
             $saatIni = $this->catatanSaatIni();
             $jenis = $this->input('jenis_tindakan', $saatIni?->jenis_tindakan);
             $catatan = $this->has('catatan') ? $this->input('catatan') : $saatIni?->catatan;
@@ -93,6 +109,7 @@ abstract class RiwayatKesehatanRequest extends FormRequest
             'tanggal.date_format'         => 'Tanggal harus berformat YYYY-MM-DD.',
             'tanggal.after_or_equal'      => 'Tanggal tindakan tidak masuk akal (sebelum tahun 2015).',
             'tanggal.before_or_equal'     => 'Tanggal tindakan tidak boleh di masa depan.',
+            'uuid'                        => 'client_uuid harus berupa UUID yang valid.',
         ];
     }
 }

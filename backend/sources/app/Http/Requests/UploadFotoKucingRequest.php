@@ -21,6 +21,8 @@ class UploadFotoKucingRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // Dikirim HP agar unggahan yang diulang (jaringan putus-nyambung) tidak membuat foto ganda.
+            'client_uuid' => ['nullable', 'uuid'],
             'foto' => [
                 'required', 'file',
                 'mimetypes:image/jpeg,image/png,image/webp',
@@ -35,6 +37,7 @@ class UploadFotoKucingRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'client_uuid.uuid' => 'client_uuid harus berupa UUID yang valid.',
             'foto.required'   => 'Berkas foto wajib diunggah (field: foto).',
             'foto.file'       => 'Foto harus berupa berkas.',
             'foto.uploaded'   => 'Foto gagal diunggah. Pastikan ukurannya tidak lebih dari 5 MB.',

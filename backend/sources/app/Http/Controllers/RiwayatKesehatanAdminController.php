@@ -2,28 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\RecordAuditLog;
 use App\Http\Requests\StoreRiwayatKesehatanRequest;
 use App\Http\Requests\UpdateRiwayatKesehatanRequest;
 use App\Http\Resources\RiwayatKesehatanAdminResource;
 use App\Models\Kucing;
 use App\Models\RiwayatKesehatan;
-use App\Services\AuditLogger;
+use App\Services\KesehatanService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 /**
  * Pencatatan kesehatan dan perawatan oleh Admin Jaga Satwa (MEOW-F-10, F-12, F-13).
  * Route: role:admin + audit:riwayat_kesehatan. Klinik tidak punya akun (MEOW-BR-09).
- *
- * Sinkronisasi: mencatat/mengubah menjadi tindakan "Sterilisasi" otomatis menetapkan
- * kucing.status_steril = Sudah. Arah sebaliknya TIDAK otomatis: menghapus atau mengubah catatan
- * sterilisasi tidak mengembalikan status ke Belum, karena status "Sudah" juga bisa berasal dari
- * data presensi (tanpa catatan medis) sehingga kebenaran sebelumnya tidak diketahui sistem.
+ * Aturan penyimpanan (sinkron status steril, idempotensi client_uuid) ada di {@see KesehatanService}.
  */
 class RiwayatKesehatanAdminController extends Controller
 {
+    public function __construct(private readonly KesehatanService $kesehatan)
+    {
+    }
+
     public function index(int $kucing): JsonResponse
     {
         $k = Kucing::findOrFail($kucing);
@@ -38,24 +40,90 @@ class RiwayatKesehatanAdminController extends Controller
 
     public function store(StoreRiwayatKesehatanRequest $request, int $kucing): JsonResponse
     {
-        $catatan = DB::transaction(function () use ($request, $kucing) {
-            $k = Kucing::whereKey($kucing)->lockForUpdate()->firstOrFail();
+        [$catatan, $dibuat] = $this->kesehatan->simpan($kucing, $request->validated(), $request->user());
 
-            if ($request->input('jenis_tindakan') === RiwayatKesehatan::JENIS_STERILISASI) {
-                $this->pastikanSterilisasiTunggal($k->id_kucing);
-            }
-
-            $catatan = $k->riwayatKesehatan()->create($request->validated());
-            $this->sinkronSteril($k, $catatan, $request);
-
-            return $catatan;
-        });
+        if (! $dibuat) {
+            // Pengiriman ulang: tidak ada data baru, jadi jangan dicatat sebagai CREATE di audit log.
+            // Memakai request() (instans yang dilihat middleware); $request di sini salinan FormRequest.
+            request()->attributes->set(RecordAuditLog::LEWATI, true);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Catatan kesehatan berhasil ditambahkan.',
+            'message' => $dibuat ? 'Catatan kesehatan berhasil ditambahkan.' : 'Catatan ini sudah tersimpan sebelumnya (pengiriman ulang diabaikan).',
             'data'    => new RiwayatKesehatanAdminResource($catatan),
-        ], 201);
+        ], $dibuat ? 201 : 200);
+    }
+
+    /**
+     * Sinkronisasi massal dari HP: hingga 50 catatan dalam satu permintaan, tiap catatan diproses mandiri.
+     * Respons 200 dengan hasil per catatan: dibuat | sudah_ada (client_uuid pernah dikirim) | ditolak.
+     */
+    public function batch(Request $request): JsonResponse
+    {
+        $request->validate([
+            'entries'   => ['required', 'array', 'min:1', 'max:50'],
+            'entries.*' => ['array'],
+        ], [
+            'entries.required' => 'Daftar catatan (entries) wajib diisi.',
+            'entries.array'    => 'entries harus berupa daftar catatan.',
+            'entries.min'      => 'Minimal 1 catatan per permintaan.',
+            'entries.max'      => 'Maksimal 50 catatan per permintaan. Kirim dalam beberapa batch.',
+            'entries.*.array'  => 'Setiap catatan harus berupa objek.',
+        ]);
+
+        $hasil = [];
+        $ringkasan = ['dibuat' => 0, 'sudah_ada' => 0, 'ditolak' => 0];
+
+        foreach ($request->input('entries') as $i => $mentah) {
+            $item = ['index' => $i, 'client_uuid' => $mentah['client_uuid'] ?? null];
+
+            if (isset($mentah['catatan']) && is_string($mentah['catatan'])) {
+                $mentah['catatan'] = trim($mentah['catatan']);
+            }
+
+            $validator = Validator::make($mentah, $this->kesehatan->aturanBatch(), [
+                'jenis_tindakan.in' => 'Jenis tindakan harus salah satu dari: '.implode(', ', RiwayatKesehatan::JENIS).'.',
+                'id_kucing.exists'  => 'Kucing tidak ditemukan.',
+                'uuid'              => 'client_uuid harus berupa UUID yang valid.',
+            ]);
+            $galat = $validator->fails() ? $validator->errors()->toArray() : [];
+
+            $data = [];
+            if (! $galat) {
+                $data = $validator->validated();
+                foreach ($this->kesehatan->periksa($data) as $field => $pesan) {
+                    $galat[$field] = [$pesan];
+                }
+            }
+
+            if (! $galat) {
+                try {
+                    [$catatan, $dibuat] = $this->kesehatan->simpan((int) $data['id_kucing'], $data, $request->user());
+                    $item += ['status' => $dibuat ? 'dibuat' : 'sudah_ada', 'id_kesehatan' => $catatan->id_kesehatan];
+                } catch (ValidationException $e) {
+                    $galat = $e->errors();
+                }
+            }
+
+            if ($galat) {
+                $item += ['status' => 'ditolak', 'errors' => $galat];
+            }
+
+            $ringkasan[$item['status']]++;
+            $hasil[] = $item;
+        }
+
+        // Semuanya pengiriman ulang atau ditolak: tidak ada perubahan data, jadi tidak dicatat sebagai aksi di audit log.
+        if ($ringkasan['dibuat'] === 0) {
+            request()->attributes->set(RecordAuditLog::LEWATI, true);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$ringkasan['dibuat']} dibuat, {$ringkasan['sudah_ada']} sudah ada, {$ringkasan['ditolak']} ditolak.",
+            'data'    => ['ringkasan' => $ringkasan, 'hasil' => $hasil],
+        ]);
     }
 
     public function update(UpdateRiwayatKesehatanRequest $request, int $id): JsonResponse
@@ -67,11 +135,11 @@ class RiwayatKesehatanAdminController extends Controller
             $catatan->fill($request->validated());
 
             if ($catatan->jenis_tindakan === RiwayatKesehatan::JENIS_STERILISASI) {
-                $this->pastikanSterilisasiTunggal($k->id_kucing, $catatan->id_kesehatan);
+                $this->kesehatan->pastikanSterilisasiTunggal($k->id_kucing, $catatan->id_kesehatan);
             }
 
             $catatan->save();
-            $this->sinkronSteril($k, $catatan, $request);
+            $this->kesehatan->sinkronSteril($k, $catatan, $request->user());
 
             return $catatan->refresh();
         });
@@ -93,32 +161,5 @@ class RiwayatKesehatanAdminController extends Controller
             'message' => 'Catatan kesehatan berhasil dihapus.',
             'data'    => ['id_kesehatan' => $id, 'id_kucing' => $catatan->id_kucing],
         ]);
-    }
-
-    private function sinkronSteril(Kucing $k, RiwayatKesehatan $catatan, Request $request): void
-    {
-        if ($catatan->jenis_tindakan !== RiwayatKesehatan::JENIS_STERILISASI || $k->status_steril === 'Sudah') {
-            return;
-        }
-
-        $k->update(['status_steril' => 'Sudah']);
-
-        // Perubahan data kucing akibat sinkronisasi juga dicatat agar bisa ditelusuri.
-        AuditLogger::record($request->user(), 'SINKRON_STERIL', 'kucing', $k->id_kucing);
-    }
-
-    /** Pengecekan ulang di dalam transaksi (baris kucing terkunci) agar permintaan bersamaan tidak lolos. */
-    private function pastikanSterilisasiTunggal(int $idKucing, ?int $abaikanId = null): void
-    {
-        $ada = RiwayatKesehatan::where('id_kucing', $idKucing)
-            ->where('jenis_tindakan', RiwayatKesehatan::JENIS_STERILISASI)
-            ->when($abaikanId, fn ($q) => $q->whereKeyNot($abaikanId))
-            ->exists();
-
-        if ($ada) {
-            throw ValidationException::withMessages([
-                'jenis_tindakan' => 'Kucing ini sudah punya catatan sterilisasi. Ubah catatan yang ada, bukan menambah baru.',
-            ]);
-        }
     }
 }

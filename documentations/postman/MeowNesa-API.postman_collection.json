@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 14)",
+    "name": "MeowNesa API (dev-backend-01 s/d 15)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -153,6 +153,30 @@
     },
     {
       "key": "email_admin_uji",
+      "value": ""
+    },
+    {
+      "key": "kursor_sinkron",
+      "value": ""
+    },
+    {
+      "key": "uuid_kesehatan_offline",
+      "value": ""
+    },
+    {
+      "key": "uuid_kesehatan_batch",
+      "value": ""
+    },
+    {
+      "key": "id_kesehatan_offline",
+      "value": ""
+    },
+    {
+      "key": "id_kesehatan_batch",
+      "value": ""
+    },
+    {
+      "key": "etag_kucing",
       "value": ""
     }
   ],
@@ -8206,7 +8230,583 @@
       ]
     },
     {
-      "name": "18. Bersih-bersih",
+      "name": "18. Offline PWA: Sinkronisasi dan Idempotensi (lanjutan folder 1-4)",
+      "item": [
+        {
+          "name": "Tarik penuh (pertama kali / HP baru)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"kursor_sinkron\", j.data.kursor);",
+                  "pm.test(\"Penarikan penuh lengkap\", function () { pm.expect(j.data.penuh).to.eql(true); pm.expect(j.data.lengkap).to.eql(true); });",
+                  "pm.test(\"Memuat kampus, lokasi, kucing, kesehatan, feeding, dan daftar terhapus\", function () { pm.expect(j.data).to.include.keys(\"kampus\", \"lokasi\", \"kucing\", \"kesehatan\", \"feeding\", \"terhapus\", \"kursor\", \"waktu_server\", \"tanggal_server\"); });",
+                  "pm.test(\"Data admin tidak boleh di-cache bersama\", function () { pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/sync/pull",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "sync",
+                "pull"
+              ]
+            },
+            "description": "Simpan seluruh hasilnya di HP (IndexedDB) dan simpan `kursor` untuk penarikan berikutnya. Feeding hanya jendela 14 hari terakhir (atur dengan hari_feeding). Waktu server dikembalikan agar HP bisa menyesuaikan jam yang meleset."
+          }
+        },
+        {
+          "name": "Catat kesehatan dengan client_uuid (pertama)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"uuid_kesehatan_offline\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_kesehatan !== undefined) { pm.collectionVariables.set(\"id_kesehatan_offline\", j.data.id_kesehatan); }",
+                  "pm.test(\"client_uuid tersimpan\", function () { pm.expect(j.data.client_uuid).to.eql(pm.collectionVariables.get(\"uuid_kesehatan_offline\")); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Pemeriksaan\",\n  \"tanggal\": \"{{tanggal_hari_ini}}\",\n  \"catatan\": \"Dicatat offline di lapangan.\",\n  \"client_uuid\": \"{{uuid_kesehatan_offline}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "HP membuat UUID sendiri saat mencatat offline, lalu mengirimnya bersama datanya."
+          }
+        },
+        {
+          "name": "Kirim ulang catatan yang sama (jaringan putus-nyambung)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Tidak membuat data ganda\", function () { pm.expect(j.data.id_kesehatan).to.eql(Number(pm.collectionVariables.get(\"id_kesehatan_offline\"))); pm.expect(j.message).to.include(\"sudah tersimpan\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kucing/{{id_kucing}}/kesehatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kucing",
+                "{{id_kucing}}",
+                "kesehatan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jenis_tindakan\": \"Pemeriksaan\",\n  \"tanggal\": \"{{tanggal_hari_ini}}\",\n  \"catatan\": \"Dicatat offline di lapangan.\",\n  \"client_uuid\": \"{{uuid_kesehatan_offline}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Status 200 (bukan 201) dan id yang sama: aman diulang. Pengiriman ulang tidak dicatat di audit log."
+          }
+        },
+        {
+          "name": "Kirim banyak catatan kesehatan sekaligus (batch)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"uuid_kesehatan_batch\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"1 dibuat, 1 sudah ada, 1 ditolak\", function () { pm.expect(j.data.ringkasan).to.eql({ dibuat: 1, sudah_ada: 1, ditolak: 1 }); });",
+                  "const dibuat = j.data.hasil.find(x => x.status === \"dibuat\"); if (dibuat) { pm.collectionVariables.set(\"id_kesehatan_batch\", dibuat.id_kesehatan); }",
+                  "pm.test(\"Hasil per catatan memuat index dan alasan penolakan\", function () { pm.expect(j.data.hasil[2].status).to.eql(\"ditolak\"); pm.expect(j.data.hasil[2].errors).to.have.property(\"jenis_tindakan\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kesehatan/batch",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kesehatan",
+                "batch"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entries\": [\n    {\n      \"id_kucing\": \"{{id_kucing}}\",\n      \"jenis_tindakan\": \"Pemeriksaan\",\n      \"tanggal\": \"{{tanggal_hari_ini}}\",\n      \"catatan\": \"Dicatat offline di lapangan.\",\n      \"client_uuid\": \"{{uuid_kesehatan_offline}}\"\n    },\n    {\n      \"id_kucing\": \"{{id_kucing}}\",\n      \"jenis_tindakan\": \"Pemberian Vitamin\",\n      \"tanggal\": \"{{tanggal_hari_ini}}\",\n      \"catatan\": \"Vitamin dari batch.\",\n      \"client_uuid\": \"{{uuid_kesehatan_batch}}\"\n    },\n    {\n      \"id_kucing\": \"{{id_kucing}}\",\n      \"jenis_tindakan\": \"Terbang\",\n      \"tanggal\": \"{{tanggal_hari_ini}}\",\n      \"client_uuid\": \"00000000-0000-4000-8000-000000000000\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Maksimal 50 catatan per permintaan. Tiap catatan diproses mandiri: yang salah tidak menggagalkan yang lain. status: dibuat | sudah_ada | ditolak."
+          }
+        },
+        {
+          "name": "Tarik perubahan sejak kursor (delta)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Bukan penarikan penuh\", function () { pm.expect(j.data.penuh).to.eql(false); });",
+                  "pm.test(\"Catatan kesehatan baru ikut tertarik\", function () { const ids = j.data.kesehatan.map(k => k.id_kesehatan); pm.expect(ids).to.include(Number(pm.collectionVariables.get(\"id_kesehatan_offline\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/sync/pull?sejak={{kursor_sinkron}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "sync",
+                "pull"
+              ],
+              "query": [
+                {
+                  "key": "sejak",
+                  "value": "{{kursor_sinkron}}"
+                }
+              ]
+            },
+            "description": "Hanya baris yang berubah sejak kursor. Kursor dimundurkan 5 detik, jadi baris bisa terbaca dua kali: HP menggabungkan menurut id. Kucing yang foto/galerinya berubah ikut tertarik."
+          }
+        },
+        {
+          "name": "Hapus catatan uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kesehatan/{{id_kesehatan_offline}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kesehatan",
+                "{{id_kesehatan_offline}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus catatan batch uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/kesehatan/{{id_kesehatan_batch}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "kesehatan",
+                "{{id_kesehatan_batch}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tarik delta: data yang dihapus dilaporkan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Id yang dihapus masuk daftar terhapus agar HP membuangnya\", function () { pm.expect(j.data.terhapus.kesehatan).to.include(Number(pm.collectionVariables.get(\"id_kesehatan_offline\"))); pm.expect(j.data.terhapus.kesehatan).to.include(Number(pm.collectionVariables.get(\"id_kesehatan_batch\"))); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/sync/pull?sejak={{kursor_sinkron}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "sync",
+                "pull"
+              ],
+              "query": [
+                {
+                  "key": "sejak",
+                  "value": "{{kursor_sinkron}}"
+                }
+              ]
+            },
+            "description": "terhapus berisi id kucing, lokasi, kesehatan, dan feeding yang dihapus. Catatan penghapusan disimpan 60 hari; HP yang lebih lama tidak sinkron otomatis mendapat penarikan penuh."
+          }
+        },
+        {
+          "name": "Format kursor tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/sync/pull?sejak=kemarin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "sync",
+                "pull"
+              ],
+              "query": [
+                {
+                  "key": "sejak",
+                  "value": "kemarin"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Perpanjang token (tukar dengan yang baru)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.token !== undefined) { pm.collectionVariables.set(\"token\", j.data.token); }",
+                  "pm.test(\"Token baru dan masa berlaku dimulai ulang\", function () { pm.expect(j.data.token).to.be.a(\"string\"); pm.expect(j.data.expires_at).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/perpanjang",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "perpanjang"
+              ]
+            },
+            "description": "Menukar token yang masih berlaku dengan yang baru (yang lama langsung dicabut). Variabel {{token}} otomatis diperbarui. Token yang sudah kedaluwarsa tidak bisa diperpanjang: login ulang (antrean tulis offline di HP tetap aman). Dibatasi 20x/menit."
+          }
+        },
+        {
+          "name": "Token baru berfungsi dan menunjukkan waktu kedaluwarsanya",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada token_kedaluwarsa_pada\", function () { pm.expect(j.data).to.have.property(\"token_kedaluwarsa_pada\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Data publik: ETag dan Cache-Control",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"ETag dan cache publik\", function () { pm.expect(pm.response.headers.get(\"ETag\")).to.be.a(\"string\"); pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"public\"); });",
+                  "pm.collectionVariables.set(\"etag_kucing\", pm.response.headers.get(\"ETag\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing?per_page=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "5"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Katalog, lokasi, kampus, artikel, info publik, dan peta mendapat ETag + Cache-Control publik (60 detik). PWA mengirim If-None-Match agar tidak mengunduh ulang data yang sama."
+          }
+        },
+        {
+          "name": "Data publik tidak berubah: 304 tanpa isi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 304\", function () { pm.response.to.have.status(304); });",
+                  "pm.test(\"Tanpa isi\", function () { pm.expect(pm.response.text()).to.eql(\"\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "If-None-Match",
+                "value": "{{etag_kucing}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kucing?per_page=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kucing"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "5"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Header If-None-Match diisi dari ETag permintaan sebelumnya. Bila ETag masih cocok, server menjawab 304 tanpa body (hemat kuota)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "19. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

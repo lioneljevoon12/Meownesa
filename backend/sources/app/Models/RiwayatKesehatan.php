@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\MencatatPenghapusan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RiwayatKesehatan extends Model
 {
-    use HasFactory;
+    use HasFactory, MencatatPenghapusan;
 
     /**
      * Jenis tindakan (MEOW-F-11: vaksinasi, sterilisasi, pemeriksaan, vitamin; roadmap menambah obat
@@ -28,6 +29,7 @@ class RiwayatKesehatan extends Model
     protected $primaryKey = 'id_kesehatan';
 
     protected $fillable = [
+        'client_uuid',
         'id_kucing',
         'jenis_tindakan',
         'tanggal',

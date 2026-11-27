@@ -13,7 +13,11 @@ class FotoKucing extends Model
     protected $table = 'foto_kucing';
     protected $primaryKey = 'id_foto_kucing';
 
+    /** Foto berubah = data kucing berubah (galeri ikut dalam payload sinkronisasi), jadi updated_at kucing ikut naik. */
+    protected $touches = ['kucing'];
+
     protected $fillable = [
+        'client_uuid',
         'id_kucing',
         'url_foto',
         'is_utama',

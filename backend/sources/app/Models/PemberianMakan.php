@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\MencatatPenghapusan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PemberianMakan extends Model
 {
-    use HasFactory;
+    use HasFactory, MencatatPenghapusan;
 
     /** Tuntas = sudah diberi (spreadsheet: Done), Belum = belum diberi (Not yet), Terjadwal = rencana hari ini/mendatang. */
     public const STATUS = ['Tuntas', 'Belum', 'Terjadwal'];

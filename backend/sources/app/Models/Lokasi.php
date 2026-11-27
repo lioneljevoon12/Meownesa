@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\MencatatPenghapusan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lokasi extends Model
 {
-    use HasFactory;
+    use HasFactory, MencatatPenghapusan;
 
     protected $table = 'lokasi';
     protected $primaryKey = 'id_lokasi';

@@ -12,3 +12,6 @@ Artisan::command('inspire', function () {
 // Pengingat dibuat tiap pagi (WIB); email PENDING (konfirmasi, status, pengingat) dikirim tiap 5 menit.
 Schedule::command('notifikasi:ingatkan')->dailyAt('08:00')->timezone('Asia/Jakarta')->withoutOverlapping();
 Schedule::command('notifikasi:kirim')->everyFiveMinutes()->withoutOverlapping();
+
+// dev-backend-15: buang catatan penghapusan sinkronisasi offline yang sudah lewat masa simpan.
+Schedule::command('sync:bersihkan')->dailyAt('03:00')->timezone('Asia/Jakarta')->withoutOverlapping();

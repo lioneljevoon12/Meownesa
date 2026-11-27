@@ -52,20 +52,41 @@ class AuthController extends Controller
             $user->forceFill(['password_hash' => $data['password']])->save();
         }
 
-        $expiresAt = config('sanctum.expiration') ? now()->addMinutes((int) config('sanctum.expiration')) : null;
-        $token = $user->createToken('api', ['*'], $expiresAt);
+        [$plain, $expiresAt] = $this->terbitkanToken($user);
 
         AuditLogger::record($user, 'LOGIN', 'users', $user->id_user);
 
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil.',
-            'data'    => [
-                'token'      => $token->plainTextToken,
-                'token_type' => 'Bearer',
-                'expires_at' => $expiresAt?->toIso8601String(),
-                'user'       => $this->userPayload($user),
-            ],
+            'data'    => $this->tokenPayload($plain, $expiresAt, $user),
+        ]);
+    }
+
+    /**
+     * Tukar token yang masih berlaku dengan token baru (masa berlaku dimulai ulang) dan cabut yang lama. Dipakai PWA
+     * agar petugas lapangan yang aktif tidak perlu login ulang tiap beberapa jam. Token yang sudah kedaluwarsa tidak
+     * bisa diperpanjang (harus login lagi); antrean tulis offline di HP tetap aman dan terkirim setelah login ulang.
+     */
+    public function perpanjang(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (! $user->isActive()) {
+            return response()->json(['success' => false, 'message' => 'Akun Anda dinonaktifkan. Hubungi Super Admin.'], 403);
+        }
+
+        $lama = $user->currentAccessToken();
+        [$plain, $expiresAt] = $this->terbitkanToken($user);
+
+        if ($lama instanceof SanctumToken) {
+            $lama->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Token diperpanjang.',
+            'data'    => $this->tokenPayload($plain, $expiresAt, $user),
         ]);
     }
 
@@ -94,10 +115,34 @@ class AuthController extends Controller
             ], 403);
         }
 
+        $token = $user->currentAccessToken();
+
         return response()->json([
             'success' => true,
-            'data'    => $this->userPayload($user),
+            'data'    => $this->userPayload($user) + [
+                // Kapan token ini berakhir (null = tidak kedaluwarsa), supaya PWA tahu kapan perlu memperpanjang.
+                'token_kedaluwarsa_pada' => $token instanceof SanctumToken ? $token->expires_at?->toIso8601String() : null,
+            ],
         ]);
+    }
+
+    /** @return array{0: string, 1: \Carbon\Carbon|null} token mentah dan waktu kedaluwarsanya */
+    private function terbitkanToken(User $user): array
+    {
+        $expiresAt = config('sanctum.expiration') ? now()->addMinutes((int) config('sanctum.expiration')) : null;
+
+        return [$user->createToken('api', ['*'], $expiresAt)->plainTextToken, $expiresAt];
+    }
+
+    /** @return array<string, mixed> */
+    private function tokenPayload(string $plain, ?\Carbon\Carbon $expiresAt, User $user): array
+    {
+        return [
+            'token'      => $plain,
+            'token_type' => 'Bearer',
+            'expires_at' => $expiresAt?->toIso8601String(),
+            'user'       => $this->userPayload($user),
+        ];
     }
 
     /** @return array<string, mixed> */

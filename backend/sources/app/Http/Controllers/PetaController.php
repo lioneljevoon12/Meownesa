@@ -58,8 +58,8 @@ class PetaController extends Controller
             ? $this->geojson($titik->all())
             : ['titik' => $titik->all(), 'kampus' => $this->ringkasKampus($lokasi, $valid, $f['id_kampus'] ?? null)];
 
-        return response()->json(['success' => true, 'data' => $data, 'meta' => $meta])
-            ->header('Cache-Control', 'public, max-age=60');
+        // Cache-Control + ETag dipasang oleh middleware cache.publik pada rutenya.
+        return response()->json(['success' => true, 'data' => $data, 'meta' => $meta]);
     }
 
     /** Koordinat terisi (bukan bawaan 0,0) dan berada dalam rentang lintang/bujur yang sah. */

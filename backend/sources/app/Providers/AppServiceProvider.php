@@ -31,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         // Cukup longgar untuk jaringan kampus yang berbagi satu IP; duplikat per pelamar dicegah di aplikasi.
         RateLimiter::for('adopsi-tulis', fn (Request $request) => Limit::perHour(30)->by($request->ip()));
 
+        // Perpanjang token (HP lapangan): longgar karena dipanggil berkala, tetapi tetap dibatasi per akun.
+        RateLimiter::for('perpanjang', fn (Request $request) => Limit::perMinute(20)->by((string) ($request->user()?->id_user ?? $request->ip())));
+
         // Pelacakan status: kode berentropi tinggi, namun tetap dibatasi agar tidak bisa ditebak massal.
         RateLimiter::for('adopsi-tracking', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
     }

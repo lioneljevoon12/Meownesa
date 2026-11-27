@@ -22,6 +22,7 @@ use App\Http\Controllers\RiwayatKesehatanAdminController;
 use App\Http\Controllers\RiwayatKesehatanController;
 use App\Http\Controllers\ScreeningAdopsiController;
 use App\Http\Controllers\SerahTerimaController;
+use App\Http\Controllers\SinkronController;
 use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,31 +45,33 @@ Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
+        // dev-backend-15: tukar token yang masih berlaku dengan yang baru (PWA/HP lapangan).
+        Route::post('perpanjang', [AuthController::class, 'perpanjang'])->middleware('throttle:perpanjang');
     });
 });
 
 // ---- dev-backend-03: kampus & lokasi (publik) ------------------------------------
-Route::get('kampus', [KampusController::class, 'index']);
-Route::get('lokasi', [LokasiController::class, 'index']);
-Route::get('lokasi/{id}', [LokasiController::class, 'show'])->whereNumber('id');
+Route::get('kampus', [KampusController::class, 'index'])->middleware('cache.publik');
+Route::get('lokasi', [LokasiController::class, 'index'])->middleware('cache.publik');
+Route::get('lokasi/{id}', [LokasiController::class, 'show'])->whereNumber('id')->middleware('cache.publik');
 
 // ---- dev-backend-04: katalog kucing (publik) -------------------------------------
-Route::get('kucing', [KucingController::class, 'index']);
-Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id');
+Route::get('kucing', [KucingController::class, 'index'])->middleware('cache.publik');
+Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id')->middleware('cache.publik');
 
 // ---- dev-backend-05: riwayat kesehatan (publik) ----------------------------------
-Route::get('kucing/{id}/kesehatan', [RiwayatKesehatanController::class, 'index'])->whereNumber('id');
+Route::get('kucing/{id}/kesehatan', [RiwayatKesehatanController::class, 'index'])->whereNumber('id')->middleware('cache.publik');
 
 // ---- dev-backend-13: peta persebaran kucing (publik; hanya titik lokasi umum + jumlah) ----
-Route::get('peta/persebaran', [PetaController::class, 'persebaran']);
+Route::get('peta/persebaran', [PetaController::class, 'persebaran'])->middleware('cache.publik');
 
 // ---- dev-backend-12: artikel edukasi + informasi donasi/pelaporan (publik, hanya yang PUBLISHED) ----
 // Rute statis (featured, kategori) harus didaftarkan sebelum {slug}.
-Route::get('artikel', [ArtikelController::class, 'index']);
-Route::get('artikel/featured', [ArtikelController::class, 'featured']);
-Route::get('artikel/kategori', [ArtikelController::class, 'kategori']);
-Route::get('artikel/{slug}', [ArtikelController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
-Route::get('info-publik', [InfoPublikController::class, 'index']);
+Route::get('artikel', [ArtikelController::class, 'index'])->middleware('cache.publik');
+Route::get('artikel/featured', [ArtikelController::class, 'featured'])->middleware('cache.publik');
+Route::get('artikel/kategori', [ArtikelController::class, 'kategori'])->middleware('cache.publik');
+Route::get('artikel/{slug}', [ArtikelController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->middleware('cache.publik');
+Route::get('info-publik', [InfoPublikController::class, 'index'])->middleware('cache.publik');
 
 // ---- dev-backend-07: pengajuan adopsi publik tanpa akun (dibatasi per IP) --------
 Route::prefix('adopsi')->group(function () {
@@ -136,6 +139,10 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('notifikasi/pengingat', [NotifikasiController::class, 'pengingat']);
         Route::put('notifikasi/{id}/status', [NotifikasiController::class, 'tandai'])->whereNumber('id');
     });
+
+    // dev-backend-15: dukungan offline PWA. Tarik perubahan (hanya baca) dan kirim catatan kesehatan massal.
+    Route::get('sync/pull', [SinkronController::class, 'tarik']);
+    Route::post('kesehatan/batch', [RiwayatKesehatanAdminController::class, 'batch'])->middleware('audit:riwayat_kesehatan,BATCH_CREATE');
 
     // dev-backend-13: statistik dashboard (hanya baca)
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);

@@ -29,6 +29,7 @@ class UpdateRiwayatKesehatanRequest extends RiwayatKesehatanRequest
     /** @return array<string, mixed> */
     public function rules(): array
     {
-        return $this->aturanDasar(sebagian: true);
+        // client_uuid hanya untuk membuat catatan; mengubahnya merusak idempotensi pengiriman ulang dari HP.
+        return array_diff_key($this->aturanDasar(sebagian: true), ['client_uuid' => 1]);
     }
 }

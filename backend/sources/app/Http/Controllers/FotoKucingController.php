@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\RecordAuditLog;
 use App\Http\Requests\UploadFotoKucingRequest;
 use App\Http\Resources\FotoKucingResource;
 use App\Models\FotoKucing;
@@ -29,11 +30,23 @@ class FotoKucingController extends Controller
 
     public function store(UploadFotoKucingRequest $request, int $kucing): JsonResponse
     {
+        $uuid = $request->validated('client_uuid');
+
+        // Pengiriman ulang dari HP: foto yang sama tidak diproses ulang (menghemat CPU dan penyimpanan).
+        if ($uuid && ($ada = $this->fotoUntukUuid($uuid, $kucing))) {
+            return $this->responsReplay($ada);
+        }
+
         $path = null;
 
         try {
-            $foto = DB::transaction(function () use ($request, $kucing, &$path) {
+            [$foto, $dibuat] = DB::transaction(function () use ($request, $kucing, $uuid, &$path) {
                 $k = Kucing::whereKey($kucing)->lockForUpdate()->firstOrFail();
+
+                // Pengecekan ulang di dalam transaksi: dua pengiriman bersamaan untuk kucing yang sama berurutan di sini.
+                if ($uuid && ($ada = $this->fotoUntukUuid($uuid, $kucing))) {
+                    return [$ada, false];
+                }
 
                 if ($k->fotoKucing()->count() >= self::MAKS_FOTO) {
                     throw ValidationException::withMessages([
@@ -47,12 +60,13 @@ class FotoKucingController extends Controller
                     throw ValidationException::withMessages(['foto' => $e->getMessage()]);
                 }
 
-                return FotoKucing::create([
-                    'id_kucing' => $k->id_kucing,
-                    'url_foto'  => $path,
+                return [FotoKucing::create([
+                    'client_uuid' => $uuid,
+                    'id_kucing'   => $k->id_kucing,
+                    'url_foto'    => $path,
                     // foto pertama otomatis menjadi foto utama
-                    'is_utama'  => ! $k->fotoKucing()->where('is_utama', true)->exists(),
-                ]);
+                    'is_utama'    => ! $k->fotoKucing()->where('is_utama', true)->exists(),
+                ]), true];
             });
         } catch (Throwable $e) {
             if ($path !== null) {
@@ -61,11 +75,35 @@ class FotoKucingController extends Controller
             throw $e;
         }
 
-        return response()->json([
+        return $dibuat ? response()->json([
             'success' => true,
             'message' => 'Foto berhasil diunggah.',
-            'data'    => new FotoKucingResource($foto),
-        ], 201);
+            'data'    => (new FotoKucingResource($foto))->resolve() + ['client_uuid' => $foto->client_uuid],
+        ], 201) : $this->responsReplay($foto);
+    }
+
+    /** Foto dengan UUID ini; 422 bila UUID itu sudah dipakai foto kucing lain. */
+    private function fotoUntukUuid(string $uuid, int $kucing): ?FotoKucing
+    {
+        $foto = FotoKucing::where('client_uuid', $uuid)->first();
+
+        if ($foto && $foto->id_kucing !== $kucing) {
+            throw ValidationException::withMessages(['client_uuid' => 'client_uuid ini sudah dipakai oleh foto kucing lain.']);
+        }
+
+        return $foto;
+    }
+
+    private function responsReplay(FotoKucing $foto): JsonResponse
+    {
+        // Tidak ada data baru: jangan dicatat sebagai CREATE di audit log (request() = instans yang dilihat middleware).
+        request()->attributes->set(RecordAuditLog::LEWATI, true);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Foto ini sudah tersimpan sebelumnya (pengiriman ulang diabaikan).',
+            'data'    => (new FotoKucingResource($foto))->resolve() + ['client_uuid' => $foto->client_uuid],
+        ]);
     }
 
     public function setUtama(int $kucing, int $foto): JsonResponse

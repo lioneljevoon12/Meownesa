@@ -15,6 +15,7 @@ class RiwayatKesehatanAdminResource extends RiwayatKesehatanResource
             'id_kesehatan' => $this->id_kesehatan,
             'id_kucing'    => $this->id_kucing,
         ] + parent::toArray($request) + [
+            'client_uuid'  => $this->client_uuid,
             'created_at'   => $this->created_at?->toIso8601String(),
             'updated_at'   => $this->updated_at?->toIso8601String(),
         ];

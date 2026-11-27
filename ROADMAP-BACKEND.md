@@ -24,6 +24,7 @@
 | **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | ✅ **SELESAI** |
 | **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | ✅ **SELESAI** |
 | **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | ✅ **SELESAI** |
+| **dev-backend-15** | Modul Dukungan Offline untuk PWA (Sinkronisasi Delta, Tulis Idempoten, Rotasi Token, Cache Data Publik) | Tujuan proyek: mobilitas petugas lapangan (di luar proposal) | ✅ **SELESAI** |
 
 ---
 
@@ -518,6 +519,44 @@
   - **Batasan:** hanya akun `admin` dan `adopter` yang bisa dikelola lewat API; akun Super Admin dikelola di luar API (seeder/konsol) sehingga tidak ada risiko saling mengunci. Data adopter dikelola lewat proses adopsi, bukan di sini. Role tidak dapat diubah per akun (hak akses melekat pada role, RBAC); `GET /hak-akses` adalah tampilan baca-saja.
   - **Audit log:** hanya baca (tidak ada rute ubah/hapus, ada tes yang memastikannya). Filter `nama_tabel`, `aktivitas`, `id_user`, `id_data`, `dari`/`sampai` (tanggal WIB, inklusif, dikonversi ke UTC), urut terbaru/terlama, paginasi, waktu keluar dalam WIB. Migrasi menambah indeks gabungan (tabel+waktu, user+waktu, aktivitas+waktu, waktu) dan ada tes yang memeriksa rencana kueri memakai indeks. `GET /audit-logs/opsi` memberi isi dropdown filter. Akun uji: `login_terakhir` di daftar akun berasal dari baris `LOGIN` di audit log.
   - **Perbaikan di jalan:** rute thumbnail artikel (modul 12) bersarang di dalam grup audit sehingga setiap unggah/hapus tercatat dua kali (`CREATE`/`DELETE` ditambah nama khususnya); sudah dikeluarkan dari grup dan diberi tes.
+
+---
+
+### dev-backend-15: Modul Dukungan Offline untuk PWA (Sinkronisasi Delta, Tulis Idempoten, Rotasi Token, Cache Data Publik)
+
+- **Deskripsi & Tujuan:**
+  Masalah yang melatarbelakangi aplikasi ini adalah mobilitas: petugas Jaga Satwa bekerja di lapangan dengan sinyal tidak menentu. Modul ini menyiapkan sisi server agar PWA (atau Flutter) bisa bekerja offline: menyimpan data di HP, mencatat tanpa koneksi, lalu mengirim ulang dengan aman. *Di luar proposal; tidak mengubah kebutuhan yang sudah ada.*
+- **Model sinkronisasi (keputusan desain):**
+  - **Tulis offline hanya untuk data tambah-saja** (feeding, riwayat kesehatan, foto kucing). Tiap catatan membawa `client_uuid` buatan HP sehingga pengiriman ulang tidak membuat data ganda dan tidak butuh penggabungan konflik. **Mengubah profil kucing/lokasi/dll. butuh koneksi** (sengaja: relawan lapangan hampir selalu hanya menambah; menggabungkan edit offline berisiko menimpa data orang lain).
+  - **Tarik (server ke HP)** lewat kursor waktu: HP mengirim `sejak`, server menjawab baris yang berubah plus id yang dihapus.
+- **Fitur & Endpoint API / Controller:**
+  - `GET /api/admin/sync/pull?sejak=<kursor>&hari_feeding=14` (kampus, lokasi, kucing beserta galeri, kesehatan, feeding, dan daftar id terhapus).
+  - `POST /api/admin/kesehatan/batch` (hingga 50 catatan kesehatan sekaligus, hasil per catatan: `dibuat` | `sudah_ada` | `ditolak`).
+  - `client_uuid` pada `POST /api/admin/kucing/{id}/kesehatan` dan `POST /api/admin/kucing/{id}/foto` (pengiriman ulang dijawab 200 dengan data yang sama, bukan 201 baru). Feeding sudah punya ini sejak modul 06.
+  - `POST /api/auth/perpanjang` (tukar token yang masih berlaku dengan yang baru) dan `token_kedaluwarsa_pada` di `GET /api/auth/me`.
+  - Cache HTTP (ETag + `Cache-Control: public, max-age=60`, 304 bila tidak berubah) untuk data publik: kampus, lokasi, kucing, kesehatan publik, artikel, info publik, dan peta.
+- **Kriteria Keberhasilan (Acceptance Criteria):**
+  - [x] HP dapat menarik seluruh data sekali, lalu hanya perubahan (termasuk penghapusan) sesudahnya.
+  - [x] Catatan kesehatan dan foto yang dikirim ulang tidak membuat data ganda; batch melaporkan hasil per catatan.
+  - [x] Petugas aktif tidak perlu login ulang tiap beberapa jam; token lama langsung dicabut saat diperpanjang.
+  - [x] Data publik tidak diunduh ulang bila tidak berubah.
+- **Target File / Komponen:**
+  - `app/Services/SinkronService.php`, `app/Http/Controllers/SinkronController.php`, `app/Http/Requests/TarikSinkronRequest.php`
+  - `app/Services/KesehatanService.php` (logika simpan dipindah dari controller; dipakai tunggal dan batch)
+  - `app/Models/SyncPenghapusan.php`, `app/Models/Concerns/MencatatPenghapusan.php`, `app/Console/Commands/BersihkanSinkron.php`
+  - `app/Http/Middleware/CacheDataPublik.php`, `config/sinkron.php`
+  - Migrasi `2026_11_30_000001_add_offline_sync_support.php`
+  - `tests/Feature/SinkronOfflineApiTest.php` (20 tes), `IdempotensiOfflineApiTest.php` (15 tes)
+- **Catatan implementasi:**
+  - **Kursor** adalah waktu server (UTC, akhiran `Z`) yang dimundurkan 5 detik (`SINKRON_TUMPANG_TINDIH`) agar baris yang baru di-commit tidak terlewat. Akibatnya baris bisa terbaca dua kali; **HP wajib menggabungkan menurut id** (upsert). Penarikan tanpa `sejak` = penuh: HP mengganti salinan lokal kampus, lokasi, kucing, dan kesehatan; feeding hanya jendela `hari_feeding` hari terakhir (bawaan 14, maks 60).
+  - **Penghapusan:** tabel `sync_penghapusan` (nisan) diisi otomatis saat model kucing, lokasi, kesehatan, atau feeding dihapus lewat Eloquent; dibersihkan harian oleh `sync:bersihkan` (pukul 03.00 WIB, masa simpan 60 hari). HP yang terakhir sinkron lebih lama dari itu otomatis mendapat penarikan penuh (nisan lamanya sudah tidak ada, jadi tidak bisa dipercaya). Hapus data selalu lewat model; penghapusan massal lewat query builder dan CASCADE basis data tidak tercatat per baris.
+  - **Galeri foto** ikut dalam payload kucing dan diganti utuh; karena itu `FotoKucing` meng-`touch` kucing induknya sehingga kucing ikut tertarik saat fotonya berubah. Foto yang dihapus tidak punya nisan sendiri.
+  - **Pemotongan:** tiap koleksi dibatasi `SINKRON_BATAS` (1000). Bila terpotong, `lengkap` = false dan `kursor` menunjuk titik terakhir yang diterima; HP cukup menarik lagi sampai `lengkap` = true. (Batas ini perlu dinaikkan bila kelak ada impor ribuan baris dalam satu detik.)
+  - **Idempotensi:** `client_uuid` unik pada `riwayat_kesehatan` dan `foto_kucing` (nullable; tanpa UUID perilaku lama tetap). Replay diperiksa di dalam transaksi dengan baris kucing terkunci, dan sebelum aturan "sterilisasi hanya sekali" sehingga mengirim ulang catatan sterilisasi tidak ditolak. UUID yang sama untuk kucing lain ditolak (422). Foto yang diulang tidak diproses dan disimpan ulang, dan tetap berhasil walau galeri sudah penuh 10 foto. Pengiriman ulang tidak dicatat sebagai perubahan di audit log. `client_uuid` tidak bisa diubah lewat `PUT`.
+  - **Token:** `POST /auth/perpanjang` menerbitkan token baru (masa berlaku dimulai ulang) dan mencabut yang lama; dibatasi 20x/menit per akun; akun nonaktif ditolak. Token yang sudah **kedaluwarsa tidak bisa diperpanjang** (harus login ulang, butuh koneksi), tetapi antrean tulis offline tersimpan di HP dan terkirim sesudahnya. Karena itu masa berlaku 12 jam tidak diperpanjang; yang penting aplikasi memperpanjang selagi online.
+  - **Cache publik** memakai middleware sendiri `cache.publik` (bukan `cache.headers` bawaan) agar hanya respons 200 yang di-cache: error 404/422 tidak pernah disimpan. Data admin, tracking adopsi, dan penarikan sinkron tidak di-cache (`no-store`). Jeda 60 detik berarti perubahan admin bisa terlambat sampai semenit di katalog publik.
+  - **Indeks** `updated_at` ditambahkan pada kucing, lokasi, kesehatan, dan feeding karena penarikan delta selalu memfilter dan mengurutkan menurut kolom itu.
+  - **Belum ada (sengaja):** penulisan offline untuk edit data, unggah foto bertahap (resumable), dan push notification; semuanya bisa menyusul bila dibutuhkan.
 
 ---
 

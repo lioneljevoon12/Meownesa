@@ -95,7 +95,7 @@ class KesehatanApiTest extends TestCase
 
         $res = $this->getJson("/api/admin/kucing/{$k->id_kucing}/kesehatan", $this->asRole('admin'))->assertOk()->assertJsonCount(1, 'data');
         $this->assertEqualsCanonicalizing(
-            ['id_kesehatan', 'id_kucing', 'tanggal', 'jenis_tindakan', 'catatan', 'created_at', 'updated_at'],
+            ['id_kesehatan', 'id_kucing', 'client_uuid', 'tanggal', 'jenis_tindakan', 'catatan', 'created_at', 'updated_at'],
             array_keys($res->json('data.0'))
         );
         $this->getJson('/api/admin/kucing/99999/kesehatan', $this->asRole('admin'))->assertStatus(404);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CacheDataPublik;
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\RecordAuditLog;
 use Illuminate\Auth\AuthenticationException;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role'  => CheckRole::class,
             'audit' => RecordAuditLog::class,
+            'cache.publik' => CacheDataPublik::class,
         ]);
 
         // Aplikasi ini API-only: tamu tidak pernah di-redirect ke halaman login (tidak ada route 'login'),

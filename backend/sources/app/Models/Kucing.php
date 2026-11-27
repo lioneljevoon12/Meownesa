@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\MencatatPenghapusan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Kucing extends Model
 {
-    use HasFactory;
+    use HasFactory, MencatatPenghapusan;
 
     /** Nilai status_kucing yang dipakai (data presensi Jaga Satwa menambah "Hilang"). */
     public const STATUS = ['Terdata', 'Tersedia', 'Proses Screening', 'Diadopsi', 'Hilang', 'Almarhum'];
