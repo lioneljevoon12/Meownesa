@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 12)",
+    "name": "MeowNesa API (dev-backend-01 s/d 13)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -6713,7 +6713,302 @@
       ]
     },
     {
-      "name": "16. Bersih-bersih",
+      "name": "16. Dashboard Admin dan Peta Persebaran",
+      "item": [
+        {
+          "name": "Statistik dashboard (6 metrik + peringatan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Enam metrik utama\", function () { pm.expect(j.data.metrik).to.have.keys(\"total_kucing\", \"siap_adopsi\", \"antrean_review\", \"feeding_hari_ini\", \"persentase_sterilisasi\", \"pengingat_terlambat\"); });",
+                  "pm.test(\"Setiap metrik punya nilai angka\", function () { Object.values(j.data.metrik).forEach(m => pm.expect(m.nilai).to.be.a(\"number\")); });",
+                  "pm.test(\"Persentase sterilisasi 0-100\", function () { const n = j.data.metrik.persentase_sterilisasi.nilai; pm.expect(n).to.be.within(0, 100); });",
+                  "pm.test(\"Rincian status kucing lengkap\", function () { pm.expect(j.data.metrik.total_kucing.per_status).to.have.keys(\"Terdata\", \"Tersedia\", \"Proses Screening\", \"Diadopsi\", \"Hilang\", \"Almarhum\"); });",
+                  "pm.test(\"Peringatan berupa daftar (kosong bila tidak ada)\", function () { pm.expect(j.data.peringatan).to.be.an(\"array\"); j.data.peringatan.forEach(p => pm.expect([\"penting\", \"peringatan\", \"info\"]).to.include(p.level)); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "stats"
+              ]
+            },
+            "description": "Dihitung real-time dari tabel sumber. total_kucing = kucing yang masih di kampus (Terdata, Tersedia, Proses Screening). Persentase sterilisasi konservatif: status \"Tidak Diketahui\" dihitung belum terkonfirmasi. \"Hari ini\" menurut WIB. peringatan[].rujukan menunjuk endpoint daftar yang relevan."
+          }
+        },
+        {
+          "name": "Widget antrean adopsi yang butuh tindakan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Maksimal 5, tanpa kontak pemohon\", function () { pm.expect(j.data.length).to.be.at.most(5); j.data.forEach(a => { pm.expect(a).to.not.have.property(\"email\"); pm.expect(a).to.not.have.property(\"nomor_whatsapp\"); pm.expect(a).to.not.have.property(\"alamat\"); pm.expect([\"MENUNGGU\", \"SCREENING\", \"DISETUJUI\"]).to.include(a.status_pengajuan); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/antrean-terbaru?limit=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "antrean-terbaru"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Urutan: MENUNGGU, lalu SCREENING, lalu DISETUJUI (menunggu serah terima); masing-masing yang terlama dulu. tindakan_berikutnya memberi petunjuk langkah selanjutnya."
+          }
+        },
+        {
+          "name": "Dashboard ditolak untuk non-admin (401 tanpa token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "stats"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Peta persebaran (publik)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Titik punya lat/lng dan jumlah\", function () { j.data.titik.forEach(t => { pm.expect(t.lat).to.be.a(\"number\"); pm.expect(t.lng).to.be.a(\"number\"); pm.expect(t.jumlah_kucing).to.be.a(\"number\"); }); });",
+                  "pm.test(\"Ringkasan kampus\", function () { pm.expect(j.data.kampus).to.be.an(\"array\"); });",
+                  "pm.test(\"Tidak ada data adopter/kucing individual\", function () { const t = pm.response.text(); pm.expect(t).to.not.include(\"nomor_whatsapp\"); pm.expect(t).to.not.include(\"alamat\"); pm.expect(t).to.not.include(\"kode_kucing\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/peta/persebaran",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "peta",
+                "persebaran"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Titik = lokasi umum kampus (bukan posisi tiap kucing). Hanya menghitung kucing yang tampil di katalog publik. lat = koordinat_x, lng = koordinat_y. Lokasi dengan koordinat 0,0 (belum diisi) tidak dipetakan; jumlahnya ada di meta.tanpa_koordinat."
+          }
+        },
+        {
+          "name": "Peta format GeoJSON (urutan [bujur, lintang])",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"FeatureCollection\", function () { pm.expect(j.data.type).to.eql(\"FeatureCollection\"); j.data.features.forEach(f => pm.expect(f.geometry.coordinates).to.have.lengthOf(2)); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/peta/persebaran?format=geojson",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "peta",
+                "persebaran"
+              ],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "geojson"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Peta difilter satu kampus",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/peta/persebaran?id_kampus=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "peta",
+                "persebaran"
+              ],
+              "query": [
+                {
+                  "key": "id_kampus",
+                  "value": "1"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Filter peta tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/peta/persebaran?format=xml",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "peta",
+                "persebaran"
+              ],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "xml"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "17. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

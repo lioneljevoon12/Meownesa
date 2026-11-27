@@ -4,6 +4,7 @@ use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\ArtikelAdminController;
 use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FotoKucingController;
 use App\Http\Controllers\InfoPublikController;
 use App\Http\Controllers\KampusController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PascaAdopsiController;
 use App\Http\Controllers\PemberianMakanController;
+use App\Http\Controllers\PetaController;
 use App\Http\Controllers\PengajuanAdopsiAdminController;
 use App\Http\Controllers\PengajuanAdopsiController;
 use App\Http\Controllers\RiwayatKesehatanAdminController;
@@ -54,6 +56,9 @@ Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id');
 
 // ---- dev-backend-05: riwayat kesehatan (publik) ----------------------------------
 Route::get('kucing/{id}/kesehatan', [RiwayatKesehatanController::class, 'index'])->whereNumber('id');
+
+// ---- dev-backend-13: peta persebaran kucing (publik; hanya titik lokasi umum + jumlah) ----
+Route::get('peta/persebaran', [PetaController::class, 'persebaran']);
 
 // ---- dev-backend-12: artikel edukasi + informasi donasi/pelaporan (publik, hanya yang PUBLISHED) ----
 // Rute statis (featured, kategori) harus didaftarkan sebelum {slug}.
@@ -129,6 +134,10 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('notifikasi/pengingat', [NotifikasiController::class, 'pengingat']);
         Route::put('notifikasi/{id}/status', [NotifikasiController::class, 'tandai'])->whereNumber('id');
     });
+
+    // dev-backend-13: statistik dashboard (hanya baca)
+    Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+    Route::get('dashboard/antrean-terbaru', [DashboardController::class, 'antreanTerbaru']);
 
     // dev-backend-12: CMS artikel (edukasi, kegiatan, kampanye kalung). Thumbnail diunggah/dihapus lewat rute tersendiri.
     Route::get('artikel', [ArtikelAdminController::class, 'index']);

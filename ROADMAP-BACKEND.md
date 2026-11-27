@@ -22,7 +22,7 @@
 | **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | ✅ **SELESAI** |
 | **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | ✅ **SELESAI** |
 | **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | ✅ **SELESAI** |
-| **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | P2 (Analytics & Map) |
+| **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | ✅ **SELESAI** |
 | **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | P2 (Admin Governance) |
 
 ---
@@ -463,15 +463,24 @@
   - MEOW-F-38 s/d 40: Menampilkan peta lokasi kucing pada area kampus tanpa mengekspos data pribadi adopter.
   - Optimasi query agregasi database agar waktu respon cepat (MEOW-NF-09).
 - **Fitur & Endpoint API / Controller:**  
-  - `GET /api/admin/dashboard/stats` (6 metrik statistik utama + status alert operasional).
-  - `GET /api/peta/persebaran` (Geo-JSON / titik koordinat persebaran kucing per gedung kampus untuk Leaflet Map).
-  - `GET /api/admin/dashboard/antrean-terbaru` (Widget daftar antrean adopsi yang butuh tindakan cepat).
+  - `GET /api/admin/dashboard/stats` (6 metrik utama + daftar peringatan operasional).
+  - `GET /api/admin/dashboard/antrean-terbaru` (widget antrean adopsi yang butuh tindakan; `limit` bawaan 5, maks 20).
+  - `GET /api/peta/persebaran` (Publik: titik lokasi + jumlah kucing; `format=geojson` untuk FeatureCollection; filter `id_kampus`).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Perhitungan metrik akurat secara real-time dari data tabel `kucing`, `pemberian_makan`, dan `pengajuan_adopsi`.
-  - [ ] Endpoint peta menyajikan data koordinat `koordinat_x` dan `koordinat_y` dengan format yang siap dirender di frontend.
+  - [x] Perhitungan metrik akurat secara real-time dari data tabel `kucing`, `pemberian_makan`, dan `pengajuan_adopsi`.
+  - [x] Endpoint peta menyajikan data koordinat `koordinat_x` dan `koordinat_y` dengan format yang siap dirender di frontend.
 - **Target File / Komponen:**  
-  - `app/Http/Controllers/DashboardController.php`
-  - `app/Http/Controllers/PetaController.php`
+  - `app/Http/Controllers/DashboardController.php`, `PetaController.php`
+  - `app/Services/DashboardService.php` (statistik, peringatan, antrean)
+  - `tests/Feature/DashboardPetaApiTest.php` (18 tes)
+- **Catatan implementasi:**  
+  - **Enam metrik** (`data.metrik.*`, masing-masing punya `nilai` sebagai angka utama): `total_kucing` (kucing yang masih di kampus: Terdata + Tersedia + Proses Screening, plus `per_status` untuk keenam status), `siap_adopsi` (Tersedia), `antrean_review` (MENUNGGU + SCREENING, plus rincian dan `menunggu_serah_terima` untuk DISETUJUI), `feeding_hari_ini` (nilai = Tuntas, plus belum/terjadwal/total), `persentase_sterilisasi`, `pengingat_terlambat` (adopsi yang lewat jatuh tempo kabar, memakai `PemantauanPascaAdopsiService`).
+  - **Persentase sterilisasi konservatif:** `sudah / semua kucing di kampus`; status "Tidak Diketahui" dihitung belum terkonfirmasi, jadi angkanya tidak melebih-lebihkan capaian. Rinciannya (sudah, belum, tidak_diketahui) ikut dikembalikan.
+  - **Peringatan operasional** (`data.peringatan`, hanya yang jumlahnya > 0, urut `penting` > `peringatan` > `info`): email gagal terkirim, pengajuan MENUNGGU > 3 hari, pengingat terlambat, kucing belum diberi makan hari ini, adopsi DISETUJUI > 7 hari belum serah terima, WhatsApp menunggu dikirim manual. Tiap item membawa `rujukan` ke endpoint daftar yang relevan. Ambang ada di konstanta `DashboardService`.
+  - **Kinerja (NF-09):** semua angka lewat kueri agregat (COUNT/GROUP BY), tanpa cache; ada tes yang membatasi jumlah kueri. Hari ini menurut WIB (diuji pada pergantian hari WIB/UTC).
+  - **Peta publik:** titik adalah LOKASI umum (bukan posisi tiap kucing) dengan `lat` (= `koordinat_x`), `lng` (= `koordinat_y`), `jumlah_kucing`, `jumlah_siap_adopsi`. Hanya kucing yang tampil di katalog publik yang dihitung (Terdata + Tersedia); kucing Proses Screening/Diadopsi/Hilang/Almarhum, data adopter, dan alamat tidak pernah ikut (NF-04 s/d NF-06, F-39). Ringkasan `kampus[]` memuat `pusat` (rata-rata titik valid) untuk memusatkan peta. Untuk daftar kucing di satu titik, frontend memanggil `GET /api/kucing?id_lokasi=`.
+  - **Koordinat 0,0 (belum diisi) atau di luar rentang** tidak dipetakan; jumlahnya ada di `meta.tanpa_koordinat`. Koordinat seeder saat ini masih nilai sementara (titik tengah kampus) sampai koordinat asli diisi.
+  - GeoJSON memakai urutan `[bujur, lintang]` (standar), kebalikan Leaflet `[lat, lng]`; format `titik` default memberi `lat`/`lng` eksplisit agar tidak tertukar. Respons peta berheader `Cache-Control: max-age=60, public`.
 
 ---
 
