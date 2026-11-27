@@ -3,6 +3,7 @@
 use App\Http\Controllers\AktivasiAkunController;
 use App\Http\Controllers\ArtikelAdminController;
 use App\Http\Controllers\ArtikelController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FotoKucingController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\RiwayatKesehatanAdminController;
 use App\Http\Controllers\RiwayatKesehatanController;
 use App\Http\Controllers\ScreeningAdopsiController;
 use App\Http\Controllers\SerahTerimaController;
+use App\Http\Controllers\SuperAdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -146,9 +148,10 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('artikel', [ArtikelAdminController::class, 'store']);
         Route::put('artikel/{id}', [ArtikelAdminController::class, 'update'])->whereNumber('id');
         Route::delete('artikel/{id}', [ArtikelAdminController::class, 'destroy'])->whereNumber('id');
-        Route::post('artikel/{id}/thumbnail', [ArtikelAdminController::class, 'uploadThumbnail'])->whereNumber('id')->middleware('audit:artikel,UNGGAH_THUMBNAIL');
-        Route::delete('artikel/{id}/thumbnail', [ArtikelAdminController::class, 'hapusThumbnail'])->whereNumber('id')->middleware('audit:artikel,HAPUS_THUMBNAIL');
     });
+    // Di luar grup audit di atas: bila bersarang, setiap aksi tercatat dua kali (CREATE/DELETE + nama khususnya).
+    Route::post('artikel/{id}/thumbnail', [ArtikelAdminController::class, 'uploadThumbnail'])->whereNumber('id')->middleware('audit:artikel,UNGGAH_THUMBNAIL');
+    Route::delete('artikel/{id}/thumbnail', [ArtikelAdminController::class, 'hapusThumbnail'])->whereNumber('id')->middleware('audit:artikel,HAPUS_THUMBNAIL');
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
     // respons; PUT/DELETE memakai {id} (= id_kesehatan).
@@ -168,4 +171,20 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::put('kesehatan/{id}', [RiwayatKesehatanAdminController::class, 'update'])->whereNumber('id');
         Route::delete('kesehatan/{id}', [RiwayatKesehatanAdminController::class, 'destroy'])->whereNumber('id');
     });
+});
+
+// ---- Super Admin (dev-backend-14) ------------------------------------------------
+// Aspek teknis sistem saja: akun pengurus, hak akses, audit log. Tidak ada rute operasional/adopsi di sini.
+Route::prefix('superadmin')->middleware(['auth:sanctum', 'role:superadmin'])->group(function () {
+    Route::get('hak-akses', [SuperAdminController::class, 'hakAkses']);
+    Route::get('users', [SuperAdminController::class, 'index']);
+    Route::get('users/{id}', [SuperAdminController::class, 'show'])->whereNumber('id');
+    Route::post('users', [SuperAdminController::class, 'store'])->middleware('audit:users');
+    Route::put('users/{id}', [SuperAdminController::class, 'update'])->whereNumber('id')->middleware('audit:users');
+    Route::put('users/{id}/status', [SuperAdminController::class, 'ubahStatus'])->whereNumber('id')->middleware('audit:users,UBAH_STATUS');
+    Route::post('users/{id}/reset-password', [SuperAdminController::class, 'resetPassword'])->whereNumber('id')->middleware('audit:users,RESET_PASSWORD');
+
+    // Audit log: HANYA baca (tidak ada rute ubah/hapus).
+    Route::get('audit-logs/opsi', [AuditLogController::class, 'opsi']);
+    Route::get('audit-logs', [AuditLogController::class, 'index']);
 });

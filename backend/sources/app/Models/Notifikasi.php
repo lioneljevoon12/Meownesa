@@ -21,6 +21,8 @@ class Notifikasi extends Model
     public const STATUS = [self::STATUS_PENDING, self::STATUS_TERKIRIM, self::STATUS_GAGAL];
 
     public const JENIS_REMINDER = 'Reminder Monitoring';
+    public const JENIS_UNDANGAN_PENGURUS = 'Undangan Pengurus';
+    public const JENIS_RESET_PASSWORD = 'Reset Password';
 
     protected $table = 'notifikasi';
     protected $primaryKey = 'id_notifikasi';
@@ -51,6 +53,16 @@ class Notifikasi extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Notifikasi yang boleh dilihat/dikelola Admin Jaga Satwa: hanya yang terkait pengajuan adopsi.
+     * Notifikasi akun pengurus (undangan, reset password) memuat tautan aktivasi akun orang lain, jadi
+     * HANYA diurus Super Admin; admin biasa tidak boleh membacanya (bisa dipakai membajak akun).
+     */
+    public function scopeUntukAdmin(Builder $query): Builder
+    {
+        return $query->whereNotNull('id_pengajuan');
     }
 
     /** @param array<string, mixed> $f */

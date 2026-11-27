@@ -17,6 +17,9 @@ class AktivasiAkunService
 {
     public const BROKER = 'aktivasi';
 
+    /** Adopter (setelah serah terima) dan admin (diundang Super Admin) mengatur passwordnya lewat tautan. */
+    public const ROLE_BOLEH = [User::ROLE_ADOPTER, User::ROLE_ADMIN];
+
     /** Buat token baru (token lama otomatis tergantikan) dan kembalikan tautan lengkapnya. */
     public function buatTautan(User $user): string
     {
@@ -30,15 +33,16 @@ class AktivasiAkunService
 
     /**
      * Atur password dan aktifkan akun. Mengembalikan false untuk SEMUA kegagalan (email tak dikenal,
-     * bukan akun adopter yang menunggu aktivasi, token salah/kedaluwarsa/sudah dipakai) agar
+     * bukan akun adopter/admin yang menunggu aktivasi, token salah/kedaluwarsa/sudah dipakai) agar
      * penelepon tidak dapat membedakannya.
      */
     public function aktifkan(string $email, string $token, string $password): ?User
     {
         $user = User::where('email', mb_strtolower(trim($email)))->first();
 
-        // Akun yang dinonaktifkan Super Admin tidak boleh "hidup lagi" lewat tautan lama.
-        if (! $user || $user->role !== User::ROLE_ADOPTER || $user->status_akun !== User::STATUS_MENUNGGU_AKTIVASI) {
+        // Akun yang dinonaktifkan Super Admin tidak boleh "hidup lagi" lewat tautan lama. Super Admin tidak
+        // pernah diaktifkan lewat tautan (akunnya dibuat lewat seeder).
+        if (! $user || ! in_array($user->role, self::ROLE_BOLEH, true) || $user->status_akun !== User::STATUS_MENUNGGU_AKTIVASI) {
             return null;
         }
 

@@ -69,9 +69,13 @@ class DashboardPetaApiTest extends TestCase
         ]);
     }
 
+    private ?PengajuanAdopsi $pengajuanNotif = null;
+
+    /** Notifikasi terkait pengajuan (yang tidak terkait pengajuan, mis. undangan akun pengurus, bukan urusan admin). */
     private function notif(string $kanal, string $status): void
     {
-        Notifikasi::create(['jenis_notifikasi' => 'Status Adopsi', 'kanal' => $kanal, 'isi_pesan' => 'x', 'status_pengiriman' => $status]);
+        $this->pengajuanNotif ??= $this->pengajuan('DITOLAK');
+        Notifikasi::create(['id_pengajuan' => $this->pengajuanNotif->id_pengajuan, 'jenis_notifikasi' => 'Status Adopsi', 'kanal' => $kanal, 'isi_pesan' => 'x', 'status_pengiriman' => $status]);
     }
 
     // ------------------------------------------------------------ dashboard: hak akses

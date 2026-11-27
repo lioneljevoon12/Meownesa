@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 13)",
+    "name": "MeowNesa API (dev-backend-01 s/d 14)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -141,6 +141,18 @@
     },
     {
       "key": "slug_artikel_cms",
+      "value": ""
+    },
+    {
+      "key": "id_user_uji",
+      "value": ""
+    },
+    {
+      "key": "id_user_superadmin",
+      "value": ""
+    },
+    {
+      "key": "email_admin_uji",
       "value": ""
     }
   ],
@@ -7008,7 +7020,1193 @@
       ]
     },
     {
-      "name": "17. Bersih-bersih",
+      "name": "17. Super Admin: Akun dan Audit Log (MENINGGALKAN AKUN UJI)",
+      "item": [
+        {
+          "name": "Hak akses per role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Tiga role dengan daftar akses\", function () { pm.expect(j.data.map(r => r.role)).to.eql([\"superadmin\", \"admin\", \"adopter\"]); j.data.forEach(r => pm.expect(r.akses).to.be.an(\"array\")); });",
+                  "pm.test(\"Super Admin tidak memegang akses operasional adopsi\", function () { pm.expect(j.data[0].akses).to.not.include(\"adopsi.proses\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/hak-akses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "hak-akses"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Hak akses melekat pada role (RBAC) dan tidak diubah per akun. Super Admin mengurus aspek teknis (akun, hak akses, audit), bukan keputusan screening/adopsi."
+          }
+        },
+        {
+          "name": "Admin biasa ditolak (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users"
+              ]
+            },
+            "description": "Memakai token Admin (bukan Super Admin)."
+          }
+        },
+        {
+          "name": "Daftar semua akun",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada ringkasan per role dan status\", function () { pm.expect(j.meta.jumlah_per_role).to.have.keys(\"superadmin\", \"admin\", \"adopter\"); pm.expect(j.meta.jumlah_per_status).to.have.keys(\"aktif\", \"nonaktif\", \"menunggu_aktivasi\"); });",
+                  "pm.test(\"Tidak ada password/token di daftar\", function () { const t = pm.response.text(); pm.expect(t).to.not.include(\"password\"); pm.expect(t).to.not.include(\"token\"); });",
+                  "const sa = j.data.find(u => u.role === \"superadmin\"); if (sa) { pm.collectionVariables.set(\"id_user_superadmin\", sa.id_user); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users?per_page=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "50"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Filter: role, status, q (nama/email), sort (terbaru|nama), per_page, page. login_terakhir dari audit log (WIB)."
+          }
+        },
+        {
+          "name": "Buat akun Admin baru (tautan aktivasi dikirim ke emailnya)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"email_admin_uji\", \"relawan.postman.\" + Date.now() + \"@contoh.id\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_user !== undefined) { pm.collectionVariables.set(\"id_user_uji\", j.data.id_user); }",
+                  "pm.test(\"Menunggu aktivasi, role admin\", function () { pm.expect(j.data.status_akun).to.eql(\"menunggu_aktivasi\"); pm.expect(j.data.role).to.eql(\"admin\"); });",
+                  "pm.test(\"Tautan/token tidak pernah dikembalikan API\", function () { const t = pm.response.text(); pm.expect(t).to.not.include(\"aktivasi-akun\"); pm.expect(t).to.not.include(\"token\"); });",
+                  "pm.test(\"Ada status pengiriman undangan\", function () { pm.expect([\"TERKIRIM\", \"GAGAL\"]).to.include(j.data.undangan.status_pengiriman); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Relawan Uji Postman\",\n  \"email\": \"{{email_admin_uji}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Super Admin tidak pernah menentukan atau melihat password. Akun dibuat dengan password acak; pemilik mengatur sendiri lewat tautan di emailnya (alur POST /auth/aktivasi). Dengan MAIL_MAILER=log tautan tertulis di storage/logs/laravel.log. Akun tidak bisa dihapus, hanya ditangguhkan."
+          }
+        },
+        {
+          "name": "Email yang sama ditolak (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Relawan Ganda\",\n  \"email\": \"{{email_admin_uji}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Validasi: nama dan email kosong (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail akun uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Detail lengkap tanpa isi pesan\", function () { pm.expect(j.data).to.include.keys(\"sesi_aktif\", \"undangan_terakhir\", \"aktivitas_terakhir\"); pm.expect(j.data.undangan_terakhir).to.not.have.property(\"isi_pesan\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ubah nama akun uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Relawan Uji Postman (diubah)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Aktifkan paksa akun yang belum aktivasi (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"aktif\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Akun menunggu aktivasi hanya bisa diaktifkan pemiliknya lewat tautan di emailnya."
+          }
+        },
+        {
+          "name": "Tangguhkan akun uji (semua sesi login dikeluarkan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"nonaktif\", function () { pm.expect(j.data.status_akun).to.eql(\"nonaktif\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"nonaktif\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Status sama = idempoten (tidak dicatat sebagai perubahan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"nonaktif\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset password akun yang ditangguhkan (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "reset-password"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Aktifkan kembali dulu sebelum mereset password."
+          }
+        },
+        {
+          "name": "Aktifkan kembali akun uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"aktif\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset password (sesi dicabut, tautan baru dikirim)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Kembali menunggu aktivasi, tanpa tautan di respons\", function () { pm.expect(j.data.status_akun).to.eql(\"menunggu_aktivasi\"); pm.expect(pm.response.text()).to.not.include(\"token\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "reset-password"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Akun Super Admin tidak dapat diubah lewat API (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_superadmin}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_superadmin}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"nonaktif\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Akun tidak ada (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/99999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "99999999"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Audit log: pembuatan akun uji tercatat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"CREATE, UBAH_STATUS, dan RESET_PASSWORD tercatat dengan pelakunya\", function () { const a = j.data.map(x => x.aktivitas); pm.expect(a).to.include(\"CREATE\"); pm.expect(a).to.include(\"UBAH_STATUS\"); pm.expect(a).to.include(\"RESET_PASSWORD\"); pm.expect(j.data[0].pengguna.role).to.eql(\"superadmin\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/audit-logs?nama_tabel=users&id_data={{id_user_uji}}&sort=terlama",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "nama_tabel",
+                  "value": "users"
+                },
+                {
+                  "key": "id_data",
+                  "value": "{{id_user_uji}}"
+                },
+                {
+                  "key": "sort",
+                  "value": "terlama"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Filter: nama_tabel, aktivitas, id_user, id_data, dari/sampai (YYYY-MM-DD, WIB, inklusif), sort, per_page. Waktu dikembalikan dalam WIB. Audit log hanya bisa dibaca: tidak ada rute ubah/hapus."
+          }
+        },
+        {
+          "name": "Audit log: rentang tanggal hari ini (WIB)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"tanggal_hari_ini\", new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada catatan hari ini\", function () { pm.expect(j.meta.total).to.be.above(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/audit-logs?dari={{tanggal_hari_ini}}&sampai={{tanggal_hari_ini}}&per_page=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "dari",
+                  "value": "{{tanggal_hari_ini}}"
+                },
+                {
+                  "key": "sampai",
+                  "value": "{{tanggal_hari_ini}}"
+                },
+                {
+                  "key": "per_page",
+                  "value": "5"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Audit log: opsi untuk dropdown filter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Daftar tabel dan aktivitas\", function () { pm.expect(j.data.nama_tabel).to.include(\"users\"); pm.expect(j.data.aktivitas).to.include(\"LOGIN\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/audit-logs/opsi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "audit-logs",
+                "opsi"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Audit log: rentang tanggal terbalik (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/audit-logs?dari=2026-12-31&sampai=2026-01-01",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "dari",
+                  "value": "2026-12-31"
+                },
+                {
+                  "key": "sampai",
+                  "value": "2026-01-01"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Audit log tidak dapat dihapus (404/405)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404 atau 405\", function () { pm.expect([404, 405]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/audit-logs/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "audit-logs",
+                "1"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tangguhkan akun uji (pembersihan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/superadmin/users/{{id_user_uji}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "superadmin",
+                "users",
+                "{{id_user_uji}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"nonaktif\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_super}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Akun uji tidak bisa dihapus (jejak audit harus utuh), jadi dinonaktifkan agar tidak bisa dipakai."
+          }
+        }
+      ]
+    },
+    {
+      "name": "18. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

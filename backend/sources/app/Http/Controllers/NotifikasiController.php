@@ -30,14 +30,14 @@ class NotifikasiController extends Controller
         $f = $request->validated();
         $perHalaman = $f['per_page'] ?? 20;
 
-        $halaman = Notifikasi::with('pengajuanAdopsi')
+        $halaman = Notifikasi::untukAdmin()->with('pengajuanAdopsi')
             ->filter($f)
             ->orderByDesc('id_notifikasi')
             ->paginate($perHalaman, ['*'], 'page', $f['page'] ?? 1);
 
         // Jumlah per status mengikuti filter kanal/jenis/pengajuan, tetapi tidak filter status itu sendiri.
         $perStatus = array_fill_keys(Notifikasi::STATUS, 0);
-        $hitung = Notifikasi::filter(array_diff_key($f, ['status' => 1]))
+        $hitung = Notifikasi::untukAdmin()->filter(array_diff_key($f, ['status' => 1]))
             ->selectRaw('status_pengiriman, count(*) as jumlah')->groupBy('status_pengiriman')->pluck('jumlah', 'status_pengiriman');
         foreach ($hitung as $status => $jumlah) {
             $perStatus[$status] = (int) $jumlah;
@@ -76,7 +76,7 @@ class NotifikasiController extends Controller
             ]);
         }
 
-        $n = Notifikasi::with('pengajuanAdopsi')->findOrFail($id);
+        $n = Notifikasi::untukAdmin()->with('pengajuanAdopsi')->findOrFail($id);
 
         if ($n->kanal !== Notifikasi::KANAL_EMAIL) {
             return $this->tolak('Pesan WhatsApp dikirim manual lewat tautan wa.me, lalu tandai hasilnya.');
@@ -99,7 +99,7 @@ class NotifikasiController extends Controller
     /** Admin melaporkan hasil pengiriman WhatsApp manual. */
     public function tandai(TandaiNotifikasiRequest $request, int $id): JsonResponse
     {
-        $n = Notifikasi::with('pengajuanAdopsi')->findOrFail($id);
+        $n = Notifikasi::untukAdmin()->with('pengajuanAdopsi')->findOrFail($id);
 
         if ($n->kanal !== Notifikasi::KANAL_WHATSAPP) {
             return $this->tolak('Status email diatur otomatis oleh sistem.');

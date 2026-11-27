@@ -17,6 +17,17 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 'admin';
     public const ROLE_ADOPTER = 'adopter';
 
+    public const ROLES = [self::ROLE_SUPERADMIN, self::ROLE_ADMIN, self::ROLE_ADOPTER];
+
+    public const STATUS_AKUN = ['aktif', 'nonaktif', self::STATUS_MENUNGGU_AKTIVASI];
+
+    /** Nama tampilan role. */
+    public const ROLE_LABEL = [
+        self::ROLE_SUPERADMIN => 'Super Admin',
+        self::ROLE_ADMIN      => 'Admin Jaga Satwa',
+        self::ROLE_ADOPTER    => 'Adopter',
+    ];
+
     /** Akun adopter dibuat saat serah terima tetapi belum bisa dipakai sebelum adopter mengatur passwordnya. */
     public const STATUS_MENUNGGU_AKTIVASI = 'menunggu_aktivasi';
 

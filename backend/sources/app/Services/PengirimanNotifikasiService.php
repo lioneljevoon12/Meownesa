@@ -32,7 +32,7 @@ class PengirimanNotifikasiService
         $n->percobaan = (int) $n->percobaan + 1;
 
         try {
-            $email = $n->pengajuanAdopsi?->email;
+            $email = $n->pengajuanAdopsi?->email ?? $n->user?->email;
             if (! $email) {
                 throw new RuntimeException('Alamat email penerima tidak tersedia.');
             }
@@ -61,7 +61,7 @@ class PengirimanNotifikasiService
     {
         $hasil = ['diproses' => 0, 'terkirim' => 0, 'gagal' => 0];
 
-        Notifikasi::with('pengajuanAdopsi')
+        Notifikasi::with(['pengajuanAdopsi', 'user'])
             ->where('kanal', Notifikasi::KANAL_EMAIL)
             ->where('status_pengiriman', Notifikasi::STATUS_PENDING)
             ->orderBy('id_notifikasi')

@@ -23,7 +23,7 @@
 | **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | ✅ **SELESAI** |
 | **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | ✅ **SELESAI** |
 | **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | ✅ **SELESAI** |
-| **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | P2 (Admin Governance) |
+| **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | ✅ **SELESAI** |
 
 ---
 
@@ -492,17 +492,32 @@
   - Dokumen Proposal (Hal. 16, 43): Super Admin menangani aspek teknis sistem dan tidak berwenang mengambil keputusan screening adopsi.
   - MEOW-NF-07: Seluruh histori modifikasi data tersimpan dalam `audit_log` untuk kebutuhan akuntabilitas.
 - **Fitur & Endpoint API / Controller:**  
-  - `GET /api/superadmin/users` (Daftar seluruh akun pengurus & adopter).
-  - `POST /api/superadmin/users` (Super Admin mendaftarkan admin baru).
+  - `GET /api/superadmin/users` (+ `/{id}`) (Daftar & detail akun pengurus dan adopter; filter `role`, `status`, `q`).
+  - `POST /api/superadmin/users` (Super Admin mendaftarkan admin baru; password diatur pemiliknya lewat email).
+  - `PUT /api/superadmin/users/{id}` (ubah nama/email admin).
   - `PUT /api/superadmin/users/{id}/status` (Aktivasi / suspend akun).
-  - `GET /api/superadmin/audit-logs` (Viewer rekam jejak audit dengan filter waktu, user, dan nama tabel).
+  - `POST /api/superadmin/users/{id}/reset-password` (reset kredensial).
+  - `GET /api/superadmin/hak-akses` (matriks hak akses per role).
+  - `GET /api/superadmin/audit-logs` (Viewer rekam jejak audit dengan filter waktu, user, dan nama tabel) + `/opsi`.
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Endpoint hanya bisa diakses oleh user dengan role `superadmin`.
-  - [ ] Log audit dapat difilter berdasarkan nama tabel dan rentang tanggal dengan performa optimal.
+  - [x] Endpoint hanya bisa diakses oleh user dengan role `superadmin`.
+  - [x] Log audit dapat difilter berdasarkan nama tabel dan rentang tanggal dengan performa optimal.
 - **Target File / Komponen:**  
-  - `app/Http/Controllers/SuperAdminController.php`
-  - `app/Http/Controllers/AuditLogController.php`
-  - `app/Models/AuditLog.php`
+  - `app/Http/Controllers/SuperAdminController.php`, `AuditLogController.php`
+  - `app/Services/AkunPengurusService.php` (buat/reset/status + email undangan), `AktivasiAkunService.php` (kini juga untuk admin)
+  - `app/Http/Requests/{FilterUser,StoreUser,UpdateUser,UbahStatusUser,FilterAuditLog}Request.php`
+  - `app/Http/Resources/UserAkunResource.php`, `AuditLogResource.php`
+  - `app/Models/User.php` (`ROLES`, `STATUS_AKUN`, `ROLE_LABEL`), `app/Models/Notifikasi.php` (`scopeUntukAdmin`)
+  - Migrasi `2026_11_29_000001_add_filter_indexes_to_audit_log_table.php`
+  - `tests/Feature/SuperAdminApiTest.php` (28 tes)
+- **Catatan implementasi:**  
+  - **Super Admin tidak pernah tahu password siapa pun.** Admin baru dibuat dengan password acak + status `menunggu_aktivasi`; tautan aktivasi sekali pakai (7 hari, alur modul 09) dikirim ke emailnya dan tidak pernah dikembalikan API. Email dikirim langsung saat dibuat; bila SMTP gagal, akun tetap terbuat dan status `GAGAL` dilaporkan (kirim ulang lewat `reset-password`).
+  - **Notifikasi akun pengurus disembunyikan dari admin biasa** (`Notifikasi::untukAdmin()`: hanya notifikasi terkait pengajuan). Tanpa ini admin biasa bisa membaca tautan aktivasi/reset akun orang lain lewat `GET /api/admin/notifikasi` lalu membajak akunnya. Hitungan peringatan dashboard ikut dibatasi.
+  - **Akun tidak dihapus**, hanya `nonaktif` (jejak audit dan riwayat tetap utuh). Menonaktifkan mencabut semua token sehingga langsung keluar. `menunggu_aktivasi` tidak bisa diaktifkan paksa (hanya pemilik lewat tautan); hanya bisa dibatalkan (`nonaktif`). Status yang sama = idempoten dan tidak dicatat sebagai perubahan.
+  - **Reset password:** sesi dicabut, akun kembali `menunggu_aktivasi`, tautan baru dikirim (tautan lama mati). Untuk akun yang memang belum aktif, sama dengan kirim ulang undangan. Akun `nonaktif` harus diaktifkan dulu. Mengganti email admin juga mencabut sesi, dan mengirim undangan baru bila akun belum aktif.
+  - **Batasan:** hanya akun `admin` dan `adopter` yang bisa dikelola lewat API; akun Super Admin dikelola di luar API (seeder/konsol) sehingga tidak ada risiko saling mengunci. Data adopter dikelola lewat proses adopsi, bukan di sini. Role tidak dapat diubah per akun (hak akses melekat pada role, RBAC); `GET /hak-akses` adalah tampilan baca-saja.
+  - **Audit log:** hanya baca (tidak ada rute ubah/hapus, ada tes yang memastikannya). Filter `nama_tabel`, `aktivitas`, `id_user`, `id_data`, `dari`/`sampai` (tanggal WIB, inklusif, dikonversi ke UTC), urut terbaru/terlama, paginasi, waktu keluar dalam WIB. Migrasi menambah indeks gabungan (tabel+waktu, user+waktu, aktivitas+waktu, waktu) dan ada tes yang memeriksa rencana kueri memakai indeks. `GET /audit-logs/opsi` memberi isi dropdown filter. Akun uji: `login_terakhir` di daftar akun berasal dari baris `LOGIN` di audit log.
+  - **Perbaikan di jalan:** rute thumbnail artikel (modul 12) bersarang di dalam grup audit sehingga setiap unggah/hapus tercatat dua kali (`CREATE`/`DELETE` ditambah nama khususnya); sudah dikeluarkan dari grup dan diberi tes.
 
 ---
 

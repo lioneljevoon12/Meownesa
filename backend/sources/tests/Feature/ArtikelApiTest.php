@@ -451,6 +451,11 @@ class ArtikelApiTest extends TestCase
 
         $this->deleteJson($uri, [], $h)->assertOk()->assertJsonPath('data.thumbnail_url', null);
         $this->assertSame([], Storage::disk('artikel_thumbnail')->allFiles());
+        // Tiap aksi tercatat TEPAT SATU kali dengan nama khususnya (bukan juga CREATE/DELETE bawaan).
+        $this->assertSame(
+            ['UNGGAH_THUMBNAIL', 'UNGGAH_THUMBNAIL', 'HAPUS_THUMBNAIL'],
+            AuditLog::where('nama_tabel', 'artikel')->where('id_data', $a->id_artikel)->orderBy('id_audit')->pluck('aktivitas')->all(),
+        );
         $this->assertDatabaseHas('audit_log', ['aktivitas' => 'UNGGAH_THUMBNAIL', 'nama_tabel' => 'artikel', 'id_data' => $a->id_artikel]);
         $this->assertDatabaseHas('audit_log', ['aktivitas' => 'HAPUS_THUMBNAIL', 'nama_tabel' => 'artikel', 'id_data' => $a->id_artikel]);
 

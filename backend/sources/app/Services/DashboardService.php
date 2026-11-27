@@ -178,8 +178,8 @@ class DashboardService
             ->whereDate('tanggal_pengajuan', '<=', $sekarang->copy()->subDays(self::BATAS_HARI_MENUNGGU)->toDateString())->count();
         $serahTerimaTertunda = PengajuanAdopsi::where('status_pengajuan', 'DISETUJUI')
             ->where('updated_at', '<=', $sekarang->copy()->subDays(self::BATAS_HARI_SERAH_TERIMA)->setTimezone($zonaApp))->count();
-        $emailGagal = Notifikasi::where('kanal', Notifikasi::KANAL_EMAIL)->where('status_pengiriman', Notifikasi::STATUS_GAGAL)->count();
-        $waMenunggu = Notifikasi::where('kanal', Notifikasi::KANAL_WHATSAPP)->where('status_pengiriman', Notifikasi::STATUS_PENDING)->count();
+        $emailGagal = Notifikasi::untukAdmin()->where('kanal', Notifikasi::KANAL_EMAIL)->where('status_pengiriman', Notifikasi::STATUS_GAGAL)->count();
+        $waMenunggu = Notifikasi::untukAdmin()->where('kanal', Notifikasi::KANAL_WHATSAPP)->where('status_pengiriman', Notifikasi::STATUS_PENDING)->count();
 
         $daftar = [
             ['email_gagal', 'penting', "{$emailGagal} email notifikasi gagal terkirim.", $emailGagal, 'admin/notifikasi?kanal=Email&status=GAGAL'],
