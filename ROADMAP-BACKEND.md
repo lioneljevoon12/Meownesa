@@ -20,7 +20,7 @@
 | **dev-backend-08** | Modul Screening & Pemeriksaan Calon Adopter (Internal Admin) | MEOW-F-16 s/d 19, MEOW-BR-05, 08 | ✅ **SELESAI** |
 | **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | ✅ **SELESAI** |
 | **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | ✅ **SELESAI** |
-| **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | P2 (Notification) |
+| **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | ✅ **SELESAI** |
 | **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | P2 (Content CMS) |
 | **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | P2 (Analytics & Map) |
 | **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | P2 (Admin Governance) |
@@ -391,18 +391,31 @@
   - MEOW-BR-12 & MEOW-F-32: Integrasi WhatsApp dibatasi hanya untuk notifikasi dan pengingat satu arah, bukan sistem chat/CRM percakapan penuh.
   - Tabel `notifikasi` menyimpan kanal (Email/WhatsApp), isi pesan, status pengiriman, dan tanggal kirim.
 - **Fitur & Endpoint API / Controller:**  
-  - `POST /api/admin/notifikasi/send` (Kirim pesan notifikasi / trigger reminder).
-  - `GET /api/admin/notifikasi` (Histori log notifikasi terkirim).
-  - WhatsApp Notification Service (Helper pembentuk URL pesan terformat `https://wa.me/` atau integrasi gateway API).
-  - Laravel Mail Mailable untuk notifikasi email konfirmasi adopsi.
+  - `GET /api/admin/notifikasi` (Histori notifikasi; filter `status`, `kanal`, `jenis`, `id_pengajuan`).
+  - `POST /api/admin/notifikasi/kirim` (Kirim email yang `PENDING`; dengan `id_notifikasi` untuk satu pesan atau mencoba ulang yang `GAGAL`).
+  - `PUT /api/admin/notifikasi/{id}/status` (Admin menandai hasil kirim WhatsApp manual: `TERKIRIM`/`GAGAL`).
+  - `POST /api/admin/notifikasi/pengingat` (Picu pengingat kabar kondisi kucing; sama dengan perintah terjadwal).
+  - WhatsApp Notification Service (pembentuk tautan terformat `https://wa.me/<nomor>?text=<pesan>`).
+  - Laravel Mailable untuk email notifikasi.
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Record notifikasi tersimpan di database dengan status `TERKIRIM` atau `GAGAL`.
-  - [ ] Tautan WhatsApp ter-generate dengan teks template yang rapi dan memuat nomor registrasi/kode tracking.
+  - [x] Record notifikasi tersimpan di database dengan status `TERKIRIM` atau `GAGAL`.
+  - [x] Tautan WhatsApp ter-generate dengan teks template yang rapi dan memuat nomor registrasi/kode tracking.
 - **Target File / Komponen:**  
   - `app/Http/Controllers/NotifikasiController.php`
-  - `app/Services/WhatsAppNotificationService.php`
-  - `app/Mail/AdoptionStatusMail.php`
-  - `app/Models/Notifikasi.php`
+  - `app/Services/WhatsAppNotificationService.php`, `PengirimanNotifikasiService.php`, `PengingatPascaAdopsiService.php`
+  - `app/Mail/NotifikasiMail.php` + `resources/views/emails/notifikasi.blade.php` (nama umum karena dipakai semua jenis notifikasi, bukan hanya status adopsi)
+  - `app/Console/Commands/KirimNotifikasi.php` (`notifikasi:kirim`), `IngatkanPascaAdopsi.php` (`notifikasi:ingatkan`); jadwal di `routes/console.php`
+  - `app/Models/Notifikasi.php`, `app/Http/Resources/NotifikasiResource.php`, `app/Http/Requests/{FilterNotifikasi,KirimNotifikasi,TandaiNotifikasi}Request.php`
+  - Migrasi `2026_11_27_000001_add_pengiriman_columns_to_notifikasi_table.php`
+  - `tests/Feature/NotifikasiApiTest.php` (21 tes)
+- **Catatan implementasi:**  
+  - **Keputusan WhatsApp: tautan `wa.me` manual** (gratis, tanpa nomor khusus, sesuai BR-12 satu arah). Sistem menyiapkan pesan + tautan, admin membukanya, menekan kirim dari WhatsApp-nya sendiri, lalu menandai hasilnya. Bila kelak memakai gateway resmi, cukup tambah pengirim otomatis yang memanggil `PengirimanNotifikasiService::tandaiWhatsApp()`; kontrak API tidak berubah.
+  - **Email dikirim sistem**, terpisah dari proses pengajuan (agar pelamar tidak menunggu SMTP dan kegagalan email tidak menggagalkan pengajuan). Modul 07-10 tetap hanya mengantrekan `PENDING`; `notifikasi:kirim` mengirimnya tiap 5 menit. Hasil `TERKIRIM`, atau `GAGAL` dengan `catatan_galat` dan jumlah `percobaan`, dan bisa dicoba ulang. Endpoint kirim tidak pernah 500 karena SMTP bermasalah.
+  - **Butuh penjadwal di server:** cron `* * * * * php artisan schedule:run` (jadwal: `notifikasi:ingatkan` 08.00 WIB, `notifikasi:kirim` tiap 5 menit). Tanpa cron, admin tetap bisa memakai `POST /notifikasi/kirim` dan `/notifikasi/pengingat` secara manual. Email memakai pengaturan `MAIL_*` di `.env` (bawaan `log`, tertulis ke `storage/logs/laravel.log`).
+  - **Pengingat kabar kondisi** (F-31): adopsi yang masih dipantau diingatkan sejak hari jatuh tempo (pembaruan terakhir + 7 hari), diulang tiap 7 hari, maksimal 4 kali per siklus; setelah itu admin menghubungi adopter langsung. Kunci unik `pengingat:{adopsi}:{jatuh tempo}:{minggu ke-n}` + `kanal` membuat proses aman dijalankan berulang. Setelah admin mencatat kabar baru, jatuh tempo bergeser dan siklus baru dimulai. Adopsi `berakhir`/`selesai` tidak diingatkan.
+  - **Token aktivasi akun** pada isi pesan disamarkan (`token=[disamarkan]`) begitu pesan `TERKIRIM`, supaya tautan sekali pakai tidak tersimpan di basis data setelah sampai. Selama belum terkirim, token tetap utuh agar bisa dikirim.
+  - `GET /notifikasi` memuat `penerima` dan `tautan_whatsapp` (hanya untuk WhatsApp yang belum terkirim) serta `meta.jumlah_per_status`. Nomor WhatsApp dinormalkan ke `628...`.
+  - Pengiriman lewat perintah konsol tidak mencatat audit log (bukan aksi pengguna); aksi lewat API tercatat sebagai `notifikasi`.
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 10)",
+    "name": "MeowNesa API (dev-backend-01 s/d 11)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -125,6 +125,14 @@
     },
     {
       "key": "id_pasca_adopsi2",
+      "value": ""
+    },
+    {
+      "key": "id_notif_wa",
+      "value": ""
+    },
+    {
+      "key": "id_notif_email",
       "value": ""
     }
   ],
@@ -5369,7 +5377,574 @@
       ]
     },
     {
-      "name": "14. Bersih-bersih",
+      "name": "14. Notifikasi dan Pengingat (lanjutan folder 12)",
+      "item": [
+        {
+          "name": "Histori notifikasi adopsi uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada notifikasi dari folder 10-12 (konfirmasi, status, serah terima)\", function () { pm.expect(j.data.length).to.be.above(3); });",
+                  "pm.test(\"Ada jumlah per status\", function () { pm.expect(j.meta.jumlah_per_status).to.have.keys(\"PENDING\", \"TERKIRIM\", \"GAGAL\"); });",
+                  "const wa = j.data.find(x => x.kanal === \"WhatsApp\" && x.status_pengiriman !== \"TERKIRIM\");",
+                  "const em = j.data.find(x => x.kanal === \"Email\" && x.status_pengiriman !== \"TERKIRIM\");",
+                  "if (wa) { pm.collectionVariables.set(\"id_notif_wa\", wa.id_notifikasi); }",
+                  "if (em) { pm.collectionVariables.set(\"id_notif_email\", em.id_notifikasi); }",
+                  "pm.test(\"Pesan WhatsApp punya tautan wa.me\", function () { pm.expect(wa).to.exist; pm.expect(wa.tautan_whatsapp).to.match(/^https:\\/\\/wa\\.me\\/628/); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi?id_pengajuan={{id_pengajuan_adopsi}}&per_page=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi"
+              ],
+              "query": [
+                {
+                  "key": "id_pengajuan",
+                  "value": "{{id_pengajuan_adopsi}}"
+                },
+                {
+                  "key": "per_page",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Terbaru di atas. Setiap pesan WhatsApp yang belum terkirim membawa tautan wa.me berisi teks siap kirim: buka tautan, tekan kirim di WhatsApp, lalu tandai di request \"Tandai WhatsApp terkirim\"."
+          }
+        },
+        {
+          "name": "Filter: hanya WhatsApp yang menunggu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Semuanya WhatsApp PENDING\", function () { pm.expect(j.data.every(x => x.kanal === \"WhatsApp\" && x.status_pengiriman === \"PENDING\")).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi?kanal=WhatsApp&status=PENDING&per_page=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi"
+              ],
+              "query": [
+                {
+                  "key": "kanal",
+                  "value": "WhatsApp"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                },
+                {
+                  "key": "per_page",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi?kanal=SMS",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi"
+              ],
+              "query": [
+                {
+                  "key": "kanal",
+                  "value": "SMS"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kirim satu email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Hasil TERKIRIM atau GAGAL (bergantung pengaturan MAIL_ di .env)\", function () { pm.expect([\"TERKIRIM\", \"GAGAL\"]).to.include(j.data.status_pengiriman); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/kirim",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "kirim"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_notifikasi\": \"{{id_notif_email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Dengan MAIL_MAILER=log (bawaan .env.example) email ditulis ke storage/logs/laravel.log dan berstatus TERKIRIM. Bila SMTP salah, status GAGAL beserta alasannya dan bisa dicoba ulang dengan request yang sama."
+          }
+        },
+        {
+          "name": "Kirim satu email WhatsApp (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/kirim",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "kirim"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_notifikasi\": \"{{id_notif_wa}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "WhatsApp tidak dikirim sistem; gunakan tautan wa.me lalu tandai hasilnya."
+          }
+        },
+        {
+          "name": "Kirim semua email yang menunggu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ada ringkasan\", function () { pm.expect(j.data).to.have.keys(\"diproses\", \"terkirim\", \"gagal\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/kirim",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "kirim"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tandai WhatsApp terkirim",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Terkirim, tanggal terisi, tautan hilang\", function () { pm.expect(j.data.status_pengiriman).to.eql(\"TERKIRIM\"); pm.expect(j.data.tanggal_dikirim).to.be.a(\"string\"); pm.expect(j.data.tautan_whatsapp).to.eql(null); });",
+                  "pm.test(\"Token aktivasi disamarkan setelah terkirim\", function () { pm.expect(j.data.isi_pesan).to.not.match(/token=[A-Za-z0-9]{10,}/); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/{{id_notif_wa}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "{{id_notif_wa}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"TERKIRIM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Tandai lagi setelah terkirim (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/{{id_notif_wa}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "{{id_notif_wa}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"GAGAL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Status tandai tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/{{id_notif_wa}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "{{id_notif_wa}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Notifikasi tidak ada (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/99999999/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "99999999",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"TERKIRIM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Picu pengingat kabar kondisi kucing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Ringkasan pengingat\", function () { pm.expect(j.data).to.include.keys(\"adopsi_ditinjau\", \"pengingat_dibuat\", \"sudah_ada\", \"dihentikan\", \"email\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi/pengingat",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi",
+                "pengingat"
+              ]
+            },
+            "description": "Sama dengan perintah terjadwal `php artisan notifikasi:ingatkan` (tiap 08.00 WIB). Adopsi yang jadwal kabarnya jatuh tempo (+7 hari) diingatkan lewat WhatsApp + Email, diulang tiap 7 hari, maksimal 4 kali. Aman dijalankan berulang: tidak membuat pesan ganda."
+          }
+        },
+        {
+          "name": "Histori pengingat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifikasi?jenis=Reminder Monitoring&per_page=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifikasi"
+              ],
+              "query": [
+                {
+                  "key": "jenis",
+                  "value": "Reminder Monitoring"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "15. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

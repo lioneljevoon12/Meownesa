@@ -7,6 +7,7 @@ use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PascaAdopsiController;
 use App\Http\Controllers\PemberianMakanController;
 use App\Http\Controllers\PengajuanAdopsiAdminController;
@@ -108,6 +109,14 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('pasca-adopsi', [PascaAdopsiController::class, 'store']);
         Route::put('pasca-adopsi/{id}', [PascaAdopsiController::class, 'update'])->whereNumber('id');
         Route::delete('pasca-adopsi/{id}', [PascaAdopsiController::class, 'destroy'])->whereNumber('id');
+    });
+
+    // dev-backend-11: histori notifikasi, kirim email, tandai WhatsApp manual, dan pemicu pengingat (BR-12).
+    Route::get('notifikasi', [NotifikasiController::class, 'index']);
+    Route::middleware('audit:notifikasi')->group(function () {
+        Route::post('notifikasi/kirim', [NotifikasiController::class, 'kirim']);
+        Route::post('notifikasi/pengingat', [NotifikasiController::class, 'pengingat']);
+        Route::put('notifikasi/{id}/status', [NotifikasiController::class, 'tandai'])->whereNumber('id');
     });
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari
