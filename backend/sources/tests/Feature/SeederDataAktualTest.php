@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\FotoKucing;
 use App\Models\Kucing;
 use App\Models\Lokasi;
+use Database\Seeders\LokasiSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -66,6 +67,59 @@ class SeederDataAktualTest extends TestCase
 
         $this->assertSame(98, Kucing::count());
         $this->assertSame(67, FotoKucing::count());
+        $this->assertSame(28, Lokasi::count());
+    }
+
+    // ------------------------------------------------------------ koordinat lokasi
+
+    public function test_koordinat_mencakup_tepat_semua_lokasi_dan_berada_di_area_kampus(): void
+    {
+        $batas = [   // [lintang min, lintang maks, bujur min, bujur maks] kira-kira area kampus
+            'Kampus Ketintang'   => [-7.3185, -7.3105, 112.7235, 112.7305],
+            'Kampus Lidah Wetan' => [-7.2990, -7.3040, 112.6650, 112.6740],
+        ];
+
+        foreach (Lokasi::with('kampus')->get() as $lokasi) {
+            $nama = $lokasi->kampus->nama_kampus;
+            $titik = LokasiSeeder::koordinat()[$nama][$lokasi->nama_lokasi] ?? null;
+
+            $this->assertNotNull($titik, "{$nama} / {$lokasi->nama_lokasi} belum punya koordinat.");
+            $this->assertEqualsWithDelta($titik['lat'], $lokasi->koordinat_x, 1e-7);
+            $this->assertEqualsWithDelta($titik['lng'], $lokasi->koordinat_y, 1e-7);
+            $this->assertContains($titik['akurasi'], ['google_maps', 'osm', 'perkiraan']);
+
+            [$latA, $latB, $lngA, $lngB] = $batas[$nama];
+            $this->assertTrue(
+                $lokasi->koordinat_x >= min($latA, $latB) && $lokasi->koordinat_x <= max($latA, $latB) && $lokasi->koordinat_y >= $lngA && $lokasi->koordinat_y <= $lngB,
+                "{$lokasi->nama_lokasi} berada di luar area {$nama}.",
+            );
+        }
+
+        // tidak ada entri koordinat yatim (nama lokasi salah ketik) dan tidak ada dua lokasi di titik yang sama
+        $namaDiDb = Lokasi::with('kampus')->get()->map(fn ($l) => $l->kampus->nama_kampus.'|'.$l->nama_lokasi)->sort()->values()->all();
+        $namaDiFile = collect(LokasiSeeder::koordinat())->flatMap(fn ($daftar, $kampus) => collect($daftar)->keys()->map(fn ($n) => "{$kampus}|{$n}"))->sort()->values()->all();
+        $this->assertSame($namaDiDb, $namaDiFile);
+        $this->assertSame(28, Lokasi::selectRaw('koordinat_x, koordinat_y')->distinct()->get()->count());
+    }
+
+    public function test_peta_publik_memetakan_semua_lokasi_hasil_seeder(): void
+    {
+        $this->getJson('/api/peta/persebaran')->assertOk()
+            ->assertJsonPath('meta.total_titik', 28)->assertJsonPath('meta.tanpa_koordinat', 0);
+    }
+
+    public function test_seeder_ulang_memindahkan_titik_lama_tetapi_tidak_menimpa_koreksi_admin(): void
+    {
+        $lama = Lokasi::where('nama_lokasi', 'FEB')->firstOrFail();
+        $diubahAdmin = Lokasi::where('nama_lokasi', 'FIP')->firstOrFail();
+        $lama->update(['koordinat_x' => -7.3129, 'koordinat_y' => 112.7275]);          // titik tengah bawaan lama
+        $diubahAdmin->update(['koordinat_x' => -7.30111, 'koordinat_y' => 112.67111]);  // sudah dikoreksi admin
+
+        $this->seed(LokasiSeeder::class);
+
+        $this->assertEqualsWithDelta(-7.3130393, $lama->refresh()->koordinat_x, 1e-7);
+        $this->assertEqualsWithDelta(112.7283961, $lama->koordinat_y, 1e-7);
+        $this->assertEqualsWithDelta(-7.30111, $diubahAdmin->refresh()->koordinat_x, 1e-7);
         $this->assertSame(28, Lokasi::count());
     }
 }

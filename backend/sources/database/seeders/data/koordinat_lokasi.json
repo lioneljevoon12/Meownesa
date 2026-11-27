@@ -1,0 +1,42 @@
+{
+  "sumber": "Dicari 27 Nov 2026 dari Google Maps dan OpenStreetMap (Nominatim). Akurasi tingkat gedung/area (kira-kira 10-30 m), cukup untuk peta persebaran, bukan titik tepat tempat kucing biasa berkumpul. Koreksi lewat PUT /api/admin/lokasi/{id} bila perlu.",
+  "akurasi": {
+    "google_maps": "Titik tempat/gedung dari Google Maps (nama tempatnya ada).",
+    "osm": "Titik gedung/area dari OpenStreetMap.",
+    "perkiraan": "Tidak ada tempat bernama itu di peta; diperkirakan dari bangunan/area terdekat. Perlu dicek oleh pengurus Jaga Satwa."
+  },
+  "kampus": {
+    "Kampus Ketintang": {
+      "FISIPOL":                  {"lat": -7.3119600, "lng": 112.7298242, "akurasi": "google_maps", "acuan": "Fakultas Ilmu Sosial dan Ilmu Politik"},
+      "FISIPOL (Perbatasan FEB)": {"lat": -7.3125000, "lng": 112.7291000, "akurasi": "perkiraan",   "acuan": "Titik tengah antara FISIPOL dan FEB"},
+      "FEB":                      {"lat": -7.3130393, "lng": 112.7283961, "akurasi": "google_maps", "acuan": "Fakultas Ekonomika dan Bisnis Unesa"},
+      "Fakultas Hukum":           {"lat": -7.3146082, "lng": 112.7276267, "akurasi": "google_maps", "acuan": "Fakultas Hukum UNESA"},
+      "Lapangan":                 {"lat": -7.3137280, "lng": 112.7276030, "akurasi": "osm",         "acuan": "Lapangan UNESA Ketintang"},
+      "FC":                       {"lat": -7.3142980, "lng": 112.7267520, "akurasi": "osm",         "acuan": "Food Court Baseball Unesa"},
+      "Area Miko":                {"lat": -7.3142000, "lng": 112.7264000, "akurasi": "perkiraan",   "acuan": "Antara Food Court dan Danau (urutan rute presensi); nama 'Miko' tidak ada di peta"},
+      "Danau":                    {"lat": -7.3141250, "lng": 112.7259730, "akurasi": "osm",         "acuan": "Danau UNESA Ketintang"},
+      "Danau Depan Masjid":       {"lat": -7.3141000, "lng": 112.7257500, "akurasi": "perkiraan",   "acuan": "Tepi barat danau, menghadap Masjid Baitul Makmur"},
+      "Masjid Samping Biologi":   {"lat": -7.3138007, "lng": 112.7253576, "akurasi": "google_maps", "acuan": "Masjid Baitul Makmur 1 Unesa"},
+      "Danau Depan FMIPA":        {"lat": -7.3145000, "lng": 112.7260000, "akurasi": "perkiraan",   "acuan": "Tepi selatan danau, menghadap gedung FMIPA"},
+      "Teknik (ATM)":             {"lat": -7.3157789, "lng": 112.7269559, "akurasi": "google_maps", "acuan": "ATM BTN Unesa di Fakultas Teknik"},
+      "Fisika":                   {"lat": -7.3151243, "lng": 112.7257811, "akurasi": "google_maps", "acuan": "Gedung Jurusan Fisika Unesa"},
+      "Teknik Sains Data":        {"lat": -7.3153275, "lng": 112.7271114, "akurasi": "google_maps", "acuan": "Sains Data Gedung E2"},
+      "Sekretariat Teknik":       {"lat": -7.3156763, "lng": 112.7270192, "akurasi": "google_maps", "acuan": "Gedung E1 Fakultas Teknik"},
+      "Samping Elektro":          {"lat": -7.3162540, "lng": 112.7267920, "akurasi": "osm",         "acuan": "Gedung A5 Jurusan Teknik Elektro"},
+      "PKK":                      {"lat": -7.3168890, "lng": 112.7258550, "akurasi": "osm",         "acuan": "Gedung A2 PKK Fakultas Teknik"},
+      "Teknik Mesin":             {"lat": -7.3165516, "lng": 112.7266530, "akurasi": "google_maps", "acuan": "Jurusan Teknik Mesin Unesa"},
+      "Gerbang Belakang":         {"lat": -7.3172063, "lng": 112.7253231, "akurasi": "perkiraan",   "acuan": "Pintu masuk kompleks Unesa di sisi selatan/barat daya kampus"},
+      "Depan Gedung IDB":         {"lat": -7.3139078, "lng": 112.7282895, "akurasi": "perkiraan",   "acuan": "Gedung Prodi Bisnis Digital (diduga Gedung IDB) di area FEB"},
+      "Joglo Kimia":              {"lat": -7.3155094, "lng": 112.7250041, "akurasi": "perkiraan",   "acuan": "Jurusan Kimia; joglo tidak ada di peta"},
+      "Unesa Press":              {"lat": -7.3132387, "lng": 112.7271368, "akurasi": "google_maps", "acuan": "Unesa University Press"}
+    },
+    "Kampus Lidah Wetan": {
+      "FIP":           {"lat": -7.3016350, "lng": 112.6709390, "akurasi": "osm",         "acuan": "Fakultas Ilmu Pendidikan"},
+      "FBS":           {"lat": -7.3012660, "lng": 112.6691770, "akurasi": "osm",         "acuan": "Fakultas Bahasa dan Seni"},
+      "Labmer":        {"lat": -7.3005069, "lng": 112.6713284, "akurasi": "google_maps", "acuan": "Lab Merdeka Belajar Unesa"},
+      "FIKK":          {"lat": -7.2998220, "lng": 112.6686800, "akurasi": "osm",         "acuan": "Fakultas Ilmu Keolahragaan"},
+      "Lapangan Kuda": {"lat": -7.3016338, "lng": 112.6657266, "akurasi": "perkiraan",   "acuan": "Titik tengah antara Pandesa Riding School dan Horse Stable UNESA"},
+      "Rektorat":      {"lat": -7.3007670, "lng": 112.6727360, "akurasi": "osm",         "acuan": "Gedung Rektorat"}
+    }
+  }
+}

@@ -129,7 +129,7 @@
   - `DELETE` ditolak **409** bila lokasi masih dipakai kucing atau feeding log (FK di DB bersifat CASCADE, jadi pengecekan ini mencegah data kucing ikut terhapus).  
   - **Data aktual:** seeder kini memakai spreadsheet presensi Jaga Satwa — 28 lokasi (22 Ketintang, 6 Lidah Wetan), 98 kucing, 67 foto. Data dummy (Mochi, Milo, dst.) dan riwayat medis/feeding dummy dihapus.  
   - Nilai baru: `status_kucing = Hilang`, `status_steril = Tidak Diketahui` (konstanta di `App\Models\Kucing`).  
-  - **Koordinat semua lokasi masih titik tengah kampus** (spreadsheet tidak memuat koordinat) — perlu dikoreksi admin.
+  - **Koordinat lokasi** (diperbarui 27 Nov 2026): spreadsheet tidak memuat koordinat, jadi dicari dari Google Maps/OpenStreetMap dan disimpan di `database/seeders/data/koordinat_lokasi.json` beserta asalnya (`google_maps`/`osm`/`perkiraan`). Akurasi tingkat gedung/area (±10-30 m). **8 lokasi berstatus `perkiraan`** (tidak ada tempat bernama itu di peta) dan perlu dicek pengurus: FISIPOL (Perbatasan FEB), Area Miko, Danau Depan Masjid, Danau Depan FMIPA, Gerbang Belakang, Depan Gedung IDB, Joglo Kimia (Ketintang), dan Lapangan Kuda (Lidah Wetan). Seeder aman dijalankan ulang: titik tengah lama diperbarui, koreksi admin tidak ditimpa.
 
 ---
 
@@ -479,7 +479,7 @@
   - **Peringatan operasional** (`data.peringatan`, hanya yang jumlahnya > 0, urut `penting` > `peringatan` > `info`): email gagal terkirim, pengajuan MENUNGGU > 3 hari, pengingat terlambat, kucing belum diberi makan hari ini, adopsi DISETUJUI > 7 hari belum serah terima, WhatsApp menunggu dikirim manual. Tiap item membawa `rujukan` ke endpoint daftar yang relevan. Ambang ada di konstanta `DashboardService`.
   - **Kinerja (NF-09):** semua angka lewat kueri agregat (COUNT/GROUP BY), tanpa cache; ada tes yang membatasi jumlah kueri. Hari ini menurut WIB (diuji pada pergantian hari WIB/UTC).
   - **Peta publik:** titik adalah LOKASI umum (bukan posisi tiap kucing) dengan `lat` (= `koordinat_x`), `lng` (= `koordinat_y`), `jumlah_kucing`, `jumlah_siap_adopsi`. Hanya kucing yang tampil di katalog publik yang dihitung (Terdata + Tersedia); kucing Proses Screening/Diadopsi/Hilang/Almarhum, data adopter, dan alamat tidak pernah ikut (NF-04 s/d NF-06, F-39). Ringkasan `kampus[]` memuat `pusat` (rata-rata titik valid) untuk memusatkan peta. Untuk daftar kucing di satu titik, frontend memanggil `GET /api/kucing?id_lokasi=`.
-  - **Koordinat 0,0 (belum diisi) atau di luar rentang** tidak dipetakan; jumlahnya ada di `meta.tanpa_koordinat`. Koordinat seeder saat ini masih nilai sementara (titik tengah kampus) sampai koordinat asli diisi.
+  - **Koordinat 0,0 (belum diisi) atau di luar rentang** tidak dipetakan; jumlahnya ada di `meta.tanpa_koordinat`. Seeder kini memakai koordinat hasil pencarian peta (lihat modul 03); 8 di antaranya masih perkiraan.
   - GeoJSON memakai urutan `[bujur, lintang]` (standar), kebalikan Leaflet `[lat, lng]`; format `titik` default memberi `lat`/`lng` eksplisit agar tidak tertukar. Respons peta berheader `Cache-Control: max-age=60, public`.
 
 ---
