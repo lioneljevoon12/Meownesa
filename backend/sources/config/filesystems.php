@@ -60,6 +60,16 @@ return [
 
         // Lampiran pengajuan adopsi (KTP, foto rumah): data pribadi, SELALU privat. Tidak ada `url` dan
         // tidak di bawah public/, jadi tidak dapat dibuka lewat alamat web; hanya dibaca server untuk admin.
+        // dev-backend-12: thumbnail artikel. Publik (tampil di halaman artikel); unggahan admin ada di upload/.
+        'artikel_thumbnail' => [
+            'driver' => 'local',
+            'root' => public_path('images/artikel'),
+            'url' => env('APP_URL').'/images/artikel',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'lampiran' => [
             'driver' => 'local',
             'root' => storage_path('app/private/lampiran'),

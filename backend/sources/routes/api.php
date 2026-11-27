@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\AktivasiAkunController;
+use App\Http\Controllers\ArtikelAdminController;
+use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FotoKucingController;
+use App\Http\Controllers\InfoPublikController;
 use App\Http\Controllers\KampusController;
 use App\Http\Controllers\KucingAdminController;
 use App\Http\Controllers\KucingController;
@@ -51,6 +54,14 @@ Route::get('kucing/{id}', [KucingController::class, 'show'])->whereNumber('id');
 
 // ---- dev-backend-05: riwayat kesehatan (publik) ----------------------------------
 Route::get('kucing/{id}/kesehatan', [RiwayatKesehatanController::class, 'index'])->whereNumber('id');
+
+// ---- dev-backend-12: artikel edukasi + informasi donasi/pelaporan (publik, hanya yang PUBLISHED) ----
+// Rute statis (featured, kategori) harus didaftarkan sebelum {slug}.
+Route::get('artikel', [ArtikelController::class, 'index']);
+Route::get('artikel/featured', [ArtikelController::class, 'featured']);
+Route::get('artikel/kategori', [ArtikelController::class, 'kategori']);
+Route::get('artikel/{slug}', [ArtikelController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
+Route::get('info-publik', [InfoPublikController::class, 'index']);
 
 // ---- dev-backend-07: pengajuan adopsi publik tanpa akun (dibatasi per IP) --------
 Route::prefix('adopsi')->group(function () {
@@ -117,6 +128,17 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('notifikasi/kirim', [NotifikasiController::class, 'kirim']);
         Route::post('notifikasi/pengingat', [NotifikasiController::class, 'pengingat']);
         Route::put('notifikasi/{id}/status', [NotifikasiController::class, 'tandai'])->whereNumber('id');
+    });
+
+    // dev-backend-12: CMS artikel (edukasi, kegiatan, kampanye kalung). Thumbnail diunggah/dihapus lewat rute tersendiri.
+    Route::get('artikel', [ArtikelAdminController::class, 'index']);
+    Route::get('artikel/{id}', [ArtikelAdminController::class, 'show'])->whereNumber('id');
+    Route::middleware('audit:artikel')->group(function () {
+        Route::post('artikel', [ArtikelAdminController::class, 'store']);
+        Route::put('artikel/{id}', [ArtikelAdminController::class, 'update'])->whereNumber('id');
+        Route::delete('artikel/{id}', [ArtikelAdminController::class, 'destroy'])->whereNumber('id');
+        Route::post('artikel/{id}/thumbnail', [ArtikelAdminController::class, 'uploadThumbnail'])->whereNumber('id')->middleware('audit:artikel,UNGGAH_THUMBNAIL');
+        Route::delete('artikel/{id}/thumbnail', [ArtikelAdminController::class, 'hapusThumbnail'])->whereNumber('id')->middleware('audit:artikel,HAPUS_THUMBNAIL');
     });
 
     // dev-backend-05: riwayat kesehatan. POST memakai {kucing} agar audit mencatat id_kesehatan dari

@@ -24,3 +24,6 @@ yarn-error.log
 
 # Foto kucing hasil unggahan admin (berkas bawaan seeder tetap dilacak)
 /public/images/kucing/upload/
+
+# Thumbnail artikel hasil unggahan admin (berkas bawaan seeder tetap dilacak)
+/public/images/artikel/upload/

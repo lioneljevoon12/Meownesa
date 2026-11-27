@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MeowNesa API (dev-backend-01 s/d 11)",
+    "name": "MeowNesa API (dev-backend-01 s/d 12)",
     "description": "Koleksi uji API MeowNesa.\n\n1. Isi variabel koleksi `password` (password akun seed di database/seeders/UserSeeder.php).\n2. Pastikan `php artisan serve` berjalan.\n3. Jalankan folder \"0. Login\" lebih dulu, lalu folder lain berurutan (atau Run collection).\n\nToken dan id disimpan otomatis oleh skrip test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -133,6 +133,14 @@
     },
     {
       "key": "id_notif_email",
+      "value": ""
+    },
+    {
+      "key": "id_artikel_cms",
+      "value": ""
+    },
+    {
+      "key": "slug_artikel_cms",
       "value": ""
     }
   ],
@@ -5944,7 +5952,768 @@
       ]
     },
     {
-      "name": "15. Bersih-bersih",
+      "name": "15. CMS Artikel dan Informasi Publik",
+      "item": [
+        {
+          "name": "Info publik: donasi, form pelaporan, kontak",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Struktur lengkap\", function () { pm.expect(j.data).to.have.keys(\"donasi\", \"pelaporan\", \"kontak\"); pm.expect(j.data.donasi).to.include.keys(\"tersedia\", \"bank\", \"nomor_rekening\", \"qris_url\", \"catatan\"); });",
+                  "pm.test(\"BR-10: sistem tidak memproses pembayaran\", function () { pm.expect(j.data.donasi.catatan).to.include(\"tidak memproses pembayaran\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/info-publik",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "info-publik"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Diisi dari .env (DONASI_*, LAPOR_FORM_URL, KONTAK_*), bukan dari CMS. Bernilai null bila belum diisi."
+          }
+        },
+        {
+          "name": "Artikel publik: daftar (hanya yang terbit)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Kartu tanpa isi dan tanpa data internal\", function () { j.data.forEach(a => { pm.expect(a).to.not.have.property(\"isi\"); pm.expect(a).to.not.have.property(\"status_publikasi\"); pm.expect(a).to.not.have.property(\"penulis\"); }); });",
+                  "pm.test(\"Ada meta paginasi\", function () { pm.expect(j.meta).to.have.keys(\"halaman\", \"halaman_akhir\", \"per_halaman\", \"total\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel?per_page=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "5"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Artikel publik: kategori beserta jumlah",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel/kategori",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel",
+                "kategori"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Artikel publik: unggulan untuk banner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel/featured?limit=3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel",
+                "featured"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "3"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Filter publik tidak valid (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel?status=DRAFT",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "DRAFT"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Publik tidak boleh memfilter status (draf/arsip tidak pernah terlihat)."
+          }
+        },
+        {
+          "name": "Buat artikel (draf) - tag HTML dibuang",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "const j = pm.response.json();",
+                  "if (j && j.data && j.data.id_artikel !== undefined) { pm.collectionVariables.set(\"id_artikel_cms\", j.data.id_artikel); }",
+                  "pm.collectionVariables.set(\"slug_artikel_cms\", j.data.slug);",
+                  "pm.test(\"Draf, slug otomatis, isi bersih\", function () { pm.expect(j.data.status_publikasi).to.eql(\"DRAFT\"); pm.expect(j.data.slug).to.include(\"panduan-uji-postman\"); pm.expect(j.data.isi).to.not.include(\"<\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"judul\": \"Panduan Uji Postman Kalung Reflektif\",\n  \"kategori\": \"Edukasi & Kampanye\",\n  \"isi\": \"<script>alert(1)</script>Kalung reflektif membantu kucing terlihat di malam hari. Pasang dengan benar dan cek berkala.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Slug dibuat otomatis dari judul. Artikel baru berstatus DRAFT kecuali status_publikasi: PUBLISHED dikirim. Bisa juga dikirim multipart bersama berkas \"thumbnail\"."
+          }
+        },
+        {
+          "name": "Draf belum tampil di publik (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel/{{slug_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel",
+                "{{slug_artikel_cms}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Draf tidak boleh jadi unggulan (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_featured\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Judul terlalu pendek (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"judul\": \"abc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Unggah thumbnail (pilih file di Body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201 atau 422\", function () { pm.expect([201, 422]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}/thumbnail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}",
+                "thumbnail"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "thumbnail",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "description": "Buka tab Body, pada baris \"thumbnail\" klik Select Files lalu pilih JPG/PNG/WebP (maks 5 MB, min 200x200 px). Hasilnya di-encode ulang menjadi JPEG dan metadata GPS dibuang. 422 bila belum memilih file."
+          }
+        },
+        {
+          "name": "Terbitkan dan jadikan unggulan + sematan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Terbit, tanggal terbit terisi\", function () { pm.expect(j.data.status_publikasi).to.eql(\"PUBLISHED\"); pm.expect(j.data.tanggal_diterbitkan).to.be.a(\"string\"); pm.expect(j.data.is_featured).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_publikasi\": \"PUBLISHED\",\n  \"is_featured\": true,\n  \"is_pinned\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Artikel kini tampil di publik",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Memuat isi lengkap\", function () { pm.expect(j.data.isi).to.include(\"Kalung reflektif\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel/{{slug_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel",
+                "{{slug_artikel_cms}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Muncul di daftar unggulan dan paling atas (disematkan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Disematkan = urutan pertama\", function () { pm.expect(j.data[0].slug).to.eql(pm.collectionVariables.get(\"slug_artikel_cms\")); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Arsipkan artikel (sematan/unggulan otomatis dilepas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Flag dilepas\", function () { pm.expect(j.data.is_featured).to.eql(false); pm.expect(j.data.is_pinned).to.eql(false); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_publikasi\": \"ARCHIVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Setelah diarsipkan hilang dari publik (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/artikel/{{slug_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "artikel",
+                "{{slug_artikel_cms}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Daftar admin: semua status + jumlah per status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Artikel uji ada, tanpa isi lengkap di daftar\", function () { const a = j.data.find(x => x.id_artikel === Number(pm.collectionVariables.get(\"id_artikel_cms\"))); pm.expect(a).to.exist; pm.expect(a).to.not.have.property(\"isi\"); });",
+                  "pm.test(\"Ada jumlah per status\", function () { pm.expect(j.meta.jumlah_per_status).to.have.keys(\"DRAFT\", \"PUBLISHED\", \"ARCHIVED\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel?q=Postman&per_page=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Postman"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail admin memuat isi dan penulis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Isi dan penulis\", function () { pm.expect(j.data.isi).to.be.a(\"string\"); pm.expect(j.data.penulis.nama).to.be.a(\"string\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hapus artikel uji",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/artikel/{{id_artikel_cms}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "artikel",
+                "{{id_artikel_cms}}"
+              ]
+            },
+            "description": "Thumbnail unggahan ikut terhapus dari disk. Artikel uji tidak meninggalkan data."
+          }
+        }
+      ]
+    },
+    {
+      "name": "16. Bersih-bersih",
       "item": [
         {
           "name": "Hapus kucing uji",

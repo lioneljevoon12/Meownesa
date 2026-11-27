@@ -21,7 +21,7 @@
 | **dev-backend-09** | Modul Serah Terima Adopsi (BAST) & Pembuatan Akun Adopter | MEOW-F-21 s/d 25, MEOW-BR-06, 07 | ✅ **SELESAI** |
 | **dev-backend-10** | Modul Pemantauan Pasca-Adopsi & Riwayat Kondisi Berkala | MEOW-F-26 s/d 29, MEOW-BR-13 | ✅ **SELESAI** |
 | **dev-backend-11** | Modul Notifikasi Otomatis & Pengingat Laporan (Email & WhatsApp Integration) | MEOW-F-30 s/d 32, MEOW-BR-12 | ✅ **SELESAI** |
-| **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | P2 (Content CMS) |
+| **dev-backend-12** | Modul CMS Artikel Edukasi, Kampanye Kalung, & Publikasi Informasi Publik | MEOW-F-33 s/d 37, DFD 6.0 | ✅ **SELESAI** |
 | **dev-backend-13** | Modul Agregasi Statistik Dashboard Admin & Data Titik Peta Persebaran | MEOW-F-38 s/d 40, DFD 8.0 | P2 (Analytics & Map) |
 | **dev-backend-14** | Modul Super Admin (Manajemen Akun Pengurus, Hak Akses, & Log Aktivitas Audit) | MEOW-F-42 s/d 44, MEOW-NF-07 | P2 (Admin Governance) |
 
@@ -428,18 +428,30 @@
   - MEOW-BR-11: Sistem tidak membuat ulang form pelaporan kucing liar (mengarahkan langsung ke Google Form eksternal).
   - MEOW-F-34 & 35: Artikel mendukung status publikasi, unggulan (`is_featured`), sematan (`is_pinned`), dan thumbnail.
 - **Fitur & Endpoint API / Controller:**  
-  - `GET /api/artikel` (Publik: daftar artikel terbit dengan filter kategori).
-  - `GET /api/artikel/{slug}` (Publik: baca artikel lengkap).
-  - `GET /api/artikel/featured` (Artikel utama untuk banner landing page).
-  - `POST /api/admin/artikel` (Admin tulis artikel baru & upload cover/thumbnail).
-  - `PUT /api/admin/artikel/{id}` & `DELETE /api/admin/artikel/{id}`.
+  - `GET /api/artikel` (Publik: daftar artikel terbit; filter `kategori`, `q`; yang disematkan di atas).
+  - `GET /api/artikel/{slug}` (Publik: baca artikel lengkap), `GET /api/artikel/featured` (banner landing page), `GET /api/artikel/kategori` (kategori + jumlah).
+  - `GET /api/info-publik` (Publik: rekening/QRIS donasi, tautan Google Form pelaporan, kontak resmi).
+  - `GET /api/admin/artikel` (+ `/{id}`), `POST /api/admin/artikel`, `PUT /api/admin/artikel/{id}`, `DELETE /api/admin/artikel/{id}`.
+  - `POST` / `DELETE /api/admin/artikel/{id}/thumbnail` (unggah/ganti/hapus thumbnail; `POST` artikel juga menerima `thumbnail` multipart).
 - **Kriteria Keberhasilan (Acceptance Criteria):**  
-  - [ ] Publik hanya dapat melihat artikel dengan `status_publikasi = PUBLISHED`.
-  - [ ] Flag `is_featured` dan `is_pinned` berfungsi benar untuk menyaring artikel di landing page.
+  - [x] Publik hanya dapat melihat artikel dengan `status_publikasi = PUBLISHED`.
+  - [x] Flag `is_featured` dan `is_pinned` berfungsi benar untuk menyaring artikel di landing page.
 - **Target File / Komponen:**  
-  - `app/Http/Controllers/ArtikelController.php`
-  - `app/Models/Artikel.php`
-  - `app/Http/Requests/StoreArtikelRequest.php`
+  - `app/Http/Controllers/ArtikelController.php` (publik), `ArtikelAdminController.php`, `InfoPublikController.php`
+  - `app/Models/Artikel.php`, `app/Services/ArtikelService.php`, `app/Services/PengolahGambar.php` (dipakai bersama foto kucing)
+  - `app/Http/Requests/{StoreArtikel,UpdateArtikel,FilterArtikel,UploadThumbnailArtikel}Request.php` + basis `ArtikelRequest.php`
+  - `app/Http/Resources/{Artikel,ArtikelDetail,ArtikelAdmin}Resource.php`
+  - `config/jagasatwa.php`, disk `artikel_thumbnail` di `config/filesystems.php`, migrasi `2026_11_28_000001_add_listing_index_to_artikel_table.php`
+  - `tests/Feature/ArtikelApiTest.php` (24 tes)
+- **Catatan implementasi:**  
+  - **Status:** `DRAFT`, `PUBLISHED`, `ARCHIVED`. Artikel baru boleh `DRAFT`/`PUBLISHED` saja. Tanggal terbit dicatat saat PERTAMA terbit (terbit ulang tidak mengubahnya). Draf dan arsip dijawab 404 di publik. Artikel yang tidak lagi `PUBLISHED` otomatis dilepas dari unggulan/sematan; meminta flag itu pada artikel non-terbit ditolak 422.
+  - **Urutan publik:** disematkan dulu, lalu tanggal terbit terbaru. `featured` boleh lebih dari satu (bawaan 5, maks 10) agar banner bisa berputar.
+  - **Slug** otomatis dari judul dan unik (`-2`, `-3`, ...); tidak berubah saat judul diubah supaya URL lama tidak putus (bisa diganti eksplisit lewat `slug`). `featured` dan `kategori` tercadang karena bentrok dengan rute statis.
+  - **Kategori** tetap (`Artikel::KATEGORI`: Edukasi & Kampanye, Kesehatan Veteriner, Panduan Adopsi, Informasi Kegiatan, Cerita Kucing); kampanye kalung masuk "Edukasi & Kampanye".
+  - **Keamanan isi:** `isi` adalah teks polos/Markdown, SEMUA tag HTML (termasuk isi `<script>`/`<style>`) dibuang saat disimpan, jadi tidak ada XSS tersimpan apa pun cara frontend merendernya. Frontend sebaiknya merender sebagai Markdown, bukan HTML mentah.
+  - **Thumbnail:** JPG/PNG/WebP maks 5 MB, di-encode ulang jadi JPEG maks 1280 px dengan metadata GPS dibuang (logika dibagi dengan foto kucing lewat `PengolahGambar`). Tersimpan publik di `public/images/artikel/upload/` (gitignore); berkas lama dihapus saat diganti; berkas bawaan seeder tidak pernah dihapus. Seeder kini memakai gambar nyata (`stop-kalung1.jpeg` dari prototipe); dua artikel lain belum punya gambar.
+  - **Info donasi/pelaporan (BR-10, BR-11):** nilainya dari `.env` (`DONASI_*`, `LAPOR_FORM_URL`, `KONTAK_*`), bukan CMS, supaya akun admin yang bocor tidak bisa mengganti rekening donasi. Sistem hanya menampilkan; tidak ada transaksi dan form pelaporan tidak dibuat ulang. Nilai kosong menjadi `null` dan `donasi.tersedia = false`.
+  - Respons publik tidak memuat penulis maupun status internal; admin melihat nama penulis. Aksi tercatat di audit log (`artikel`, termasuk `UNGGAH_THUMBNAIL`/`HAPUS_THUMBNAIL`).
 
 ---
 
